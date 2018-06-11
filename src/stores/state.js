@@ -8,8 +8,11 @@ const state = {
     asideinfo:[{
         system:'manager',
         name:'园区管理',
-        url:'/yqgl',
-        icon:'fa fa-globe fa-2x'
+        icon:'fa fa-globe fa-2x',
+        children:[{
+            name:'洛阳园区',
+            url:'/yqgl',
+        }]
     },{
         system:'manager',
         name:'企业管理',

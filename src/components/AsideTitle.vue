@@ -5,20 +5,29 @@
         :collapse="isCollapse"
         background-color="#545c64"
         text-color="#fff"
-        active-text-color="#409EFF">
-        <el-submenu v-for="(item,key) in AsideTitle"
-                      :key="key"
-                      :index="item.name">
+        active-text-color="#ffd04b">
+        <el-submenu
+                    v-for="(item,key) in AsideTitle"
+                    v-if="item.children != null"
+                    :key="key"
+                    :index="key">
             <template slot="title">
             <i :class="item.icon"></i>
-            <span slot="title"><router-link :to="item.url">{{item.name}}</router-link></span>
+            <span slot="title">{{item.name}}</span>
             </template>
             <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
+                <el-menu-item
+                    v-for="(miniitem,minikey) in item.children"
+                    :key="minikey"><router-link :to="miniitem.url">{{miniitem.name}}</router-link></el-menu-item>
             </el-menu-item-group>
         </el-submenu>
+        <el-menu-item
+            v-else
+            :key="key"
+            :index="key">
+            <i :class="item.icon"></i>
+            <span slot="title"><router-link :to="item.url">{{item.name}}</router-link></span>
+        </el-menu-item>
     </el-menu>
 </template>
 </template>
