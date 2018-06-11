@@ -7,6 +7,7 @@
         text-color="#fff"
         active-text-color="#409EFF">
         <el-menu-item v-for="(item,key) in AsideTitle"
+                      :key="key"
                       :index="item.name">
             <i :class="item.icon"></i>
             <span slot="title"><router-link :to="item.url">{{item.name}}</router-link></span>
