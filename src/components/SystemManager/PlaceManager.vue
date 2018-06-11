@@ -15,14 +15,17 @@
         </el-form-item>
     </el-form>
     </container>
+    <section class="content-operate">
     <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">修改</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
+    </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
 </div>
 </template>
 <script>
     import Table from '@/components/Table'
+    import { mapGetters } from 'vuex'
     export default {
         name: "place",
         data(){
@@ -104,6 +107,12 @@
         components:{
             'mini-table':Table
         },
+        computed:{
+            ...mapGetters({
+                showEdit: 'showedit',
+                showDetele:'showdel',
+            })
+        },
         methods:{
             selectedChange(val){
                 console.log(val);
@@ -111,7 +120,8 @@
             searchChange(){
 
             }
-        }
+        },
+
     }
 </script>
 <style>
