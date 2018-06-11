@@ -1,0 +1,5 @@
+{
+    name:'list',
+    path: 'list',
+    component: resolve => require(['../components/HelloWorld.vue'], resolve)
+}

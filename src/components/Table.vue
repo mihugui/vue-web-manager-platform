@@ -1,0 +1,51 @@
+<template>
+    <div class="content-wrap">
+    <el-table
+        ref="multipleTable"
+        :data="tableData"
+        align="left"
+        tooltip-effect="dark"
+        style="width: 100%"
+        height="100%"
+        max-height="520">
+        <el-table-column
+            type="selection"
+            width="55">
+        </el-table-column>
+        <el-table-column
+            v-for="(item,key) in tableKey"
+            :key="key"
+            :prop="item.value"
+            :label="item.name"
+            :width="item.width">
+        </el-table-column>
+    </el-table>
+    <el-pagination
+        :page-sizes="[20 , 40, 60, 100]"
+        :page-size="20"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+    </el-pagination>
+    </div>
+</template>
+<script>
+    export default{
+        data(){
+            return{
+            }
+        },
+        props:['tableData','tableKey','total'],
+    }
+</script>
+<style>
+    .content-wrap {
+        height:100%;
+        background-color:#f0f4f7;
+        flex-direction:column;
+    }
+
+    .el-pagination{
+        position: relative;
+        margin-top: 0px;
+    }
+</style>
