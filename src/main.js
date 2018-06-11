@@ -9,7 +9,7 @@ import store from './stores'
 import global from './globbal/index'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import 'font-awesome/css/font-awesome.css'
+//import 'font-awesome/css/font-awesome.css'
 
 
 Vue.config.productionTip = false
