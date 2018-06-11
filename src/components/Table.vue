@@ -7,7 +7,8 @@
         tooltip-effect="dark"
         style="width: 100%"
         height="100%"
-        max-height="520">
+        max-height="520"
+        @selection-change="selectedChange">
         <el-table-column
             type="selection"
             width="55">
@@ -34,7 +35,7 @@
             return{
             }
         },
-        props:['tableData','tableKey','total'],
+        props:['tableData','tableKey','total','selectedChange'],
     }
 </script>
 <style>

@@ -5,8 +5,12 @@
 import * as types from './mutation-types'
 
 const mutations = {
-    [types.USER_INFO](state, data) {
-        state.userInfo = data
+    [types.SHOW_DEL_BUTTON](status,data){
+        status.show = data;
+    },
+
+    [types.SHOW_EDIT_BUTTON](status,data){
+        status.show = data;
     }
 }
 
