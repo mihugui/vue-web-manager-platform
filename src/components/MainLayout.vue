@@ -166,11 +166,11 @@
     }
 
     .el-aside {
-        background-color: #D3DCE6;
+        background-color: rgb(84, 92, 100);
         color: #333;
         text-align: center;
         line-height: 200px;
-        width: 65px;
+        width: 63px;
     }
 
     .el-main {

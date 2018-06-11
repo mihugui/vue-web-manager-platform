@@ -1,6 +1,6 @@
 <template>
     <el-menu
-        class="el-menu-vertical-demo"
+
         default-active="1"
         :collapse="isCollapse"
         background-color="#545c64"
@@ -29,5 +29,9 @@
     a{
         text-decoration:none;
         color:white;
+    }
+
+    .el-menu {
+        border-right: solid 0px #e6e6e6;
     }
 </style>
