@@ -15,9 +15,7 @@
             <span slot="title">{{item.name}}</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item
-                    v-for="(miniitem,minikey) in item.children"
-                    :key="minikey">{{miniitem.name}}</el-menu-item>
+                <aside-title  :AsideTitle="item.children"></aside-title>
             </el-menu-item-group>
         </el-submenu>
         <el-menu-item
@@ -29,9 +27,9 @@
         </el-menu-item>
     </el-menu>
 </template>
-</template>
 <script>
     export default{
+        name:'aside-title',
         data(){
             return{
 
