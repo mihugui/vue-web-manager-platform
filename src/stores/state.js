@@ -11,7 +11,13 @@ const state = {
         icon:'fa fa-globe fa-2x',
         children:[{
             name:'洛阳园区',
-            url:'/yqgl',
+            children:[{
+                name:'洛阳园区-分区',
+                children:[{
+                    name:'洛阳园区-分区中的分区',
+                    url:'/yqgl',
+                }]
+            }]
         }]
     },{
         system:'manager',

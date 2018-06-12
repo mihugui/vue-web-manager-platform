@@ -1,14 +1,13 @@
 <template>
     <el-menu
-
         default-active="1"
         :collapse="isCollapse"
         background-color="#545c64"
         text-color="#fff"
-        active-text-color="#ffd04b">
+        active-text-color="#409EFF">
         <el-submenu
                     v-for="(item,key) in AsideTitle"
-                    v-if="item.children != null"
+                    v-if="item.children!=null"
                     :key="key"
                     :index="key">
             <template slot="title">
@@ -16,9 +15,7 @@
             <span slot="title">{{item.name}}</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item
-                    v-for="(miniitem,minikey) in item.children"
-                    :key="minikey"><router-link :to="miniitem.url">{{miniitem.name}}</router-link></el-menu-item>
+                <aside-title  :AsideTitle="item.children"></aside-title>
             </el-menu-item-group>
         </el-submenu>
         <el-menu-item
@@ -26,13 +23,13 @@
             :key="key"
             :index="key">
             <i :class="item.icon"></i>
-            <span slot="title"><router-link :to="item.url">{{item.name}}</router-link></span>
+            <span slot="title">{{item.name}}</span>
         </el-menu-item>
     </el-menu>
 </template>
-</template>
 <script>
     export default{
+        name:'aside-title',
         data(){
             return{
 

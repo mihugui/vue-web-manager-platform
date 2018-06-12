@@ -1,7 +1,6 @@
 <template>
 <div>
-    <container class="content-search">
-    <el-form :inline="true" :model="companySearch" class="demo-form-inline" size="mini" label-width="100px">
+    <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
         <el-form-item
             label="园区名称" label-width="80px">
             <el-input
@@ -14,11 +13,10 @@
             <el-button type="primary" @click="searchChange" icon="el-icon-search">查询</el-button>
         </el-form-item>
     </el-form>
-    </container>
     <section class="content-operate">
-    <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
-    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">修改</el-button>
-    <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
+    <!--<el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>-->
+    <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">修改</el-button>-->
+    <!--<el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>-->
     </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
 </div>
@@ -126,9 +124,28 @@
 </script>
 <style>
     .content-search {
-    margin-bottom: 10px;
-    text-align: left;
-    padding: 15px 20px 0;
-    border-bottom: 1px solid rgba(235,235,235,0.9);
+        text-align: left;
+        background-color: #fff;
+        border-bottom: 1px solid hsla(0,0%,92%,.9);
+        padding: 15px 20px 0;
+        display: block;
+        margin: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
+    .content-operate {
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        text-align: left;
+        background-color: #fff;
+        border-bottom: 1px solid hsla(0,0%,92%,.9);
+        display: block;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
     }
 </style>
