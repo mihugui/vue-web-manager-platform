@@ -9,7 +9,7 @@
             :before-close="handleClose">
 
             <span>
-                <el-form :inline="true" :model="companySearch" class="demo-form-inline" size="mini" label-width="100px">
+                <el-form :inline="true"  class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
                 v-for ="(search,index) in searchData"
                 :key="index"
