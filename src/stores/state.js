@@ -49,6 +49,16 @@ const state = {
         name:'资源管理',
         url:'/yqgl',
         icon:'fa fa-briefcase fa-lg',
+    },{
+        system:'manager',
+        name:'日志管理',
+        url:'/yqgl',
+        icon:'fa fa-calendar fa-lg',
+    },{
+        system:'manager',
+        name:'数据字典管理',
+        url:'/yqgl',
+        icon:'fa fa-book fa-lg',
     }],
     systeminfo:[{
         icon:'fa fa-money',
