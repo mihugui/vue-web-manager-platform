@@ -69,19 +69,20 @@
         line-height: 60px;
         padding: 0;
     }
-
     .el-aside {
         background-color: rgb(84, 92, 100);
         color: #333;
         text-align: center;
         line-height: 200px;
         width: 63px;
+        /*position: fixed;*/
+        /*height: 100%;*/
     }
 
     .el-main {
         background-color: #fff;
         color: #333;
-        text-align: center;
+        /*text-align: center;*/
         margin:0px 0px 0px 0px;
         height: auto;
 
