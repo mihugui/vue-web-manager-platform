@@ -7,14 +7,14 @@
         active-text-color="#409EFF">
         <el-submenu
                     v-for="(item,key) in AsideTitle"
-                    v-if="item.children!=null"
+                    v-if="item.list!=''"
                     :index="item.name">
             <template slot="title">
             <i :class="item.icon"></i>
             <span slot="title">{{item.name}}</span>
             </template>
             <el-menu-item-group>
-                <aside-title  :AsideTitle="item.children"></aside-title>
+                <aside-title  :AsideTitle="item.list"></aside-title>
             </el-menu-item-group>
         </el-submenu>
         <el-menu-item
