@@ -18,6 +18,10 @@ const state = {
                     url:'/yqgl',
                 }]
             }]
+        },{
+            system:'manager',
+            name:'园区管理',
+            icon:'fa fa-globe fa-2x',
         }]
     },{
         system:'manager',
@@ -28,7 +32,12 @@ const state = {
         system:'test',
         name:'用户管理',
         url:'/yqgl',
-        icon:'fa fa-group fa-2x'
+        icon:'fa fa-group fa-lg'
+    },{
+        system:'manager',
+        name:'资源管理',
+        url:'/yqgl',
+        icon:'fa fa-briefcase fa-lg',
     }],
     systeminfo:[{
         icon:'fa fa-money',
