@@ -1,8 +1,8 @@
 const index = resolve => {
     require(['@/components/MainLayout'], resolve)
 }
-const table = resolve => {
-    require(['@/components/SystemManager/resource'], resolve)
+const resource = resolve => {
+    require(['@/components/SystemManager/ResourceManagement'], resolve)
 }
 
 let router = [
@@ -13,7 +13,7 @@ let router = [
         children:[{
             name:'source',
             path:'source',
-            component:table,
+            component:resource,
         }]
     },
 
