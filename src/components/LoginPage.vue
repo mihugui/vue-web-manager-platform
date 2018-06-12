@@ -37,6 +37,7 @@
 </template>
 <script>
     import {loginpage} from '../axios/Login'
+    import {Permission} from '../axios/Permission'
     export default {
         name: 'LoginPage',
         data() {
@@ -78,6 +79,8 @@
                     vm.isBtnLoading = false;
                     if(res.data.data){
                         console.log(res.data.data);
+                        sessionStorage.setItem("token",res.data.data);
+                        Permission.getallpermission();
                     }else{
                         return Promise.reject({
                             message: '登录异常！'

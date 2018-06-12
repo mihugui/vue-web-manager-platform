@@ -7,25 +7,11 @@
             :visible.sync="dialogVisible"
             width="30%"
             :before-close="handleClose">
-
             <span>
-                <el-form :inline="true"  class="demo-form-inline" size="mini" label-width="100px">
-                <el-form-item
-                v-for ="(search,index) in searchData"
-                :key="index"
-                v-if="search.seachtype===1"
-                :label="search.name" label-width="80px">
-        <el-input
-            :placeholder="'请输入'+search.name"
-            :id="search.key"
-            clearable>
-        </el-input>
-    </el-form-item>
-                </el-form>
             </span>
             <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
         </el-dialog>
     </div>

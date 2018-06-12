@@ -16,9 +16,9 @@
     </el-form>
     </section>
     <section class="content-operate">
-    <!--<el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>-->
-    <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">修改</el-button>-->
-    <!--<el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>-->
+    <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
+    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
+    <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
     </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
 </div>
@@ -27,9 +27,11 @@
     import Table from '@/components/Table'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
-        name: "place",
+        name: "PlaceManager",
         data(){
             return {
+                showEdit:false,
+                showDetele:false,
                 url:'/table/data',
                 placename:'',
                 tableKey: [{
@@ -45,6 +47,7 @@
                     value: 'address',
                     operate: false
                 }],
+                param:null,
             }
         },
         components:{
@@ -52,20 +55,40 @@
         },
         computed:{
             ...mapGetters({
-                showEdit: 'showedit',
-                showDetele:'showdel',
                 tableData:'tableData',
                 total:'total'
             }),
         },
         methods:{
             selectedChange(val){
-                console.log(val);
+
+                switch(val.length){
+                    case 0:
+                        this.showEdit = false;
+                        this.showDetele= false;
+                    case 1:
+                        this.showEdit = true
+                        this.showDetele= true;
+                    default:
+                        this.showEdit = false;
+                        this.showDetele= true;
+                }
+                console.log(val.length);
             },
+
+            showAddModal(){
+
+            },
+            showEditModal(){
+
+            },
+            deleteList(){
+
+            },
+
             ...mapMutations({
                setTableUrl: 'SET_TABLE_URL'
-           }),
-
+            }),
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA'
             })
@@ -74,6 +97,7 @@
         mounted () {
             this.setTableUrl(this.url);
             this.getTableData(123);
+            this.selectedChange('');
         }
     }
 </script>

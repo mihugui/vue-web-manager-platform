@@ -2,6 +2,7 @@
 * 全局变量，状态管理
 * */
 const state = {
+    token:'123',
     tableurl:'',
     total:100,
     tableData:[{
@@ -16,6 +17,7 @@ const state = {
     system:'manager',
     showedit:true,
     showdel:true,
+    buttonpermission:'',
     asideinfo:[{
         system:'manager',
         name:'园区管理',

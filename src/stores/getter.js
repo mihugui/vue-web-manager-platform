@@ -17,5 +17,8 @@ export const total = state => state.total
 
 export const tableurl = state => state.tableurl
 
+export const token = state => state.token
+
+
 
 
