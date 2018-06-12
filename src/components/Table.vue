@@ -42,11 +42,19 @@
     .content-wrap {
         height:100%;
         background-color:#f0f4f7;
+        display: flex;
         flex-direction:column;
     }
 
     .el-pagination{
         position: relative;
         margin-top: 0px;
+    }
+
+    .el-table{
+        padding-left: 20px;
+        border-top-width: 20px;
+        padding-top: 20px;
+        padding-right: 10px;
     }
 </style>

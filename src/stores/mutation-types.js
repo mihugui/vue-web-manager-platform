@@ -6,6 +6,8 @@ export const SHOW_DEL_BUTTON = 'SHOW_DEL_BUTTON'
 
 export const SHOW_EDIT_BUTTON = 'SHOW_EDIT_BUTTON'
 
-export const ASIDE_INFO = 'ASIDE_INFO'
+export const SET_TABLE_URL = 'SET_TABLE_URL'
 
-export const SYSTEM_INFO = 'SYSTEM_INFO'
+export const SET_TABLE_DATA = 'SET_TABLE_DATA'
+
+export const GET_TABLE_DATA = 'GET_TABLE_DATA'

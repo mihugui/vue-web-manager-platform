@@ -8,8 +8,7 @@
         <el-submenu
                     v-for="(item,key) in AsideTitle"
                     v-if="item.children!=null"
-                    :key="key"
-                    :index="key">
+                    :index="item.name">
             <template slot="title">
             <i :class="item.icon"></i>
             <span slot="title">{{item.name}}</span>
@@ -21,7 +20,7 @@
         <el-menu-item
             v-else
             :key="key"
-            :index="key">
+            :index="item.name">
             <i :class="item.icon"></i>
             <span slot="title">{{item.name}}</span>
         </el-menu-item>

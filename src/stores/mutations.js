@@ -11,6 +11,15 @@ const mutations = {
 
     [types.SHOW_EDIT_BUTTON](status,data){
         status.show = data;
+    },
+
+    [types.SET_TABLE_URL](status,data){
+        console.log(data);
+        status.tableurl = data;
+    },
+
+    [types.SET_TABLE_DATA](status,data){
+        status.tableData = data;
     }
 }
 

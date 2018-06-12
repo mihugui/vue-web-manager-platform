@@ -1,5 +1,6 @@
 <template>
 <div>
+    <section class="content-search">
     <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
         <el-form-item
             label="园区名称" label-width="80px">
@@ -10,9 +11,10 @@
             </el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="searchChange" icon="el-icon-search">查询</el-button>
+            <el-button type="primary" icon="el-icon-search">查询</el-button>
         </el-form-item>
     </el-form>
+    </section>
     <section class="content-operate">
     <!--<el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>-->
     <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">修改</el-button>-->
@@ -23,70 +25,13 @@
 </template>
 <script>
     import Table from '@/components/Table'
-    import { mapGetters } from 'vuex'
+    import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "place",
         data(){
             return {
+                url:'/table/data',
                 placename:'',
-                total:100,
-                tableData:[{
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                },{
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }],
                 tableKey: [{
                     name: '日期',
                     value: 'date',
@@ -109,17 +54,27 @@
             ...mapGetters({
                 showEdit: 'showedit',
                 showDetele:'showdel',
-            })
+                tableData:'tableData',
+                total:'total'
+            }),
         },
         methods:{
             selectedChange(val){
                 console.log(val);
             },
-            searchChange(){
+            ...mapMutations({
+               setTableUrl: 'SET_TABLE_URL'
+           }),
 
-            }
+            ...mapActions({
+                getTableData : 'GET_TABLE_DATA'
+            })
+
         },
-
+        mounted () {
+            this.setTableUrl(this.url);
+            this.getTableData(123);
+        }
     }
 </script>
 <style>
@@ -136,13 +91,12 @@
         vertical-align: baseline;
     }
     .content-operate {
-        padding: 10px 20px;
         margin-bottom: 10px;
         text-align: left;
         background-color: #fff;
         border-bottom: 1px solid hsla(0,0%,92%,.9);
         display: block;
-        padding: 0;
+        padding-left: 30px;
         border: 0;
         font-size: 100%;
         font: inherit;
