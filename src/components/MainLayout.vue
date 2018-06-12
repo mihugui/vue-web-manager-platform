@@ -30,6 +30,7 @@
         },
         methods:{
             changertitle(){
+                console.log(this.AsideTitle)
                 if(window.innerWidth>800) {
                     this.isCollapse = false;
                     this.myWidth = "200px";
@@ -42,7 +43,7 @@
         },
         mounted () {
             this.changertitle();
-            var _this =this
+            var _this =this;
             // 注：window.onresize只能在项目内触发1次
             window.onresize = function windowResize () {
                 // 通过捕获系统的onresize事件触发我们需要执行的事件

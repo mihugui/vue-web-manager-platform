@@ -1,5 +1,6 @@
 import url from "../globbal/url";
 import axios from 'axios';
+import store from '../stores'
 
 export const Permission = {
 
@@ -22,8 +23,13 @@ export const Permission = {
         vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
             return Permission.button !=1;
         });
-        console.log(vm.data);
-        vm.analysis();
+        store.commit('SET_ASIDETITLE_PERMISSION',vm.analysis());
+        store.commit('SET_BUTTON_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
+            return Permission.button ===1;
+        }));
+        store.commit('SET_SYSTEM_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
+            return Permission.pId === null;
+        }));
     },
 
     analysis:function(){
@@ -38,8 +44,7 @@ export const Permission = {
                 i--
             }
         }
-        this.menuList(tree);
-        console.log(this.menuList(tree));
+        return this.menuList(tree);
     },
 
     menuList:function(arr){
