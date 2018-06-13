@@ -1,6 +1,6 @@
 
 const index = resolve => {
-    require(['@/components/TreeMenu'], resolve)
+    require(['@/components/AsideTitle'], resolve)
 }
 
 

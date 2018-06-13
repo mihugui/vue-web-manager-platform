@@ -7,7 +7,7 @@
         active-text-color="#409EFF">
         <el-submenu
                     v-for="(item,key) in AsideTitle"
-                    v-if="item.children!=''"
+                    v-if="item.children !=''"
                     :index="item.name">
             <template slot="title">
             <i :class="item.icon"></i>
