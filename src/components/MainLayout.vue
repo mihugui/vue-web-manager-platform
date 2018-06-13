@@ -8,7 +8,7 @@
                 </div>
             </div>
         </el-header>
-        <el-container>
+        <el-container class="maintype">
             <el-aside :width="myWidth"><mini-asidetitle :AsideTitle="AsideTitle" :isCollapse="isCollapse"></mini-asidetitle></el-aside>
             <el-main>
                 <router-view></router-view>
@@ -63,6 +63,12 @@
     }
 </script>
 <style scoped>
+    .maintype {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        margin-top: 60px
+    }
     .el-header {
         background-color: #36a8fc;
         color: #333;
@@ -76,8 +82,6 @@
         text-align: center;
         line-height: 200px;
         width: 63px;
-        /*position: fixed;*/
-        /*height: 100%;*/
     }
 
     .el-main {
@@ -86,7 +90,6 @@
         /*text-align: center;*/
         margin:0px 0px 0px 0px;
         height: auto;
-
     }
 
     .title {
