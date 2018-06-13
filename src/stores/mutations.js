@@ -9,6 +9,10 @@ const mutations = {
         status.show = data;
     },
 
+    [types.SET_TREE_IDS](status,data){
+        status.treeids = data;
+    },
+
     [types.SHOW_EDIT_BUTTON](status,data){
         status.show = data;
     },
