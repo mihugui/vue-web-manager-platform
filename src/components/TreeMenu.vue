@@ -4,13 +4,14 @@
         show-checkbox
         node-key="id"
         ref="tree"
-        :default-checked-keys="[5]"
+        :default-checked-keys="[221]"
         :props="defaultProps"
-        @check-change="getHalfCheckedNodes">
+        @check-change="gettreeid">
     </el-tree>
 </template>
 <script>
-    import {mapGetters} from 'vuex'
+    import {mapGetters,mapMutations} from 'vuex'
+    import * as types from '../stores/mutation-types'
     export default{
         name:'treemenu',
         data(){
@@ -22,15 +23,23 @@
             };
         },
         methods :{
-            getHalfCheckedNodes(){
-                console.log(this.$refs.tree.getCheckedNodes())
-                console.log(this.$refs.tree.getHalfCheckedNodes());
+            gettreeid(){
+                let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
+                let ids = [];
+                for( var item of tree){
+                    ids.push(item.id);
+                }
+                this.settreeids(ids);
             },
+            ...mapMutations({
+                settreeids: types.SET_TREE_IDS
+            }),
         },
         computed:{
             ...mapGetters({
                 data:'permission',
             }),
         },
+        props:['checkedids'],
     }
 </script>
