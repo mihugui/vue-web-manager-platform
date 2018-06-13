@@ -37,6 +37,11 @@ const mutations = {
     [types.SET_ASIDETITLE_PERMISSION](status,data){
         status.asideinfo = data;
     },
+
+    [types.SET_ALL_PERMISSION](status,data){
+        status.permission = data;
+    }
+
 }
 
 export default mutations

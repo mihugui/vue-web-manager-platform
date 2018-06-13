@@ -8,6 +8,7 @@
         <el-submenu
                     v-for="(item,key) in AsideTitle"
                     v-if="item.children !=''"
+                    :key="key"
                     :index="item.name">
             <template slot="title">
             <i :class="item.icon"></i>

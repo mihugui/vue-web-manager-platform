@@ -67,6 +67,7 @@
 </template>
 <script>
     import Table from '@/components/Table'
+    import {Permission} from '../../axios/Permission'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "CompanyManager",
@@ -167,6 +168,7 @@
 
             showAddModal(){
                 this.dialogVisible=true;
+                Permission.getpermission();
 
             },
             showEditModal(){

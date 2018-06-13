@@ -5,7 +5,7 @@ import store from '../stores'
 export const Permission = {
 
     data:'',
-
+    //获取用户资源
     getallpermission:function(){
         var vm = this;
         if(!sessionStorage.getItem('permission')){
@@ -14,15 +14,15 @@ export const Permission = {
             vm.data = res.data.data.filter(Permission=>{
                 return Permission.button !=1;
             });
-            //console.log(res.data.data);
-            vm.analysis(res.data.data);
         }).catch(function(error){
             console.log(error)
         });
+        }else{
+            vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
+                return Permission.button !=1;
+            });
         }
-        vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
-            return Permission.button !=1;
-        });
+
         store.commit('SET_ASIDETITLE_PERMISSION',vm.analysis());
         store.commit('SET_BUTTON_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
             return Permission.button ===1;
@@ -44,14 +44,12 @@ export const Permission = {
                 i--
             }
         }
-        console.log(tree);
         return this.menuList(tree);
     },
 
     menuList:function(arr){
         var vm = this;
         if(vm.data.length !=0){
-            console.log(arr)
             for(let i=0; i<arr.length;i++){
                 for(let j=0;j<vm.data.length;j++){
                     if(this.data[j].pId == arr[i].id){
@@ -68,19 +66,19 @@ export const Permission = {
         return arr;
     },
 
+    //获取全部资源
     getpermission:function(){
         var vm = this;
         if(!sessionStorage.getItem('permission')){
-            axios.post(url.allurl+url.permissionurl).then(function(res){
+            axios.post(url.allurl+url.allpermissionurl).then(function(res){
                 sessionStorage.setItem('permission',JSON.stringify(res.data.data));
-                vm.data = res.data.data.filter(Permission=>{
-                    return Permission.button !=1;
-                });
-                console.log(res.data.data);
-                vm.analysis(res.data.data);
+                vm.data = res.data.data;
             }).catch(function(error){
                 console.log(error)
             });
+        }else{
+            vm.data = JSON.parse(sessionStorage.getItem('permission'));
         }
+        store.commit('SET_ALL_PERMISSION',vm.analysis());
     }
 }

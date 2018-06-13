@@ -30,7 +30,6 @@
         },
         methods:{
             changertitle(){
-                console.log(this.AsideTitle)
                 if(window.innerWidth>800) {
                     this.isCollapse = false;
                     this.myWidth = "200px";
