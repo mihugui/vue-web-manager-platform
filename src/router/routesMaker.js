@@ -3,6 +3,8 @@
 import route0 from "./map/LoginPage/index.js"
 import route1 from "./map/System/PlaceManager/index.js"
 import route2 from "./map/System/resource/index.js"
+import route3 from "./map/System/LogManagement/index.js"
+import route4 from "./map/System/dictonary/index.js"
 let routes = []
-let myRoutes = routes.concat(route0,route1,route2)
+let myRoutes = routes.concat(route0,route1,route2,route3,route4);
 export default myRoutes;

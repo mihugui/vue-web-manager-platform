@@ -8,7 +8,8 @@
        <el-row style="margin-top: 20px">
            <el-tree
                :data="data2"
-               show-checkbox
+               @click="getCheckedNodes"
+               show-checkbox="true"
                node-key="id"
                :default-expanded-keys="[]"
                :default-checked-keys="[]"
@@ -17,6 +18,7 @@
        </el-row>
        <el-dialog
            title="增加"
+           :modal-append-to-body="false"
            :visible.sync="dialogVisible"
            width="60%"
            :before-close="handleClose">
@@ -150,6 +152,10 @@
                        done();
                    })
                    .catch(_ => {});
+           },
+           getCheckedNodes() {
+               console.log(this.$refs.tree.getCheckedNodes());
+               console.log(this.$refs.tree.getCheckedKeys());
            }
        }
    }
