@@ -5,7 +5,7 @@ import store from '../stores'
 export const Permission = {
 
     data:'',
-
+    //获取用户资源
     getallpermission:function(){
         var vm = this;
         if(!sessionStorage.getItem('permission')){
@@ -14,15 +14,15 @@ export const Permission = {
             vm.data = res.data.data.filter(Permission=>{
                 return Permission.button !=1;
             });
-            console.log(res.data.data);
-            vm.analysis(res.data.data);
         }).catch(function(error){
             console.log(error)
         });
+        }else{
+            vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
+                return Permission.button !=1;
+            });
         }
-        vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
-            return Permission.button !=1;
-        });
+
         store.commit('SET_ASIDETITLE_PERMISSION',vm.analysis());
         store.commit('SET_BUTTON_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
             return Permission.button ===1;
@@ -38,7 +38,7 @@ export const Permission = {
         for(let i=0;i<vm.data.length;i++){
             if(this.data[i].pId === null){
                 let obj = vm.data[i]
-                obj.list = []
+                obj.children = []
                 tree.push(obj)
                 vm.data.splice(i,1)
                 i--
@@ -54,15 +54,31 @@ export const Permission = {
                 for(let j=0;j<vm.data.length;j++){
                     if(this.data[j].pId == arr[i].id){
                         let obj = vm.data[j]
-                        obj.list = []
-                        arr[i].list.push(obj)
+                        obj.children = []
+                        arr[i].children.push(obj)
                         vm.data.splice(j,1)
                         j--
                     }
                 }
-                vm.menuList(arr[i].list)
+                vm.menuList(arr[i].children)
             }
         }
         return arr;
+    },
+
+    //获取全部资源
+    getpermission:function(){
+        var vm = this;
+        if(!sessionStorage.getItem('permission')){
+            axios.post(url.allurl+url.allpermissionurl).then(function(res){
+                sessionStorage.setItem('permission',JSON.stringify(res.data.data));
+                vm.data = res.data.data;
+            }).catch(function(error){
+                console.log(error)
+            });
+        }else{
+            vm.data = JSON.parse(sessionStorage.getItem('permission'));
+        }
+        store.commit('SET_ALL_PERMISSION',vm.analysis());
     }
 }

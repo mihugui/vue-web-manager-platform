@@ -1,58 +1,45 @@
 <template>
     <el-tree
-        :data="data2"
+        :data="data"
         show-checkbox
         node-key="id"
-        accordion
-        :default-checked-keys="[5]"
-        :props="defaultProps">
+        ref="tree"
+        :default-checked-keys="[221]"
+        :props="defaultProps"
+        @check-change="gettreeid">
     </el-tree>
 </template>
 <script>
+    import {mapGetters,mapMutations} from 'vuex'
+    import * as types from '../stores/mutation-types'
     export default{
         name:'treemenu',
         data(){
             return {
-                data2: [{
-                    id: 1,
-                    label: '一级 1',
-                    children: [{
-                        id: 4,
-                        label: '二级 1-1',
-                        children: [{
-                            id: 9,
-                            label: '三级 1-1-1'
-                        }, {
-                            id: 10,
-                            label: '三级 1-1-2'
-                        }]
-                    }]
-                }, {
-                    id: 2,
-                    label: '一级 2',
-                    children: [{
-                        id: 5,
-                        label: '二级 2-1'
-                    }, {
-                        id: 6,
-                        label: '二级 2-2'
-                    }]
-                }, {
-                    id: 3,
-                    label: '一级 3',
-                    children: [{
-                        id: 7,
-                        label: '二级 3-1'
-                    }, {
-                        id: 8,
-                        label: '二级 3-2'
-                    }]
-                }],
                 defaultProps: {
                     children: 'children',
-                    label: 'label'
+                    label: 'name'
                 }
             };
-        }
+        },
+        methods :{
+            gettreeid(){
+                let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
+                let ids = [];
+                for( var item of tree){
+                    ids.push(item.id);
+                }
+                this.settreeids(ids);
+            },
+            ...mapMutations({
+                settreeids: types.SET_TREE_IDS
+            }),
+        },
+        computed:{
+            ...mapGetters({
+                data:'permission',
+            }),
+        },
+        props:['checkedids'],
     }
 </script>

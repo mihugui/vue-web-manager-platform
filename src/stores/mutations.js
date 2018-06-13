@@ -9,6 +9,10 @@ const mutations = {
         status.show = data;
     },
 
+    [types.SET_TREE_IDS](status,data){
+        status.treeids = data;
+    },
+
     [types.SHOW_EDIT_BUTTON](status,data){
         status.show = data;
     },
@@ -37,6 +41,11 @@ const mutations = {
     [types.SET_ASIDETITLE_PERMISSION](status,data){
         status.asideinfo = data;
     },
+
+    [types.SET_ALL_PERMISSION](status,data){
+        status.permission = data;
+    }
+
 }
 
 export default mutations
