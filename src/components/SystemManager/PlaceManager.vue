@@ -21,6 +21,31 @@
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
     </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
+    <div>
+        <el-dialog
+            title="修改"
+            :visible.sync="dialogVisible"
+            width="850px"
+            heigth = "80%"
+            :before-close="handleClose">
+            <span>
+                <div>
+                    <el-input placeholder="请输入内容" v-model="input3">
+                        <template slot="prepend">园区名称</template>
+                    </el-input>
+                </div>
+                <div style="margin-top: 15px;">
+                    <el-input placeholder="请输入内容" v-model="input3">
+                        <template slot="prepend">园区名称</template>
+                    </el-input>
+                </div>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
 </div>
 </template>
 <script>
@@ -30,8 +55,12 @@
         name: "PlaceManager",
         data(){
             return {
-                showEdit:false,
-                showDetele:false,
+                dialog:{
+
+                },
+                dialogVisible:false,
+                showEdit:true,
+                showDetele:true,
                 url:'/table/data',
                 placename:'',
                 tableKey: [{
@@ -46,6 +75,10 @@
                     name: '地址',
                     value: 'address',
                     operate: false
+                },{
+                    name: '日期',
+                    value: 'date',
+                    operate: true
                 }],
                 param:null,
             }
@@ -60,44 +93,55 @@
             }),
         },
         methods:{
-            selectedChange(val){
 
+            ...mapMutations({
+                setTableUrl: 'SET_TABLE_URL'
+            }),
+            ...mapActions({
+                getTableData : 'GET_TABLE_DATA'
+            }),
+
+            selectedChange(val){
+                var vm = this;
                 switch(val.length){
                     case 0:
-                        this.showEdit = false;
-                        this.showDetele= false;
+                        console.log(13);
+                        vm.showEdit = false;
+                        vm.showDetele = false;
+                        break;
                     case 1:
-                        this.showEdit = true
-                        this.showDetele= true;
+                        vm.showEdit = true
+                        vm.showDetele = true;
+                        break;
                     default:
-                        this.showEdit = false;
-                        this.showDetele= true;
+                        vm.showEdit = false;
+                        vm.showDetele = true;
                 }
-                console.log(val.length);
             },
 
             showAddModal(){
+                this.dialogVisible=true;
 
             },
             showEditModal(){
-
+                this.dialogVisible=true;
             },
             deleteList(){
 
             },
 
-            ...mapMutations({
-               setTableUrl: 'SET_TABLE_URL'
-            }),
-            ...mapActions({
-                getTableData : 'GET_TABLE_DATA'
-            })
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => {});
+            }
 
         },
         mounted () {
             this.setTableUrl(this.url);
             this.getTableData(123);
-            this.selectedChange('');
         }
     }
 </script>
@@ -125,5 +169,17 @@
         font-size: 100%;
         font: inherit;
         vertical-align: baseline;
+    }
+
+    .el-dialog{
+        max-height:calc(100% - 300px);
+        max-width:calc(100% - 30px);
+        display:flex;
+        flex-direction:column;
+
+    }
+    .el-dialog__body
+    {
+        overflow:auto;
     }
 </style>
