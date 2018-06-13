@@ -4,7 +4,7 @@
         show-checkbox
         node-key="id"
         ref="tree"
-        :default-checked-keys="[221]"
+        :default-checked-keys="checkedids"
         :props="defaultProps"
         @check-change="gettreeid">
     </el-tree>

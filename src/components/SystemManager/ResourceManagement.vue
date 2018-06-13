@@ -8,7 +8,7 @@
        <el-row style="margin-top: 20px">
            <el-tree
                :data="data2"
-               @click="getCheckedNodes"
+               @check="getCheckedNodes"
                show-checkbox="true"
                node-key="id"
                :default-expanded-keys="[]"
@@ -153,9 +153,8 @@
                    })
                    .catch(_ => {});
            },
-           getCheckedNodes() {
-               console.log(this.$refs.tree.getCheckedNodes());
-               console.log(this.$refs.tree.getCheckedKeys());
+           getCheckedNodes(value) {
+               console.log(value);
            }
        }
    }
