@@ -1,34 +1,34 @@
 <template>
-<div>
-    <section class="content-search">
-    <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
-        <el-form-item
-            label="园区名称" label-width="80px">
-            <el-input
-                placeholder="请输入园区名称"
-                v-model="placename"
-                clearable>
-            </el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" icon="el-icon-search">查询</el-button>
-        </el-form-item>
-    </el-form>
-    </section>
-    <section class="content-operate">
-    <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
-    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
-    <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
-    </section>
-    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
     <div>
-        <el-dialog
-            title="修改"
-            :visible.sync="dialogVisible"
-            width="850px"
-            heigth = "80%"
-            :before-close="handleClose"
-            style="z-index: 99999;">
+        <section class="content-search">
+            <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
+                <el-form-item
+                    label="园区名称" label-width="80px">
+                    <el-input
+                        placeholder="请输入园区名称"
+                        v-model="placename"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-search">查询</el-button>
+                </el-form-item>
+            </el-form>
+        </section>
+        <section class="content-operate">
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
+        </section>
+        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
+        <div>
+            <el-dialog
+                title="修改"
+                :visible.sync="dialogVisible"
+                width="850px"
+                heigth = "80%"
+                :before-close="handleClose"
+                style="z-index: 99999;">
             <span>
                 <div  class="dialog-input">
                     <el-input placeholder="请输入名称" v-model="dialog.placename">
@@ -57,19 +57,19 @@
                     </el-input>
                 </div>
             </span>
-            <span slot="footer" class="dialog-footer">
+                <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
-        </el-dialog>
+            </el-dialog>
+        </div>
     </div>
-</div>
 </template>
 <script>
     import Table from '@/components/Table'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
-        name: "PlaceManager",
+        name: "CompanyManager",
         data(){
             return {
                 dialog:{
@@ -85,22 +85,47 @@
                     value: 'date',
                     operate: true
                 },{
-                    name: '园区名称',
+                    name: '企业名称',
                     value: 'name',
                     operate: false
                 },{
-                    name: '园区编号',
+                    name: '企业编号',
                     value: 'address',
                     operate: false
                 },{
-                    name: '园区地址',
+                    name: '企业法人',
                     value: 'date',
                     operate: true
                 },{
-                    name: '园区描述',
+                    name: '企业类型',
                     value: 'date',
                     operate: true
-                }],
+                },{
+                    name: '企业税号',
+                    value: 'date',
+                    operate: true
+                },{
+                    name: '负责人电话',
+                    value: 'date',
+                    operate: true
+                },{
+                    name: '父级企业',
+                    value: 'date',
+                    operate: true
+                },{
+                    name: '入驻园区',
+                    value: 'date',
+                    operate: true
+                },{
+                    name: '默认资源',
+                    value: 'date',
+                    operate: true
+                },{
+                    name: '组织管理',
+                    value: 'date',
+                    operate: true
+                }
+                ],
                 param:null,
             }
         },

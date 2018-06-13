@@ -14,7 +14,7 @@ export const Permission = {
             vm.data = res.data.data.filter(Permission=>{
                 return Permission.button !=1;
             });
-            console.log(res.data.data);
+            //console.log(res.data.data);
             vm.analysis(res.data.data);
         }).catch(function(error){
             console.log(error)
@@ -38,31 +38,49 @@ export const Permission = {
         for(let i=0;i<vm.data.length;i++){
             if(this.data[i].pId === null){
                 let obj = vm.data[i]
-                obj.list = []
+                obj.children = []
                 tree.push(obj)
                 vm.data.splice(i,1)
                 i--
             }
         }
+        console.log(tree);
         return this.menuList(tree);
     },
 
     menuList:function(arr){
         var vm = this;
         if(vm.data.length !=0){
+            console.log(arr)
             for(let i=0; i<arr.length;i++){
                 for(let j=0;j<vm.data.length;j++){
                     if(this.data[j].pId == arr[i].id){
                         let obj = vm.data[j]
-                        obj.list = []
-                        arr[i].list.push(obj)
+                        obj.children = []
+                        arr[i].children.push(obj)
                         vm.data.splice(j,1)
                         j--
                     }
                 }
-                vm.menuList(arr[i].list)
+                vm.menuList(arr[i].children)
             }
         }
         return arr;
+    },
+
+    getpermission:function(){
+        var vm = this;
+        if(!sessionStorage.getItem('permission')){
+            axios.post(url.allurl+url.permissionurl).then(function(res){
+                sessionStorage.setItem('permission',JSON.stringify(res.data.data));
+                vm.data = res.data.data.filter(Permission=>{
+                    return Permission.button !=1;
+                });
+                console.log(res.data.data);
+                vm.analysis(res.data.data);
+            }).catch(function(error){
+                console.log(error)
+            });
+        }
     }
 }
