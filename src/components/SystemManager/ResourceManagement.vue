@@ -7,10 +7,10 @@
        </el-row>
        <el-row style="margin-top: 20px">
            <el-tree
-               :data="data2"
-               @check="getCheckedNodes"
-               show-checkbox="true"
+               :data="permission"
+               @node-click="getCheckedNodes"
                node-key="id"
+               highlight-current
                :default-expanded-keys="[]"
                :default-checked-keys="[]"
                :props="defaultProps">
@@ -55,6 +55,8 @@
 </template>
 <script type="text/ecmascript-6">
    import ElRow from "element-ui/packages/row/src/row";
+   import {mapGetters,mapMutations} from 'vuex'
+   import * as types from '../../stores/mutation-types';
    export default {
        components: {ElRow},
        name: 'ResourceManagement',
@@ -63,87 +65,40 @@
                form: {
                    name: ''
                },
+               table: [{"id":1,"system":"xfxt","name":"消费系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null},{"id":2,"system":"mjxt","name":"门禁系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null},{"id":11,"system":null,"name":"消费系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null},{"id":12,"system":null,"name":"消费系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null},{"id":21,"system":null,"name":"门禁系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null},{"id":22,"system":null,"name":"门禁系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null},{"id":111,"system":null,"name":"消费系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":11,"button":1},{"id":121,"system":null,"name":"消费系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":12,"button":1},{"id":211,"system":null,"name":"门禁系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":21,"button":1},{"id":221,"system":null,"name":"门禁系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":22,"button":1}],
                dialogVisible: false,
-               data2: [
-                   {
-                   id: 1,
-                   label: '消费系统',
-                   children: [{
-                       id: 4,
-                       label: '报表管理',
-                       children: [{
-                           id: 9,
-                           label: '员工福利'
-                       }, {
-                           id: 10,
-                           label: '福利类型'
-                       },{
-                           id: 11,
-                           label: '充支管理'
-                       }]
-                   },{
-                       id: 5,
-                       label: '信息管理'
-                   },{
-                       id: 6,
-                       label: '消费设置'
-                   },{
-                       id: 7,
-                       label: '设备管理'
-                   },{
-                       id: 8,
-                       label: '系统管理'
-                   },{
-                       id: 9,
-                       label: '财务管理'
-                   }]
-               },
-                   {
-                   id: 2,
-                   label: '门禁系统',
-                   children: [{
-                       id: 5,
-                       label: '二级 2-1'
-                   }, {
-                       id: 6,
-                       label: '二级 2-2'
-                   }]
-               },{
-                   id: 3,
-                   label: '视频系统',
-                   children: [{
-                       id: 7,
-                       label: '二级 3-1'
-                   }, {
-                       id: 8,
-                       label: '二级 3-2'
-                   }]
-               },{
-                   id :4,
-                   label: '能耗系统',
+               permission:[
+                   {"id":1,"system":"xfxt","label":"消费系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null,
+                       children: [
+                       {"id":11,"system":null,"label":"消费系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null,children: [
+                           {"id":111,"system":null,"label":"消费系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":11,"button":1},
+                       ]},
+                       {"id":12,"system":null,"label":"消费系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null,children: [
+                           {"id":121,"system":null,"label":"消费系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":12,"button":1},
+                       ]},
+                       ]},
+                    {"id":2,"system":"mjxt","label":"门禁系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null,
+                        children: [
+                            {"id":21,"system":null,"label":"门禁系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null,children:[
+                                {"id":211,"system":null,"label":"门禁系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":21,"button":1},
+                            ]},
+                            {"id":22,"system":null,"label":"门禁系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null,children:[
+                                {"id":221,"system":null,"label":"门禁系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":22,"button":1}
+                            ]},
+                        ]
                    },
-                   {
-                       id :5,
-                       label: '**系统',
-                   },
-                   {
-                       id :6,
-                       label: '系统管理',
-                       children: [{
-                           id: 7,
-                           label: '园区管理'
-                       },{
-                           id: 7,
-                           label: '企业管理'
-                       }]
-                   }
-               ],
+                   ],
                defaultProps: {
                    children: 'children',
                    label: 'label'
                },
                checkList: ['选中且禁用','复选框 A']
            };
+       },
+       computed: {
+           ...mapGetters({
+               data: 'permission'
+           }),
        },
        methods: {
            handleClose(done) {
@@ -155,8 +110,27 @@
            },
            getCheckedNodes(value) {
                console.log(value);
+           },
+           init() {
+               this.table.forEach((item, index) => {
+//                   console.log(item);
+                   if (item.button === null) {
+                        console.log(item.id);
+                        console.log(item.name);
+                        console.log(item.icon);
+                        console.log(item.url);
+                   } else if (item.button === 1) {
+                       console.log(item.id);
+                       console.log(item.name);
+                       console.log(item.icon);
+                       console.log(item.url);
+                   }
+               })
            }
-       }
+       },
+       created() {
+         this.init()
+            }
    }
 </script>
 
