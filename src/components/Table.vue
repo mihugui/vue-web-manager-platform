@@ -6,8 +6,6 @@
         align="left"
         tooltip-effect="dark"
         style="width: 100%"
-        height="100%"
-        max-height="520"
         @selection-change="selectedChange">
         <el-table-column
             type="selection"
@@ -22,6 +20,7 @@
         </el-table-column>
     </el-table>
     <el-pagination
+        style="position: fixed;bottom: 0px"
         :page-sizes="[20 , 40, 60, 100]"
         :page-size="20"
         layout="total, sizes, prev, pager, next, jumper"
