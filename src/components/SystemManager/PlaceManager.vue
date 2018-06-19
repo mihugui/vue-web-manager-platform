@@ -20,7 +20,7 @@
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
     </section>
-    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
+    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
     <div>
         <el-dialog
             :title="title"
@@ -150,6 +150,12 @@
                 }
             },
 
+            sizeChange(val){
+                console.log(val)
+            },
+            currentChange(val){
+                console.log(val)
+            },
             showAddModal(){
                 this.title="新增";
                 this.setSureUrl('/places/add');
