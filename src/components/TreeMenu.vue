@@ -24,6 +24,7 @@
         },
         methods :{
             gettreeid(){
+                console.log(this.$refs.tree.getNode());
                 let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
                 let ids = [];
                 for( var item of tree){

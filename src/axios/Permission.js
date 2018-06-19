@@ -10,10 +10,15 @@ export const Permission = {
         var vm = this;
         if(!sessionStorage.getItem('permission')){
         axios.post(url.allurl+url.permissionurl).then(function(res){
-            sessionStorage.setItem('permission',JSON.stringify(res.data.data));
-            vm.data = res.data.data.filter(Permission=>{
-                return Permission.button !=1;
-            });
+            if(res.data.code=200) {
+                sessionStorage.setItem('permission', JSON.stringify(res.data.data));
+                vm.data = res.data.data.filter(Permission => {
+                    return Permission.button != 1;
+                });
+                return vm.analysis();
+            }else{
+                return null;
+            }
         }).catch(function(error){
             console.log(error)
         });
@@ -23,13 +28,8 @@ export const Permission = {
             });
         }
 
-        store.commit('SET_ASIDETITLE_PERMISSION',vm.analysis());
-        store.commit('SET_BUTTON_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
-            return Permission.button ===1;
-        }));
-        store.commit('SET_SYSTEM_PERMISSION',JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
-            return Permission.pId === null;
-        }));
+        return vm.analysis();
+
     },
 
     analysis:function(){
@@ -73,12 +73,13 @@ export const Permission = {
             axios.post(url.allurl+url.allpermissionurl).then(function(res){
                 sessionStorage.setItem('permission',JSON.stringify(res.data.data));
                 vm.data = res.data.data;
+                return vm.analysis();
             }).catch(function(error){
                 console.log(error)
             });
         }else{
             vm.data = JSON.parse(sessionStorage.getItem('permission'));
         }
-        store.commit('SET_ALL_PERMISSION',vm.analysis());
+        return vm.analysis();
     }
 }

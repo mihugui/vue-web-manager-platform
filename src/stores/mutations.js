@@ -44,6 +44,10 @@ const mutations = {
 
     [types.SET_ALL_PERMISSION](status,data){
         status.permission = data;
+    },
+
+    [types.SET_SURE_URL](status,data){
+        status.sureurl = data;
     }
 
 }
