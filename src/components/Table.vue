@@ -24,7 +24,10 @@
         :page-sizes="[20 , 40, 60, 100]"
         :page-size="20"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+        :total="total"
+        @size-change="size-change"
+        @current-change="current-change"
+    >
     </el-pagination>
     </div>
 </template>
@@ -34,7 +37,7 @@
             return{
             }
         },
-        props:['tableData','tableKey','total','selectedChange'],
+        props:['tableData','tableKey','total','selectedChange','size-change','current-change'],
     }
 </script>
 <style>
