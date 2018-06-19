@@ -48,6 +48,10 @@ const mutations = {
 
     [types.SET_SURE_URL](status,data){
         status.sureurl = data;
+    },
+
+    [types.SET_TABLE_TOTAL](status,data){
+        status.total = data;
     }
 
 }

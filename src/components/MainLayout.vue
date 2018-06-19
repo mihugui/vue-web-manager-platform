@@ -19,7 +19,7 @@
 <script>
     import SystemTitle from '@/components/SystemTitle'
     import AsideTitle from '@/components/AsideTitle'
-    import { mapGetters } from 'vuex'
+    import { mapGetters,mapActions} from 'vuex'
     export default {
         name: "MainLayout",
         data(){
@@ -39,8 +39,12 @@
                     this.myWidth = "65px";
                 }
             },
+            ...mapActions({
+                getUserPermission: 'GET_USER_PERMISSION'
+            })
         },
         mounted () {
+            this.getUserPermission();
             this.changertitle();
             var _this =this;
             // 注：window.onresize只能在项目内触发1次

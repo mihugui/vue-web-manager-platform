@@ -18,6 +18,10 @@ export const GET_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
     var qs = require('qs');
     axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
         console.log(res);
+        if(res.data.retcode===200){
+            commit(types.SET_TABLE_DATA,res.data.data.list);
+            commit(types.SET_TABLE_TOTAL,res.data.data.total)
+        }
         return res;
     }).catch(function(error){
         console.log(error)
@@ -57,11 +61,7 @@ export const SET_SYSTEM_PERMISSION = async({ dispatch, commit, state },data)=>{
 }
 
 export const GET_USER_PERMISSION = async({ dispatch, commit, state },data)=> {
-    commit('SET_ASIDETITLE_PERMISSION', Permission.getallpermission());
-
-    new Promise(function(resolve , reject) {
-    });
-
+    commit('SET_ASIDETITLE_PERMISSION', Permission.getUserPermission());
     if(sessionStorage.getItem('permission')) {
         dispatch('SET_ALL_PERMISSION');
     }

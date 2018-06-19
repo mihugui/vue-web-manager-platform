@@ -6,7 +6,7 @@ export const Permission = {
 
     data:'',
     //获取用户资源
-    getallpermission:function(){
+    getUserPermission:function(){
         var vm = this;
         if(!sessionStorage.getItem('permission')){
         axios.post(url.allurl+url.permissionurl).then(function(res){
@@ -27,8 +27,9 @@ export const Permission = {
                 return Permission.button !=1;
             });
         }
-
-        return vm.analysis();
+        let permission = this.analysis()
+        console.log(permission)
+        return permission;
 
     },
 
@@ -67,7 +68,7 @@ export const Permission = {
     },
 
     //获取全部资源
-    getpermission:function(){
+    getAllPermission:function(){
         var vm = this;
         if(!sessionStorage.getItem('permission')){
             axios.post(url.allurl+url.allpermissionurl).then(function(res){

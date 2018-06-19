@@ -38,7 +38,6 @@
 <script>
     import {loginpage} from '../axios/Login'
     import {Permission} from '../axios/Permission'
-    import { mapActions } from 'vuex'
     export default {
         name: 'LoginPage',
         data() {
@@ -81,7 +80,7 @@
                     if(res.data.data){
                         console.log(res.data.data);
                         sessionStorage.setItem("token",res.data.data);
-                        vm.getuserpermission();
+                        Permission.getUserPermission();
                     }else{
                         return Promise.reject({
                             message: '登录异常！'
@@ -93,10 +92,6 @@
                 this.random = new Date().getTime().toString();
                 this.imgurl=loginpage.getimgurl(this.random);
             },
-
-            ...mapActions({
-                getuserpermission: 'GET_USER_PERMISSION' // 将 `this.add()` 映射为 `this.$store.dispatch('increment')`
-            })
         },
         mounted () {
             this.getimg();

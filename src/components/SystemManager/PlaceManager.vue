@@ -82,6 +82,10 @@
                     placeArea:'',
                     placeDescription:'',
                 },
+                page:{
+                    pageNum:1,
+                    pageSize:20,
+                },
                 dialogVisible:false,
                 showEdit:true,
                 showDetele:true,
@@ -136,7 +140,6 @@
                 var vm = this;
                 switch(val.length){
                     case 0:
-                        console.log(13);
                         vm.showEdit = false;
                         vm.showDetele = false;
                         break;
@@ -177,8 +180,7 @@
                     .catch(_ => {});
             },
             sureok:function(){
-                console.log(this.dialog);
-                if(this.updateSureOK(this.dialog).data.retcode===200){
+                if(this.updateSureOK(this.dialog).retcode===200){
                     this.dialogVisible=false;
                 }
             },
@@ -189,13 +191,12 @@
                 this.dialog.placeCode='';
                 this.dialog.placeDescription='';
                 this.dialog.placeName='';
-                console.log(this.dialog);
             }
 
         },
         mounted () {
             this.setTableUrl(this.url);
-            this.getTableData(this.dialog);
+            this.getTableData(this.page);
         }
     }
 </script>

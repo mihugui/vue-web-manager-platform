@@ -13,7 +13,7 @@ let router = [
         path: '/',
         component: index,
         children:[{
-            name:'place',
+            name:'system/place',
             path:'place',
             component:table,
         }]
