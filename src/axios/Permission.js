@@ -95,12 +95,21 @@ export const Permission = {
     getAllPermission:function(){
         var vm = this;
         const promise = new Promise(function(resolve, reject) {
-            axios.post(url.allurl + url.allpermissionurl).then(function (res) {
-                vm.data = res.data.data;
-                resolve(vm.analysis());
-            }).catch(function (error) {
-                console.log(error)
-            });
+            axios.post(url.allurl + url.allpermissionurl)
+              .then(res =>{
+                  vm.data = res.data.data;
+                  sessionStorage.setItem('alpr',JSON.stringify(res.data.data));
+                  resolve(vm.analysis());
+              }).catch(error => {
+                  console.log(error);
+              })
+            // axios.post(url.allurl + url.allpermissionurl).then(function (res) {
+            //     console.log(res)
+            //     vm.data = res.data.data;
+            //     resolve(vm.analysis());
+            // }).catch(function (error) {
+            //     console.log(error)
+            // });
         });
         return promise;
     }
