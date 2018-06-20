@@ -49,6 +49,7 @@ global.install = (Vue, router) => {
                         router.addRoutes(userRoutes);
                         store.commit("SET_USER_ROUTES", true)
                     });
+                    store.dispatch("GET_DICTS_DATA");
                     next();
                 } else {
                     next();

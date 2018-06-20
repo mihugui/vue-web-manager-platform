@@ -26,3 +26,5 @@ export const mycomponents = state =>state.mycomponents
 export const buttonpermission = state => state.buttonpermission
 
 export const userroutes = state => state.userroutes
+
+export const dicts = state =>state.dicts

@@ -38,7 +38,7 @@
 <script>
     import {loginpage} from '../axios/Login'
     import {Permission} from '../axios/Permission'
-    import { mapGetters,mapMutations} from 'vuex'
+    import { mapGetters,mapMutations,mapActions} from 'vuex'
     export default {
         name: 'LoginPage',
         data() {
@@ -62,6 +62,7 @@
 
             ...mapMutations({
                 setUserRoutes : 'SET_USER_ROUTES'
+
             })
 
         },
@@ -88,6 +89,7 @@
                     vm.isBtnLoading = false;
                     if(res.data.retcode==200){
                         sessionStorage.setItem("token",res.data.data);
+                        vm.getDictsData();
                         Permission.getUserPermission(1).then(function(val){
                             let userRoutes = Permission.getrouter(val,vm.myComponents);
                             //console.log(userRoutes)
@@ -107,6 +109,9 @@
                 this.random = new Date().getTime().toString();
                 this.imgurl=loginpage.getimgurl(this.random);
             },
+            ...mapActions({
+                 getDictsData:'GET_DICTS_DATA'
+            })
         },
         mounted () {
             this.getimg();

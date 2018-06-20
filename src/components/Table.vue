@@ -17,7 +17,8 @@
             :prop="item.value"
             :label="item.name"
             :type="item.type"
-            :width="item.width">
+            :width="item.width"
+            :formatter="item.formatter">
         </el-table-column>
     </el-table>
     <el-pagination
@@ -38,7 +39,7 @@
             return{
             }
         },
-        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange'],
+        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange',],
     }
 </script>
 <style>

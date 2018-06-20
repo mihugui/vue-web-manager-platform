@@ -29,10 +29,18 @@ const state = {
         source: (resolve) => {
             require(['@/components/SystemManager/ResourceManagement'],resolve)
         },
+        enterprise: (resolve) => {
+            require(['@/components/SystemManager/EnterpriseManager'],resolve)
+        },
+
+
     },
 
     //路由
     userroutes:false,
+
+    //数据字典
+    dicts:[],
 
 }
 

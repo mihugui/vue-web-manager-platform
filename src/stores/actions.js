@@ -30,6 +30,19 @@ export const GET_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
     return promise;
 }
 
+export const GET_DICTS_DATA = async({ dispatch, commit, state }, data)=>{
+
+    axios.post(url.allurl+url.dicts).then(function(res){
+        if(res.data.retcode===200){
+            commit(types.SET_DICTS_DATA,res.data.data);
+            console.log('数据字典载入成功')
+        }
+    }).catch(function(error){
+        console.log(error,'数据字典载入失败');
+    });
+
+}
+
 export const UPDATE_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
 
     let tableurl = state.sureurl;
