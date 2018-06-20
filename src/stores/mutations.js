@@ -54,7 +54,7 @@ const mutations = {
     },
 
     [types.SET_USER_ROUTES](status,data){
-        status.routes = data;
+        status.userroutes = data;
     }
 
 }

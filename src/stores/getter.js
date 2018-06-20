@@ -25,4 +25,4 @@ export const mycomponents = state =>state.mycomponents
 
 export const buttonpermission = state => state.buttonpermission
 
-export const routes = state => state.routes
+export const userroutes = state => state.userroutes

@@ -43,25 +43,23 @@ global.install = (Vue, router) => {
 		* 需要调用next()生效
 		*/
         if (sessionStorage.getItem("token")) {
-                console.log('token');
-                if (store.getters.routes === null) {
+                if (store.getters.userroutes === false) {
                     Permission.getUserPermission(1).then(function (val) {
-                        let routes = Permission.getrouter(val, store.getters.mycomponents)
-                        router.addRoutes(routes);
-
-                        store.commit("SET_USER_ROUTES", routes)
+                        let userRoutes = Permission.getrouter(val, store.getters.mycomponents)
+                        router.addRoutes(userRoutes);
+                        store.commit("SET_USER_ROUTES", true)
                     });
                     next();
                 } else {
                     next();
                 }
-            } else {
-               if (to.path === '/login') {
-                    next()
-               }else{
-                   next('/login')
-               }
-            }
+        }else{
+           if (to.path === '/login') {
+                next()
+           }else{
+               next('/login')
+           }
+        }
     })
 
 }

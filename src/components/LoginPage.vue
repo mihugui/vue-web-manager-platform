@@ -89,12 +89,12 @@
                     if(res.data.retcode==200){
                         sessionStorage.setItem("token",res.data.data);
                         Permission.getUserPermission(1).then(function(val){
-                            let userroutes = Permission.getrouter(val,vm.myComponents);
-                            vm.setUserRoutes(userroutes);
-                           //console.log( Permission.getrouter(val,vm.myComponents));
-                            vm.$router.addRoutes(userroutes);
+                            let userRoutes = Permission.getrouter(val,vm.myComponents);
+                            //console.log(userRoutes)
+                            vm.$router.addRoutes(userRoutes);
+                            //vm.setUserRoutes(true);
+                            vm.$router.push('/');
                         });
-
                     }else{
                         vm.$message.error('登录异常！请稍后重试');
                         return Promise.reject({

@@ -83,13 +83,13 @@ export const Permission = {
 
     //路由权限处理
     getrouter:function(data,components){
-        let router = [{name:'MainLayout',path: '/',component: resolve => {require(['@/components/MainLayout'], resolve)}, children:[]}];
+        let userRouter = [{name:'mainLayout',path: '/',component: resolve => {require(['@/components/MainLayout'], resolve)}, children:[]}];
         for(let router of data){
             router.component = components[router.component];
         }
 
-        router[0].children=data;
-        return router;
+        userRouter[0].children=data;
+        return userRouter;
     },
     //获取全部资源
     getAllPermission:function(){

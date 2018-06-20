@@ -32,7 +32,7 @@ const state = {
     },
 
     //路由
-    routes:null,
+    userroutes:false,
 
 }
 
