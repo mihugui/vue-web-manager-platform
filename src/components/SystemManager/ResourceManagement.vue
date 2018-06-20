@@ -7,7 +7,7 @@
        </el-row>
        <el-row style="margin-top: 20px">
            <el-tree
-               :data="table"
+               :data="permission"
                @node-click="getCheckedNodes"
                node-key="id"
                highlight-current
@@ -65,21 +65,24 @@
                form: {
                    name: ''
                },
-               table: JSON.parse(sessionStorage.getItem('kao')),
+//               table: JSON.parse(sessionStorage.getItem('kao')),
                dialogVisible: false,
                defaultProps: {
-                   children: 'list',
+                   children: 'children',
                    label: 'name'
                },
                checkList: ['选中且禁用','复选框 A']
            };
        },
        computed: {
-           ...mapActions({
-               permission: 'GET_ALL_PERMISSION'
-           }),
+           ...mapGetters({
+               permission: 'permission'
+           })
        },
        methods: {
+           ...mapActions({
+              setAllPermission:"GET_ALL_PERMISSION"
+           }),
            resolve() {
                let msg = [{"id":1,"system":"system","name":"系统管理","icon":"fa fa-bullseye","path":"","component":null,"pId":null,"button":null},{"id":2,"system":null,"name":"资源管理","icon":"fa fa-bullseye","path":"/system/source","component":"source","pId":1,"button":null},{"id":3,"system":null,"name":"园区管理","icon":"fa fa-bullseye","path":"/system/place","component":"place","pId":1,"button":null},{"id":4,"system":null,"name":"添加","icon":null,"path":"/places/add","component":null,"pId":2,"button":1},{"id":5,"system":null,"name":"企业管理","icon":"fa fa-bullseye","path":"/system/enterprise","component":"enterprise","pId":1,"button":null},{"id":6,"system":null,"name":"编辑","icon":null,"path":"/places/edit","component":null,"pId":2,"button":1},{"id":7,"system":null,"name":"删除","icon":null,"path":"/places/del","component":null,"pId":2,"button":1}]
                let tree = [];
@@ -126,6 +129,7 @@
        },
        created() {
            this.resolve();
+           this.setAllPermission()
        }
    }
 </script>
