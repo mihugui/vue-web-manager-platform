@@ -51,6 +51,10 @@ const mutations = {
 
     [types.SET_TABLE_TOTAL](status,data){
         status.total = data;
+    },
+
+    [types.SET_USER_ROUTES](status,data){
+        status.routes = data;
     }
 
 }

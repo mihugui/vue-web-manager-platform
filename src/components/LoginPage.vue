@@ -38,7 +38,7 @@
 <script>
     import {loginpage} from '../axios/Login'
     import {Permission} from '../axios/Permission'
-    import { mapGetters} from 'vuex'
+    import { mapGetters,mapMutations} from 'vuex'
     export default {
         name: 'LoginPage',
         data() {
@@ -58,6 +58,10 @@
             },
             ...mapGetters({
                 myComponents: 'mycomponents',
+            }),
+
+            ...mapMutations({
+                setUserRoutes : 'SET_USER_ROUTES'
             })
 
         },
@@ -65,7 +69,6 @@
         methods:{
             login(){
                 var vm = this;
-                console.log(this.random);
                 if(!vm.username){
                     vm.$message.error('请输入用户名！！！');
                     return;
@@ -84,12 +87,12 @@
                 loginpage.loginget(loginParams).then(res => {
                     vm.isBtnLoading = false;
                     if(res.data.retcode==200){
-                        console.log(res.data.data);
                         sessionStorage.setItem("token",res.data.data);
                         Permission.getUserPermission(1).then(function(val){
+                            let userroutes = Permission.getrouter(val,vm.myComponents);
+                            vm.setUserRoutes(userroutes);
                            //console.log( Permission.getrouter(val,vm.myComponents));
-                           vm.$router.addRoutes(Permission.getrouter(val,vm.myComponents));
-                           vm.$router.push('/system/place');
+                            vm.$router.addRoutes(userroutes);
                         });
 
                     }else{

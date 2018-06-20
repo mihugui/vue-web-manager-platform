@@ -83,16 +83,7 @@ export const Permission = {
 
     //路由权限处理
     getrouter:function(data,components){
-        let router = [
-            {
-                name:'MainLayout',
-                path: '/',
-                component: resolve => {
-                    require(['@/components/MainLayout'], resolve)
-                },
-                children:[]
-            },
-        ]
+        let router = [{name:'MainLayout',path: '/',component: resolve => {require(['@/components/MainLayout'], resolve)}, children:[]}];
         for(let router of data){
             router.component = components[router.component];
         }

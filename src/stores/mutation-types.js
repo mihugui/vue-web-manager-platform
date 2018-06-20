@@ -27,3 +27,5 @@ export const SET_TREE_IDS = 'SET_TREE_IDS'
 export const SET_SURE_URL =  'SET_SURE_URL'
 
 export const SET_TABLE_TOTAL = 'SET_TABLE_TOTAL'
+
+export const SET_USER_ROUTES = 'SET_USER_ROUTES'

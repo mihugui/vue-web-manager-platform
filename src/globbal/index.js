@@ -1,5 +1,7 @@
 import axios from 'axios'
 import * as getters from "../stores/getter";
+import store from '../stores';
+import {Permission} from '../axios/Permission'
 
 const global = {
     install: null
@@ -33,13 +35,33 @@ global.install = (Vue, router) => {
     }
 
 
+
     router.beforeEach((to, from, next) => {
         /*
 		* to下一个路由路径
 		* from上一个路由路径
 		* 需要调用next()生效
 		*/
-        next()
+        if (sessionStorage.getItem("token")) {
+                console.log('token');
+                if (store.getters.routes === null) {
+                    Permission.getUserPermission(1).then(function (val) {
+                        let routes = Permission.getrouter(val, store.getters.mycomponents)
+                        router.addRoutes(routes);
+
+                        store.commit("SET_USER_ROUTES", routes)
+                    });
+                    next();
+                } else {
+                    next();
+                }
+            } else {
+               if (to.path === '/login') {
+                    next()
+               }else{
+                   next('/login')
+               }
+            }
     })
 
 }

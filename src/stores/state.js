@@ -29,7 +29,10 @@ const state = {
         source: (resolve) => {
             require(['@/components/SystemManager/ResourceManagement'],resolve)
         },
-    }
+    },
+
+    //路由
+    routes:null,
 
 }
 
