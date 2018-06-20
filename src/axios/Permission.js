@@ -6,7 +6,7 @@ export const Permission = {
 
     data:'',
     //获取用户资源
-    getUserPermission: async function(){
+    getUserPermission: async function(action){
         var vm = this;
         const promise = new Promise(function(resolve, reject) {
         if(!sessionStorage.getItem('permission')){
@@ -16,7 +16,13 @@ export const Permission = {
                     vm.data = res.data.data.filter(Permission => {
                         return Permission.button != 1;
                     });
-                    return vm.analysis();
+                    if(action==1){
+                        resolve(res.data.data.filter(Permission => {
+                            return Permission.button != 1 || Permission.pId != null;
+                        }));
+                    }else {
+                        resolve(vm.analysis());
+                    }
                 }else{
                     return null;
                 }
@@ -28,8 +34,14 @@ export const Permission = {
             vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
                 return Permission.button !=1;
             });
+            if(action==1){
+                resolve(vm.data.filter(Permission => {
+                    return (Permission.button != 1 && Permission.pId != null);
+                }));
+            }else {
+                resolve(vm.analysis());
+            }
         }
-        resolve(vm.analysis());
         });
         return promise;
 
@@ -69,6 +81,25 @@ export const Permission = {
         return arr;
     },
 
+    //路由权限处理
+    getrouter:function(data,components){
+        let router = [
+            {
+                name:'MainLayout',
+                path: '/',
+                component: resolve => {
+                    require(['@/components/MainLayout'], resolve)
+                },
+                children:[]
+            },
+        ]
+        for(let router of data){
+            router.component = components[router.component];
+        }
+
+        router[0].children=data;
+        return router;
+    },
     //获取全部资源
     getAllPermission:function(){
         var vm = this;

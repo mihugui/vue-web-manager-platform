@@ -8,9 +8,9 @@
         router>
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="item.url">
+                       :index="item.path">
             <i :class="item.icon"></i>
-            <router-link :to="item.url">{{item.name}}</router-link>
+            <router-link :to="item.path">{{item.name}}</router-link>
         </el-menu-item>
     </el-menu>
 </template>

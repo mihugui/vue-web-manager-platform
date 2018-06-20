@@ -38,6 +38,7 @@
 <script>
     import {loginpage} from '../axios/Login'
     import {Permission} from '../axios/Permission'
+    import { mapGetters} from 'vuex'
     export default {
         name: 'LoginPage',
         data() {
@@ -51,11 +52,16 @@
             }
         },
         computed:{
-        btnText() {
-            if (this.isBtnLoading) return '登录中...';
-            return '登录';
-        }
+            btnText() {
+                if (this.isBtnLoading) return '登录中...';
+                return '登录';
+            },
+            ...mapGetters({
+                myComponents: 'mycomponents',
+            })
+
         },
+
         methods:{
             login(){
                 var vm = this;
@@ -77,11 +83,17 @@
                 vm.isBtnLoading = true;
                 loginpage.loginget(loginParams).then(res => {
                     vm.isBtnLoading = false;
-                    if(res.data.data){
+                    if(res.data.retcode==200){
                         console.log(res.data.data);
                         sessionStorage.setItem("token",res.data.data);
-                        Permission.getUserPermission();
+                        Permission.getUserPermission(1).then(function(val){
+                           //console.log( Permission.getrouter(val,vm.myComponents));
+                           vm.$router.addRoutes(Permission.getrouter(val,vm.myComponents));
+                           vm.$router.push('/system/place');
+                        });
+
                     }else{
+                        vm.$message.error('登录异常！请稍后重试');
                         return Promise.reject({
                             message: '登录异常！'
                         });

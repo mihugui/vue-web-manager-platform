@@ -53,7 +53,7 @@
                 _this.changertitle()
             }
         },
-          created(){
+        created(){
             this.getUserPermission();
         },
         computed:{

@@ -21,4 +21,5 @@ export const token = state => state.token
 
 export const permission = state => state.permission
 
+export const mycomponents = state =>state.mycomponents
 

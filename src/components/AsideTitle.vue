@@ -21,7 +21,7 @@
         <el-menu-item
             v-else
             :key="key"
-            :index="item.url">
+            :index="item.path">
             <i :class="item.icon"></i>
             <span slot="title" >{{item.name}}</span>
         </el-menu-item>
