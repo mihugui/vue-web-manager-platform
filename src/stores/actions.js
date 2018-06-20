@@ -16,30 +16,32 @@ export const GET_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
 
     let tableurl = state.tableurl;
     var qs = require('qs');
-    axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
-        console.log(res);
-        if(res.data.retcode===200){
-            commit(types.SET_TABLE_DATA,res.data.data.list);
-            commit(types.SET_TABLE_TOTAL,res.data.data.total)
-        }
-        return res;
-    }).catch(function(error){
-        console.log(error)
-        return error;
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
+            if(res.data.retcode===200){
+                commit(types.SET_TABLE_DATA,res.data.data.list);
+                commit(types.SET_TABLE_TOTAL,res.data.data.total)
+            }
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
     });
+    return promise;
 }
 
 export const UPDATE_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
 
     let tableurl = state.sureurl;
     var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
     axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
-        console.log(res);
-        return res;
+        resolve(res);
     }).catch(function(error){
-        console.log(error);
-        return error;
+        reject(error);
     });
+    });
+    return promise;
 }
 
 export const SET_BUTTON_PERMISSION = async({ dispatch, commit, state },data)=>{
@@ -61,11 +63,11 @@ export const SET_SYSTEM_PERMISSION = async({ dispatch, commit, state },data)=>{
 }
 
 export const GET_USER_PERMISSION = async({ dispatch, commit, state },data)=> {
-    commit('SET_ASIDETITLE_PERMISSION', Permission.getUserPermission());
-    if(sessionStorage.getItem('permission')) {
+    Permission.getUserPermission().then(function(val){
+        console.log(val);
+        commit('SET_ASIDETITLE_PERMISSION',val );
         dispatch('SET_ALL_PERMISSION');
-    }
-
+    });
 }
 
 export const GET_ALL_PERMISSION = async({ dispatch, commit, state },data)=> {

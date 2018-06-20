@@ -18,7 +18,6 @@ const mutations = {
     },
 
     [types.SET_TABLE_URL](status,data){
-        console.log(data);
         status.tableurl = data;
     },
 

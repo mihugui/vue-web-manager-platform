@@ -4,10 +4,11 @@
         mode="horizontal"
         background-color="#36a8fc"
         text-color="#fff"
-        active-text-color="#ffd04b">
+        active-text-color="#ffd04b"
+        router>
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="item.name">
+                       :index="item.url">
             <i :class="item.icon"></i>
             <router-link :to="item.url">{{item.name}}</router-link>
         </el-menu-item>

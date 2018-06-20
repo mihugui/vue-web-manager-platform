@@ -16,6 +16,7 @@
             :key="key"
             :prop="item.value"
             :label="item.name"
+            :type="item.type"
             :width="item.width">
         </el-table-column>
     </el-table>

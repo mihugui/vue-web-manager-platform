@@ -6,30 +6,32 @@ export const Permission = {
 
     data:'',
     //获取用户资源
-    getUserPermission:function(){
+    getUserPermission: async function(){
         var vm = this;
+        const promise = new Promise(function(resolve, reject) {
         if(!sessionStorage.getItem('permission')){
-        axios.post(url.allurl+url.permissionurl).then(function(res){
-            if(res.data.code=200) {
-                sessionStorage.setItem('permission', JSON.stringify(res.data.data));
-                vm.data = res.data.data.filter(Permission => {
-                    return Permission.button != 1;
-                });
-                return vm.analysis();
-            }else{
-                return null;
-            }
-        }).catch(function(error){
-            console.log(error)
-        });
+            axios.post(url.allurl+url.permissionurl).then(function(res){
+                if(res.data.code=200) {
+                    sessionStorage.setItem('permission', JSON.stringify(res.data.data));
+                    vm.data = res.data.data.filter(Permission => {
+                        return Permission.button != 1;
+                    });
+                    return vm.analysis();
+                }else{
+                    return null;
+                }
+            }).catch(function(error){
+                console.log(error)
+            });
+
         }else{
             vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
                 return Permission.button !=1;
             });
         }
-        let permission = this.analysis()
-        console.log(permission)
-        return permission;
+        resolve(vm.analysis());
+        });
+        return promise;
 
     },
 

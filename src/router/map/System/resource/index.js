@@ -12,7 +12,7 @@ let router = [
         component: index,
         children:[{
             name:'source',
-            path:'source',
+            path:'system/source',
             component:resource,
         }]
     },

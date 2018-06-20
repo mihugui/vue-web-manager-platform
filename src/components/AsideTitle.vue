@@ -4,12 +4,12 @@
         :collapse="isCollapse"
         background-color="#545c64"
         text-color="#fff"
-        active-text-color="#409EFF">
+        active-text-color="#409EFF"
+        router>
         <el-submenu
                     v-for="(item,key) in AsideTitle"
                     v-if="item.children !=''"
-                    :key="key"
-                    :index="item.name">
+                    :key="key">
             <template slot="title">
             <i :class="item.icon"></i>
             <span slot="title">{{item.name}}</span>
@@ -21,9 +21,9 @@
         <el-menu-item
             v-else
             :key="key"
-            :index="item.name">
+            :index="item.url">
             <i :class="item.icon"></i>
-            <span slot="title">{{item.name}}</span>
+            <span slot="title" >{{item.name}}</span>
         </el-menu-item>
     </el-menu>
 </template>

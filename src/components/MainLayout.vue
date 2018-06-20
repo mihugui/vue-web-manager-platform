@@ -44,7 +44,7 @@
             })
         },
         mounted () {
-            this.getUserPermission();
+
             this.changertitle();
             var _this =this;
             // 注：window.onresize只能在项目内触发1次
@@ -52,6 +52,9 @@
                 // 通过捕获系统的onresize事件触发我们需要执行的事件
                 _this.changertitle()
             }
+        },
+          created(){
+            this.getUserPermission();
         },
         computed:{
             ...mapGetters({

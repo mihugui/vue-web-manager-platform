@@ -20,46 +20,48 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
         </section>
-        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"></mini-table>
+        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
         <div>
             <el-dialog
-                title="修改"
+                :title="title"
                 :visible.sync="dialogVisible"
                 width="850px"
                 heigth = "80%"
+                :modal-append-to-body="false"
                 :before-close="handleClose"
+                @close='closeDialog'
                 style="z-index: 99999;">
             <span>
                 <div  class="dialog-input">
-                    <el-input placeholder="请输入名称" v-model="dialog.placename">
+                    <el-input placeholder="请输入名称"  v-model="dialog.placeName">
                         <template slot="prepend">园区名称</template>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;" v-model="dialog.placename">
-                    <el-input placeholder="请输入编号" >
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入编号" v-model="dialog.placeCode">
                         <template slot="prepend">园区编号</template>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;" v-model="dialog.placename">
-                    <el-input placeholder="请输入地址" >
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入地址" v-model="dialog.placeAddress">
                         <template slot="prepend">园区地址</template>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;" v-model="dialog.placename">
-                    <el-input placeholder="请输入面积" >
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入面积" v-model="dialog.placeArea">
                         <template slot="prepend">园区面积</template>
                         <el-button slot="append">平方</el-button>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;" v-model="dialog.placename">
-                    <el-input placeholder="请输入描述" >
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入描述" v-model="dialog.placeDescription">
                         <template slot="prepend">园区描述</template>
                     </el-input>
                 </div>
             </span>
                 <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
         </div>
@@ -67,66 +69,54 @@
 </template>
 <script>
     import Table from '@/components/Table'
-    import {Permission} from '../../axios/Permission'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
-        name: "CompanyManager",
+        name: "PlaceManager",
         data(){
             return {
+                title:'',
                 dialog:{
-                    placename:''
+                    placeName:'',
+                    placeCode:'',
+                    placeAddress:'',
+                    placeArea:'',
+                    placeDescription:'',
+                },
+                page:{
+                    pageNum:1,
+                    pageSize:20,
                 },
                 dialogVisible:false,
                 showEdit:true,
                 showDetele:true,
-                url:'/table/data',
+                url:'/places/list',
+                soururl:'',
                 placename:'',
                 tableKey: [{
                     name: '序号',
-                    value: 'date',
+                    type: 'index',
                     operate: true
                 },{
-                    name: '企业名称',
-                    value: 'name',
-                    operate: false
-                },{
-                    name: '企业编号',
-                    value: 'address',
-                    operate: false
-                },{
-                    name: '企业法人',
-                    value: 'date',
+                    name: '园区名称',
+                    value: 'placeName',
                     operate: true
                 },{
-                    name: '企业类型',
-                    value: 'date',
+                    name: '园区编号',
+                    value: 'placeCode',
                     operate: true
                 },{
-                    name: '企业税号',
-                    value: 'date',
+                    name: '园区地址',
+                    value: 'placeAddress',
                     operate: true
                 },{
-                    name: '负责人电话',
-                    value: 'date',
+                    name: '园区面积',
+                    value: 'placeArea',
                     operate: true
                 },{
-                    name: '父级企业',
-                    value: 'date',
+                    name: '园区描述',
+                    value: 'placeDescription',
                     operate: true
-                },{
-                    name: '入驻园区',
-                    value: 'date',
-                    operate: true
-                },{
-                    name: '默认资源',
-                    value: 'date',
-                    operate: true
-                },{
-                    name: '组织管理',
-                    value: 'date',
-                    operate: true
-                }
-                ],
+                }],
                 param:null,
             }
         },
@@ -142,17 +132,18 @@
         methods:{
 
             ...mapMutations({
-                setTableUrl: 'SET_TABLE_URL'
+                setTableUrl: 'SET_TABLE_URL',
+                setSureUrl:'SET_SURE_URL'
             }),
             ...mapActions({
-                getTableData : 'GET_TABLE_DATA'
+                getTableData : 'GET_TABLE_DATA',
+                updateSureOK : 'UPDATE_TABLE_DATA'
             }),
 
             selectedChange(val){
                 var vm = this;
                 switch(val.length){
                     case 0:
-                        console.log(13);
                         vm.showEdit = false;
                         vm.showDetele = false;
                         break;
@@ -166,12 +157,22 @@
                 }
             },
 
-            showAddModal(){
-                this.dialogVisible=true;
-                Permission.getpermission();
+            sizeChange(val){
+                this.page.pageSize = val;
 
+                this.getTableData({...this.page,...this.placename});
+            },
+            currentChange(val){
+                this.page.pageNum = val;
+                this.getTableData(this.page);
+            },
+            showAddModal(){
+                this.title="新增";
+                this.setSureUrl('/places/add');
+                this.dialogVisible=true;
             },
             showEditModal(){
+                this.title="编辑";
                 this.dialogVisible=true;
             },
             deleteList(){
@@ -184,13 +185,30 @@
                         done();
                     })
                     .catch(_ => {});
+            },
+            sureok:function(){
+                if(this.updateSureOK(this.dialog).retcode===200){
+                    this.dialogVisible=false;
+                }
+            },
+
+            closeDialog:function(){
+                this.dialog.placeArea='';
+                this.dialog.placeAddress='';
+                this.dialog.placeCode='';
+                this.dialog.placeDescription='';
+                this.dialog.placeName='';
+            },
+
+            getTableByOthrt:function(){
+                this.getTableData(this.page);
             }
 
         },
         mounted () {
             this.setTableUrl(this.url);
-            this.getTableData(123);
-        }
+            this.getTableByOthrt();
+        },
     }
 </script>
 <style>

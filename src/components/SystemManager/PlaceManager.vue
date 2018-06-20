@@ -87,30 +87,34 @@
                     pageSize:20,
                 },
                 dialogVisible:false,
-                showEdit:true,
-                showDetele:true,
+                showEdit:false,
+                showDetele:false,
                 url:'/places/list',
                 soururl:'',
                 placename:'',
                 tableKey: [{
                     name: '序号',
-                    value: 'date',
+                    type: 'index',
                     operate: true
                 },{
                     name: '园区名称',
-                    value: 'name',
-                    operate: false
+                    value: 'placeName',
+                    operate: true
                 },{
                     name: '园区编号',
-                    value: 'address',
-                    operate: false
+                    value: 'placeCode',
+                    operate: true
                 },{
                     name: '园区地址',
-                    value: 'date',
+                    value: 'placeAddress',
+                    operate: true
+                },{
+                    name: '园区面积',
+                    value: 'placeArea',
                     operate: true
                 },{
                     name: '园区描述',
-                    value: 'date',
+                    value: 'placeDescription',
                     operate: true
                 }],
                 param:null,
@@ -138,6 +142,8 @@
 
             selectedChange(val){
                 var vm = this;
+                console.log(val);
+                this.dialog ={...val[0]} ;
                 switch(val.length){
                     case 0:
                         vm.showEdit = false;
@@ -154,10 +160,13 @@
             },
 
             sizeChange(val){
-                console.log(val)
+                this.page.pageSize = val;
+
+                this.getTableData({...this.page,...this.placename});
             },
             currentChange(val){
-                console.log(val)
+                this.page.pageNum = val;
+                this.getTableData(this.page);
             },
             showAddModal(){
                 this.title="新增";
@@ -166,6 +175,7 @@
             },
             showEditModal(){
                 this.title="编辑";
+                this.setSureUrl('/places/update');
                 this.dialogVisible=true;
             },
             deleteList(){
@@ -180,9 +190,14 @@
                     .catch(_ => {});
             },
             sureok:function(){
-                if(this.updateSureOK(this.dialog).retcode===200){
-                    this.dialogVisible=false;
-                }
+                let vm =this;
+                vm.updateSureOK(vm.dialog).then(function(val){
+                    if(val.data.retcode===200){
+                        vm.dialogVisible=false;
+                        vm.getTableByOthrt();
+                    }
+                })
+
             },
 
             closeDialog:function(){
@@ -191,13 +206,17 @@
                 this.dialog.placeCode='';
                 this.dialog.placeDescription='';
                 this.dialog.placeName='';
+            },
+
+            getTableByOthrt:function(){
+                this.getTableData(this.page);
             }
 
         },
         mounted () {
             this.setTableUrl(this.url);
-            this.getTableData(this.page);
-        }
+            this.getTableByOthrt();
+        },
     }
 </script>
 <style>
