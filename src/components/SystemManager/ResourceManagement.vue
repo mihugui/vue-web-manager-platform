@@ -7,7 +7,7 @@
        </el-row>
        <el-row style="margin-top: 20px">
            <el-tree
-               :data="permission"
+               :data="table"
                @node-click="getCheckedNodes"
                node-key="id"
                highlight-current
@@ -55,7 +55,7 @@
 </template>
 <script type="text/ecmascript-6">
    import ElRow from "element-ui/packages/row/src/row";
-   import {mapGetters,mapMutations} from 'vuex'
+   import {mapGetters,mapMutations, mapActions} from 'vuex'
    import * as types from '../../stores/mutation-types';
    export default {
        components: {ElRow},
@@ -65,42 +65,54 @@
                form: {
                    name: ''
                },
-               table: [{"id":1,"system":"xfxt","name":"消费系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null},{"id":2,"system":"mjxt","name":"门禁系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null},{"id":11,"system":null,"name":"消费系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null},{"id":12,"system":null,"name":"消费系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null},{"id":21,"system":null,"name":"门禁系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null},{"id":22,"system":null,"name":"门禁系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null},{"id":111,"system":null,"name":"消费系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":11,"button":1},{"id":121,"system":null,"name":"消费系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":12,"button":1},{"id":211,"system":null,"name":"门禁系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":21,"button":1},{"id":221,"system":null,"name":"门禁系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":22,"button":1}],
+               table: JSON.parse(sessionStorage.getItem('kao')),
                dialogVisible: false,
-               permission:[
-                   {"id":1,"system":"xfxt","label":"消费系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null,
-                       children: [
-                       {"id":11,"system":null,"label":"消费系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null,children: [
-                           {"id":111,"system":null,"label":"消费系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":11,"button":1},
-                       ]},
-                       {"id":12,"system":null,"label":"消费系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":1,"button":null,children: [
-                           {"id":121,"system":null,"label":"消费系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":12,"button":1},
-                       ]},
-                       ]},
-                    {"id":2,"system":"mjxt","label":"门禁系统","icon":"fab fa-apple","url":"aaaa","pId":null,"button":null,
-                        children: [
-                            {"id":21,"system":null,"label":"门禁系统菜单一","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null,children:[
-                                {"id":211,"system":null,"label":"门禁系统菜单一按钮","icon":"fab fa-apple","url":"aaaa","pId":21,"button":1},
-                            ]},
-                            {"id":22,"system":null,"label":"门禁系统菜单二","icon":"fab fa-apple","url":"aaaa","pId":2,"button":null,children:[
-                                {"id":221,"system":null,"label":"门禁系统菜单二按钮","icon":"fab fa-apple","url":"aaaa","pId":22,"button":1}
-                            ]},
-                        ]
-                   },
-                   ],
                defaultProps: {
-                   children: 'children',
-                   label: 'label'
+                   children: 'list',
+                   label: 'name'
                },
                checkList: ['选中且禁用','复选框 A']
            };
        },
        computed: {
-           ...mapGetters({
-               data: 'permission'
+           ...mapActions({
+               permission: 'GET_ALL_PERMISSION'
            }),
        },
        methods: {
+           resolve() {
+               let msg = [{"id":1,"system":"system","name":"系统管理","icon":"fa fa-bullseye","path":"","component":null,"pId":null,"button":null},{"id":2,"system":null,"name":"资源管理","icon":"fa fa-bullseye","path":"/system/source","component":"source","pId":1,"button":null},{"id":3,"system":null,"name":"园区管理","icon":"fa fa-bullseye","path":"/system/place","component":"place","pId":1,"button":null},{"id":4,"system":null,"name":"添加","icon":null,"path":"/places/add","component":null,"pId":2,"button":1},{"id":5,"system":null,"name":"企业管理","icon":"fa fa-bullseye","path":"/system/enterprise","component":"enterprise","pId":1,"button":null},{"id":6,"system":null,"name":"编辑","icon":null,"path":"/places/edit","component":null,"pId":2,"button":1},{"id":7,"system":null,"name":"删除","icon":null,"path":"/places/del","component":null,"pId":2,"button":1}]
+               let tree = [];
+               for(let i=0;i<msg.length;i++){
+                   if(msg[i].pId === null){
+                       let obj = msg[i];
+                       obj.list = [];
+                       tree.push(obj);
+                       msg.splice(i,1);
+                       i--
+                   }
+               }
+               console.log(tree);
+               menuList(tree);
+               console.log(tree);
+               sessionStorage.setItem('kao', JSON.stringify(tree));
+               function menuList(arr){
+                   if(msg.length !=0){
+                       for(let i=0; i<arr.length;i++){
+                           for(let j=0;j<msg.length;j++){
+                               if(msg[j].pId == arr[i].id){
+                                   let obj = msg[j]
+                                   obj.list = []
+                                   arr[i].list.push(obj)
+                                   msg.splice(j,1)
+                                   j--
+                               }
+                           }
+                           menuList(arr[i].list)
+                       }
+                   }
+               }
+           },
            handleClose(done) {
                this.$confirm('确认关闭？')
                    .then(_ => {
@@ -110,27 +122,11 @@
            },
            getCheckedNodes(value) {
                console.log(value);
-           },
-           init() {
-               this.table.forEach((item, index) => {
-//                   console.log(item);
-                   if (item.button === null) {
-                        console.log(item.id);
-                        console.log(item.name);
-                        console.log(item.icon);
-                        console.log(item.url);
-                   } else if (item.button === 1) {
-                       console.log(item.id);
-                       console.log(item.name);
-                       console.log(item.icon);
-                       console.log(item.url);
-                   }
-               })
            }
        },
        created() {
-         this.init()
-            }
+           this.resolve();
+       }
    }
 </script>
 
