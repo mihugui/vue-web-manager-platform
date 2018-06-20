@@ -103,6 +103,24 @@
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
+
+            <el-dialog
+                :title="title_permission"
+                :visible.sync="dialogVisible_permission"
+                width="850px"
+                heigth = "80%"
+                :modal-append-to-body="false"
+                :before-close="handleClose"
+                @close='closeDialog_permission'
+                style="z-index: 99999;">
+            <span>
+
+            </span>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="sureok">确 定</el-button>
+            </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -114,8 +132,9 @@
         name: "PlaceManager",
         data(){
             return {
-                title:'',
+
                 //弹出框
+                title:'',
                 dialog:{
                     entName:'',
                     entCode:'',
@@ -129,6 +148,10 @@
                 },
                 dialogVisible:false,
                 soururl:'',
+
+                //权限弹出框
+                title_permission:'',
+                dialogVisible_permission:false,
 
                 //表格
                 page:{
@@ -255,6 +278,12 @@
                 this.setSureUrl('/enterprise/update');
                 this.dialogVisible=true;
             },
+
+            showPerMission(){
+                this.title_permission="编辑";
+                this.setSureUrl('/enterprise/update');
+                this.dialogVisible=true;
+            },
             deleteList(){
 
             },
@@ -283,6 +312,10 @@
                 this.entParentId='';
                 this.businessScope='';
                 this.entDimension='';
+            },
+
+            closeDialog_permission:function(){
+
             },
 
             getTableByOther:function(){
