@@ -64,16 +64,16 @@ export const SET_SYSTEM_PERMISSION = async({ dispatch, commit, state },data)=>{
 
 export const GET_USER_PERMISSION = async({ dispatch, commit, state },data)=> {
     Permission.getUserPermission().then(function(val){
-        console.log(val);
         commit('SET_ASIDETITLE_PERMISSION',val );
         dispatch('SET_ALL_PERMISSION');
     });
 }
 
 export const GET_ALL_PERMISSION = async({ dispatch, commit, state },data)=> {
-
-    commit('SET_ALL_PERMISSION',Permission.getpermission());
-
+    Permission.getAllPermission().then(function (val) {
+        console.log(val);
+        commit('SET_ALL_PERMISSION',val);
+    });
 }
 
 export const SET_ALL_PERMISSION = async({ dispatch, commit, state })=> {
