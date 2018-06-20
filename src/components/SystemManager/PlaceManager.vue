@@ -75,6 +75,8 @@
         data(){
             return {
                 title:'',
+                url:'/places/list',
+                //弹出框
                 dialog:{
                     placeName:'',
                     placeCode:'',
@@ -82,16 +84,17 @@
                     placeArea:'',
                     placeDescription:'',
                 },
+                dialogVisible:false,
+                showEdit:false,
+                showDetele:false,
+                soururl:'',
+
+
+                //表格
                 page:{
                     pageNum:1,
                     pageSize:20,
                 },
-                dialogVisible:false,
-                showEdit:false,
-                showDetele:false,
-                url:'/places/list',
-                soururl:'',
-                placename:'',
                 tableKey: [{
                     name: '序号',
                     type: 'index',
@@ -117,7 +120,9 @@
                     value: 'placeDescription',
                     operate: true
                 }],
+
                 param:null,
+                placename:'',
             }
         },
         components:{
@@ -143,7 +148,6 @@
 
             selectedChange(val){
                 var vm = this;
-                console.log(val);
                 this.dialog ={...val[0]} ;
                 switch(val.length){
                     case 0:
@@ -195,7 +199,7 @@
                 vm.updateSureOK(vm.dialog).then(function(val){
                     if(val.data.retcode===200){
                         vm.dialogVisible=false;
-                        vm.getTableByOthrt();
+                        vm.getTableByOther();
                     }
                 })
 
@@ -209,7 +213,7 @@
                 this.dialog.placeName='';
             },
 
-            getTableByOthrt:function(){
+            getTableByOther:function(){
                 this.getTableData(this.page);
             }
 

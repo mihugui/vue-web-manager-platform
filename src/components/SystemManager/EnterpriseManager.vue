@@ -3,12 +3,23 @@
         <section class="content-search">
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
-                    label="园区名称" label-width="80px">
+                    label="企业名称" label-width="80px">
                     <el-input
-                        placeholder="请输入园区名称"
+                        placeholder="请输入企业名称"
                         v-model="placename"
                         clearable>
                     </el-input>
+                </el-form-item>
+                <el-form-item
+                    label="企业类型" label-width="80px">
+                    <el-select v-model="enttype" clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in dicts.enttype"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.code">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search">查询</el-button>
@@ -33,29 +44,56 @@
                 style="z-index: 99999;">
             <span>
                 <div  class="dialog-input">
-                    <el-input placeholder="请输入名称"  v-model="dialog.placeName">
-                        <template slot="prepend">园区名称</template>
+                    <el-input placeholder="请输入名称"  v-model="dialog.entName">
+                        <template slot="prepend">企业名称</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入编号" v-model="dialog.placeCode">
-                        <template slot="prepend">园区编号</template>
+                    <el-input placeholder="请输入编号" v-model="dialog.entCode">
+                        <template slot="prepend">企业编号</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入地址" v-model="dialog.placeAddress">
-                        <template slot="prepend">园区地址</template>
+                    <el-input placeholder="请输入法人名称" v-model="dialog.entLerep">
+                        <template slot="prepend">企业法人</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入面积" v-model="dialog.placeArea">
-                        <template slot="prepend">园区面积</template>
-                        <el-button slot="append">平方</el-button>
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">企业类型</div>
+                    <el-select v-model="dialog.entType" clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in dicts.enttype"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.code">
+                        </el-option>
+                    </el-select>
+                    </div>
+                </div>
+                <!--<div class="dialog-input" style="margin-top: 15px;">-->
+                    <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
+                        <!--<template slot="prepend">企业开票名称</template>-->
+                    <!--</el-input>-->
+                <!--</div>-->
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入企业税号" v-model="dialog.entNo">
+                        <template slot="prepend">企业税号</template>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入描述" v-model="dialog.placeDescription">
-                        <template slot="prepend">园区描述</template>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入负责人电话" v-model="dialog.entTel">
+                        <template slot="prepend">负责人电话</template>
+                    </el-input>
+                </div>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入父级企业" v-model="dialog.entParentId">
+                        <template slot="prepend">父级企业</template>
+                    </el-input>
+                </div>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <el-input placeholder="请输入入驻园区" v-model="dialog.businessScope">
+                        <template slot="prepend">入驻园区</template>
                     </el-input>
                 </div>
             </span>
@@ -70,54 +108,98 @@
 <script>
     import Table from '@/components/Table'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
+    import Vue from 'vue'
     export default {
         name: "PlaceManager",
         data(){
             return {
                 title:'',
+                //弹出框
                 dialog:{
-                    placeName:'',
-                    placeCode:'',
-                    placeAddress:'',
-                    placeArea:'',
-                    placeDescription:'',
-                },
-                page:{
-                    pageNum:1,
-                    pageSize:20,
+                    entName:'',
+                    entCode:'',
+                    entLerep:'',
+                    entType:'',
+                    entNo:'',
+                    entTel:'',
+                    entParentId:'',
+                    businessScope:'',
+                    entDimension:'',
                 },
                 dialogVisible:false,
+                soururl:'',
+
+                //表格
+                page:{
+                    page:1,
+                    pageSize:20,
+                },
                 showEdit:true,
                 showDetele:true,
-                url:'/places/list',
-                soururl:'',
-                placename:'',
+                url:'/enterprise/list',
                 tableKey: [{
                     name: '序号',
                     type: 'index',
                     operate: true
                 },{
-                    name: '园区名称',
-                    value: 'placeName',
+                    name: '企业编号',
+                    value: 'entCode',
                     operate: true
                 },{
-                    name: '园区编号',
-                    value: 'placeCode',
+                    name: '企业名称',
+                    value: 'entName',
                     operate: true
                 },{
-                    name: '园区地址',
-                    value: 'placeAddress',
+                    name: '企业法人',
+                    value: 'entLerep',
                     operate: true
                 },{
-                    name: '园区面积',
+                    name: '企业类型',
                     value: 'placeArea',
+                    operate: true,
+                    formatter:function(row, column, cellValue, index){
+                        if(row.entType==='in')
+                        {
+                            return "内部企业"
+                        }else{
+                            return "外部企业"
+                        }
+                    }
+                },{
+                    name: '企业税号',
+                    value: 'entNo',
                     operate: true
                 },{
-                    name: '园区描述',
+                    name: '负责人电话',
+                    value: 'entTel',
+                    operate: true
+                },{
+                    name: '父级企业',
                     value: 'placeDescription',
                     operate: true
+                },{
+                    name: '入驻园区',
+                    value: 'placeDescription',
+                    operate: true
+                },{
+                    name: '默认资源',
+                    value: 'placeDescription',
+                    operate: true,
+                    formatter:function(){
+                        return "测试"
+                    }
+                },{
+                    name: '组织管理',
+                    value: 'placeDescription',
+                    operate: true,
+                    formatter:function(){
+                        return "测试"
+                    }
                 }],
                 param:null,
+
+                enttype:'',
+                placename:'',
             }
         },
         components:{
@@ -126,7 +208,8 @@
         computed:{
             ...mapGetters({
                 tableData:'tableData',
-                total:'total'
+                total:'total',
+                dicts:'dicts'
             }),
         },
         methods:{
@@ -142,6 +225,8 @@
 
             selectedChange(val){
                 var vm = this;
+                console.log(val)
+                this.dialog ={...val[0]} ;
                 switch(val.length){
                     case 0:
                         vm.showEdit = false;
@@ -168,11 +253,12 @@
             },
             showAddModal(){
                 this.title="新增";
-                this.setSureUrl('/places/add');
+                this.setSureUrl('/enterprise/add');
                 this.dialogVisible=true;
             },
             showEditModal(){
                 this.title="编辑";
+                this.setSureUrl('/enterprise/update');
                 this.dialogVisible=true;
             },
             deleteList(){
@@ -189,6 +275,7 @@
             sureok:function(){
                 if(this.updateSureOK(this.dialog).retcode===200){
                     this.dialogVisible=false;
+                    this.getTableByOther();
                 }
             },
 
@@ -200,14 +287,14 @@
                 this.dialog.placeName='';
             },
 
-            getTableByOthrt:function(){
+            getTableByOther:function(){
                 this.getTableData(this.page);
             }
 
         },
         mounted () {
             this.setTableUrl(this.url);
-            this.getTableByOthrt();
+            this.getTableByOther();
         },
     }
 </script>

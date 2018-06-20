@@ -29,3 +29,5 @@ export const SET_SURE_URL =  'SET_SURE_URL'
 export const SET_TABLE_TOTAL = 'SET_TABLE_TOTAL'
 
 export const SET_USER_ROUTES = 'SET_USER_ROUTES'
+
+export const SET_DICTS_DATA = 'SET_DICTS_DATA'
