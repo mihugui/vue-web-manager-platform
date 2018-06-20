@@ -94,17 +94,14 @@ export const Permission = {
     //获取全部资源
     getAllPermission:function(){
         var vm = this;
-        if(!sessionStorage.getItem('permission')){
-            axios.post(url.allurl+url.allpermissionurl).then(function(res){
-                sessionStorage.setItem('permission',JSON.stringify(res.data.data));
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl + url.allpermissionurl).then(function (res) {
                 vm.data = res.data.data;
-                return vm.analysis();
-            }).catch(function(error){
+                resolve(vm.analysis());
+            }).catch(function (error) {
                 console.log(error)
             });
-        }else{
-            vm.data = JSON.parse(sessionStorage.getItem('permission'));
-        }
-        return vm.analysis();
+        });
+        return promise;
     }
 }
