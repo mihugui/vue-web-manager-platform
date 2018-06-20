@@ -220,7 +220,7 @@
         },
         mounted () {
             this.setTableUrl(this.url);
-            this.getTableByOthrt();
+            this.getTableByOther();
         },
     }
 </script>

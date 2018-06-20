@@ -6,8 +6,7 @@
         align="left"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="selectedChange"
-        @cell-click = "">
+        @selection-change="selectedChange">
         <el-table-column
             type="selection"
             width="55">

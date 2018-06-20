@@ -29,6 +29,7 @@
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
@@ -182,13 +183,6 @@
                     value: 'placeDescription',
                     operate: true
                 },{
-                    name: '默认资源',
-                    value: 'placeDescription',
-                    operate: true,
-                    formatter:function(){
-                        return "测试"
-                    }
-                },{
                     name: '组织管理',
                     value: 'placeDescription',
                     operate: true,
@@ -280,11 +274,15 @@
             },
 
             closeDialog:function(){
-                this.dialog.placeArea='';
-                this.dialog.placeAddress='';
-                this.dialog.placeCode='';
-                this.dialog.placeDescription='';
-                this.dialog.placeName='';
+                this.entName='';
+                this.entCode='';
+                this.entLerep='';
+                this.entType='';
+                this.entNo='';
+                this.entTel='';
+                this.entParentId='';
+                this.businessScope='';
+                this.entDimension='';
             },
 
             getTableByOther:function(){
