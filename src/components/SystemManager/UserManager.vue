@@ -3,15 +3,26 @@
         <section class="content-search">
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
-                    label="企业名称" label-width="80px">
+                    label="姓名" label-width="80px">
                     <el-input
-                        placeholder="请输入企业名称"
+                        placeholder="请输入姓名"
                         v-model="placename"
                         clearable>
                     </el-input>
                 </el-form-item>
                 <el-form-item
-                    label="企业类型" label-width="80px">
+                    label="所在园区" label-width="80px">
+                    <el-select v-model="enttype" clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in dicts.enttype"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    label="状态" label-width="80px">
                     <el-select v-model="enttype" clearable placeholder="请选择">
                         <el-option
                             v-for="item in dicts.enttype"
@@ -30,7 +41,6 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
@@ -74,9 +84,9 @@
                     </div>
                 </div>
                 <!--<div class="dialog-input" style="margin-top: 15px;">-->
-                    <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
-                        <!--<template slot="prepend">企业开票名称</template>-->
-                    <!--</el-input>-->
+                <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
+                <!--<template slot="prepend">企业开票名称</template>-->
+                <!--</el-input>-->
                 <!--</div>-->
                  <div class="dialog-input" style="margin-top: 15px;">
                     <el-input placeholder="请输入企业税号" v-model="dialog.entNo">
@@ -108,48 +118,14 @@
             <el-dialog
                 :title="title_permission"
                 :visible.sync="dialogVisible_permission"
-                width="300px"
+                width="850px"
                 heigth = "80%"
                 :modal-append-to-body="false"
                 :before-close="handleClose"
                 @close='closeDialog_permission'
                 style="z-index: 99999;">
             <span>
-                <el-tree
-                    :data="allPermission"
-                    show-checkbox
-                    node-key="id"
-                    ref="tree"
-                    :default-checked-keys="entIds"
-                    :props="defaultProps"
-                    @check-change="gettreeid">
-                 </el-tree>
-            </span>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_permission = false">取 消</el-button>
-                <el-button type="primary" @click="sureok">确 定</el-button>
-            </span>
-            </el-dialog>
-
-            <el-dialog
-                :title="title_permission"
-                :visible.sync="dialogVisible_permission"
-                width="300px"
-                heigth = "80%"
-                :modal-append-to-body="false"
-                :before-close="handleClose"
-                @close='closeDialog_permission'
-                style="z-index: 99999;">
-            <span>
-                <el-tree
-                    :data="allPermission"
-                    show-checkbox
-                    node-key="id"
-                    ref="tree"
-                    :default-checked-keys="entIds"
-                    :props="defaultProps"
-                    @check-change="gettreeid">
-                 </el-tree>
+                <!--<tree-menu :checkedids="entIds" :data="" :gettreeid="gettreeid" :defaultProps="defaultProps"></tree-menu>-->
             </span>
                 <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible_permission = false">取 消</el-button>
@@ -165,10 +141,9 @@
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     import Vue from 'vue'
     export default {
-        name: "EnterpriseManager",
+        name: "UserManager",
         data(){
             return {
-
                 //弹出框
                 title:'',
                 dialog:{
@@ -192,67 +167,56 @@
                     children: 'children',
                     label: 'name'
                 },
-                entIds:[],
+                entIds:'',
 
                 //表格
                 page:{
                     page:1,
                     pageSize:20,
                 },
-                showEdit:false,
-                showDetele:false,
-                url:'/enterprise/list',
+                showEdit:true,
+                showDetele:true,
+                url:'/user/query',
                 tableKey: [{
                     name: '序号',
                     type: 'index',
                     operate: true
                 },{
-                    name: '企业编号',
-                    value: 'entCode',
+                    name: '姓名',
+                    value: 'userRealname',
                     operate: true
                 },{
-                    name: '企业名称',
-                    value: 'entName',
+                    name: '编号',
+                    value: 'userNo',
                     operate: true
                 },{
-                    name: '企业法人',
-                    value: 'entLerep',
+                    name: '用户名',
+                    value: 'userName',
                     operate: true
                 },{
-                    name: '企业类型',
+                    name: '用户角色 ',
                     value: 'placeArea',
                     operate: true,
-                    formatter:function(row, column, cellValue, index){
-                        if(row.entType==='in')
-                        {
-                            return "内部企业"
-                        }else{
-                            return "外部企业"
-                        }
-                    }
                 },{
-                    name: '企业税号',
-                    value: 'entNo',
+                    name: '手机',
+                    value: 'userMobile',
                     operate: true
                 },{
-                    name: '负责人电话',
-                    value: 'entTel',
+                    name: '身份证号',
+                    value: 'userIdno',
                     operate: true
                 },{
-                    name: '父级企业',
+                    name: '所在园区',
                     value: 'placeDescription',
                     operate: true
                 },{
-                    name: '入驻园区',
+                    name: '所属企业',
                     value: 'placeDescription',
                     operate: true
                 },{
-                    name: '组织管理',
-                    value: 'placeDescription',
+                    name: '状态',
+                    value: 'userStatus',
                     operate: true,
-                    formatter:function(){
-                        return "测试"
-                    }
                 }],
                 param:null,
 
@@ -263,13 +227,13 @@
         },
         components:{
             'mini-table':Table,
+            'tree-menu':TreeMenu
         },
         computed:{
             ...mapGetters({
                 tableData:'tableData',
                 total:'total',
-                dicts:'dicts',
-                allPermission :'permission'
+                dicts:'dicts'
             }),
         },
         methods:{
@@ -282,8 +246,7 @@
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA',
                 updateSureOK : 'UPDATE_TABLE_DATA',
-                getEntPermission : 'GET_ENT_PERMISSION',
-                getAllPermission : 'GET_ALL_PERMISSION'
+                getEntPermission : 'GET_ENT_PERMISSION'
             }),
 
             gettreeid(){
@@ -297,9 +260,7 @@
             },
 
             selectedChange(val){
-                console.log(val);
                 var vm = this;
-                if(val.length>0){
                 this.seltable ={
                     "entName":val[0].entName,
                     "entCode":val[0].entCode,
@@ -311,7 +272,7 @@
                     "businessScope":val[0].businessScope,
                     "entDimension":val[0].entDimension,
                     "Id":val[0].id,
-                };}
+                };
                 switch(val.length){
                     case 0:
                         vm.showEdit = false;
@@ -351,15 +312,14 @@
 
             showPerMission(){
                 let vm = this ;
-                this.params = {'id': vm.seltable.Id}
+                console.log(vm.dialog.id);
+                this.params = {'Id': vm.dialog.id}
                 this.title_permission="权限分配";
+                this.setSureUrl('/enterprise/updateResource');
                 this.dialogVisible_permission=true;
                 this.getEntPermission(this.params).then(function(val){
                     console.log(val);
                 });
-            },
-            showOrganization(){
-
             },
             deleteList(){
 
@@ -407,7 +367,6 @@
 
         },
         mounted () {
-            this.getAllPermission();
             this.setTableUrl(this.url);
             this.getTableByOther();
         },

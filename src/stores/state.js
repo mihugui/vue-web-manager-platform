@@ -32,6 +32,9 @@ const state = {
         enterprise: (resolve) => {
             require(['@/components/SystemManager/EnterpriseManager'],resolve)
         },
+        user: (resolve) => {
+            require(['@/components/SystemManager/UserManager'],resolve)
+        },
 
 
     },

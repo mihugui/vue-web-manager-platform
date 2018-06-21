@@ -10,37 +10,26 @@
     </el-tree>
 </template>
 <script>
-    import {mapGetters,mapMutations} from 'vuex'
-    import * as types from '../stores/mutation-types'
+    import {mapMutations} from 'vuex'
     export default{
         name:'treemenu',
         data(){
             return {
-                defaultProps: {
-                    children: 'children',
-                    label: 'name'
-                }
+
             };
         },
-        methods :{
+
+        methods:{
             gettreeid(){
-                console.log(this.$refs.tree.getNode());
-                let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
+                let vm =this;
+                let tree = [...vm.$refs.tree.getCheckedNodes(),...vm.$refs.tree.getHalfCheckedNodes()];
                 let ids = [];
                 for( var item of tree){
                     ids.push(item.id);
                 }
                 this.settreeids(ids);
             },
-            ...mapMutations({
-                settreeids: types.SET_TREE_IDS
-            }),
         },
-        computed:{
-            ...mapGetters({
-                data:'permission',
-            }),
-        },
-        props:['checkedids'],
+        props:['checkedids','data','defaultProps'],
     }
 </script>

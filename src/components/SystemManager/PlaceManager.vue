@@ -123,6 +123,7 @@
 
                 param:null,
                 placename:'',
+                seltable:''
             }
         },
         components:{
@@ -148,7 +149,15 @@
 
             selectedChange(val){
                 var vm = this;
-                this.dialog ={...val[0]} ;
+                if(val.length>0){
+                this.seltable ={
+                    "placeName":val[0].placeName,
+                    "placeCode":val[0].placeCode,
+                    "placeAddress":val[0].placeAddress,
+                    "placeArea":val[0].placeArea,
+                    "placeDescription":val[0].placeDescription,
+                    "Id":val[0].id,
+                };}
                 switch(val.length){
                     case 0:
                         vm.showEdit = false;
@@ -166,7 +175,6 @@
 
             sizeChange(val){
                 this.page.pageSize = val;
-
                 this.getTableData({...this.page,...this.placename});
             },
             currentChange(val){
@@ -174,17 +182,24 @@
                 this.getTableData(this.page);
             },
             showAddModal(){
+                this.closeDialog();
                 this.title="新增";
                 this.setSureUrl('/places/add');
                 this.dialogVisible=true;
             },
             showEditModal(){
+                this.dialog={...this.seltable};
                 this.title="编辑";
                 this.setSureUrl('/places/update');
                 this.dialogVisible=true;
             },
             deleteList(){
-
+                this.setSureUrl('/places/delete');
+                this.$confirm('确认删除？')
+                    .then(_ => {
+                        console.log(123);
+                    })
+                    .catch(_ => {});
             },
 
             handleClose(done) {
@@ -211,6 +226,9 @@
                 this.dialog.placeCode='';
                 this.dialog.placeDescription='';
                 this.dialog.placeName='';
+                if(this.dialog.Id){
+                    delete this.dialog.Id;
+                }
             },
 
             getTableByOther:function(){
