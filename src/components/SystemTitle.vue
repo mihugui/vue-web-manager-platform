@@ -4,13 +4,12 @@
         mode="horizontal"
         background-color="#36a8fc"
         text-color="#fff"
-        active-text-color="#ffd04b"
-        router>
+        active-text-color="#ffd04b">
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="item.path">
-            <i :class="item.icon"></i>
-            <router-link :to="item.path">{{item.name}}</router-link>
+                       :index="item.path"
+                       @click="changeSystem(item.system)">
+            <i :class="item.icon"></i> {{item.name}}
         </el-menu-item>
     </el-menu>
 </template>
@@ -20,7 +19,7 @@
             return{
             }
         },
-        props:['SystemTitle'],
+        props:['SystemTitle','changeSystem'],
     }
 </script>
 <style scoped>

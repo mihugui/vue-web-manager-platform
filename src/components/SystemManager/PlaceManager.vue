@@ -194,6 +194,7 @@
                 this.dialogVisible=true;
             },
             deleteList(){
+
                 this.setSureUrl('/places/delete');
                 this.$confirm('确认删除？')
                     .then(_ => {
