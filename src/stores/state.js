@@ -20,6 +20,7 @@ const state = {
     asideinfo:[], // 权限边框
     systeminfo:[], // 权限系统
     permission:[], //全部权限
+    permissionUrl:'', //权限更新url
 
     //组建定死数据
     mycomponents: {

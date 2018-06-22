@@ -113,10 +113,11 @@ export const GET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
-export const SET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
+export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
+    console.log(state.permissionUrl);
     const promise = new Promise(function(resolve, reject) {
-        axios.post(url.allurl+"/enterprise/updateResource",qs.stringify(data)).then(function(res) {
+        axios.post(url.allurl+state.permissionUrl,qs.stringify(data)).then(function(res) {
             if (res.data.retcode === 200) {
                 resolve(res);
             }
@@ -126,4 +127,6 @@ export const SET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
     });
     return promise;
 }
+//
+// export const AXIO_POST =
 

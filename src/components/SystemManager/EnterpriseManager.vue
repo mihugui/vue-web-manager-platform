@@ -122,18 +122,19 @@
                     ref="tree"
                     :default-checked-keys="entIds"
                     :props="defaultProps"
+                    check-strictly
                     @check-change="gettreeid">
                  </el-tree>
             </span>
                 <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible_permission = false">取 消</el-button>
-                <el-button type="primary" @click="sureok">确 定</el-button>
+                <el-button type="primary" @click="surePermission">确 定</el-button>
             </span>
             </el-dialog>
 
             <el-dialog
                 :title="title_permission"
-                :visible.sync="dialogVisible_permission"
+                :visible.sync="dialogVisible_Organization"
                 width="300px"
                 heigth = "80%"
                 :modal-append-to-body="false"
@@ -147,8 +148,10 @@
                     node-key="id"
                     ref="tree"
                     :default-checked-keys="entIds"
+                    check-strictly
                     :props="defaultProps"
-                    @check-change="gettreeid">
+                    @check-change="gettreeid"
+                    >
                  </el-tree>
             </span>
                 <span slot="footer" class="dialog-footer">
@@ -188,6 +191,7 @@
                 //权限弹出框
                 title_permission:'',
                 dialogVisible_permission:false,
+                dialogVisible_Organization:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -277,27 +281,30 @@
             ...mapMutations({
                 setTableUrl: 'SET_TABLE_URL',
                 setSureUrl:'SET_SURE_URL',
-                settreeids: 'SET_TREE_IDS'
+                settreeids: 'SET_TREE_IDS',
+                setPermissionUrl:'SET_PERMISSION_URL',
             }),
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA',
                 updateSureOK : 'UPDATE_TABLE_DATA',
                 getEntPermission : 'GET_ENT_PERMISSION',
-                getAllPermission : 'GET_ALL_PERMISSION'
+                getAllPermission : 'GET_ALL_PERMISSION',
+                setPermission: 'SET_PERMISSION',
             }),
 
             gettreeid(){
-                console.log(this.$refs.tree.getNode());
+                let vm = this;
                 let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
                 let ids = [];
                 for( var item of tree){
                     ids.push(item.id);
                 }
-                this.settreeids(ids);
+                let a = JSON.stringify(ids);
+                let pids = a.substring(1,a.length-1);
+                this.params = {'entId': vm.seltable.Id,'resourceId':pids}
             },
 
             selectedChange(val){
-                console.log(val);
                 var vm = this;
                 if(val.length>0){
                 this.seltable ={
@@ -350,16 +357,33 @@
             },
 
             showPerMission(){
+                this.setPermissionUrl('/enterprise/updateResource');
                 let vm = this ;
-                this.params = {'id': vm.seltable.Id}
                 this.title_permission="权限分配";
+                this.params = {'Id': vm.seltable.Id}
                 this.dialogVisible_permission=true;
                 this.getEntPermission(this.params).then(function(val){
-                    console.log(val);
+                    let ids = [];
+                    for( var item of val.data.data){
+                            ids.push(item.id)
+                    }
+                    console.log(ids)
+                    vm.$refs.tree.setCheckedKeys(ids);
                 });
             },
             showOrganization(){
-
+                let vm = this ;
+                this.title_permission="组织管理";
+                this.params = {'Id': vm.seltable.Id}
+                this.dialogVisible_Organization = true;
+                this.getEntPermission(this.params).then(function(val){
+                    let ids = [];
+                    for( var item of val.data.data){
+                        ids.push(item.id)
+                    }
+                    console.log(ids)
+                    vm.$refs.tree.setCheckedKeys(ids);
+                });
             },
             deleteList(){
 
@@ -372,6 +396,20 @@
                     })
                     .catch(_ => {});
             },
+
+            surePermission:function(){
+                let vm = this ;
+                this.setPermission(this.params).then(function(val){
+                    if(val.data.retcode = 200){
+                        vm.$message.success(val.data.data);
+                        vm.dialogVisible_permission = false;
+                    }else{
+                        vm.$message.error(val.data.data);
+                        vm.dialogVisible_permission = false;
+                    }
+                })
+            },
+
             sureok:function(){
                 let vm =this;
                 vm.updateSureOK(vm.dialog).then(function(val){

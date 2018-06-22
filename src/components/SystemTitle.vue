@@ -7,7 +7,7 @@
         active-text-color="#ffd04b">
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="item.path"
+                       :index="item.name"
                        @click="changeSystem(item.system)">
             <i :class="item.icon"></i> {{item.name}}
         </el-menu-item>

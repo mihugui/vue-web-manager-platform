@@ -62,7 +62,13 @@ const mutations = {
 
     [types.SET_SYSTEM_TITLE](status,data){
         status.system = data;
+    },
+
+    [types.SET_PERMISSION_URL](status,data){
+        status.permissionUrl = data;
     }
+
+
 
 }
 
