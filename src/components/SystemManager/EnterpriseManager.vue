@@ -226,7 +226,7 @@
                     name: '企业类型',
                     value: 'placeArea',
                     operate: true,
-                    formatter:function(row, column, cellValue, index){
+                    formatter:function(row){
                         if(row.entType==='in')
                         {
                             return "内部企业"

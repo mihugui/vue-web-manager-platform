@@ -36,6 +36,9 @@ const state = {
         user: (resolve) => {
             require(['@/components/SystemManager/UserManager'],resolve)
         },
+        role: (resolve) => {
+            require(['@/components/SystemManager/RoleManager'],resolve)
+        },
 
 
     },

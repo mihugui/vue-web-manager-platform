@@ -113,6 +113,20 @@ export const GET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
+export const GET_ROLE_PERMISSION = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+"/role/findRoleResource",qs.stringify(data)).then(function(res) {
+            if (res.data.retcode === 200) {
+                resolve(res);
+            }
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
 export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     console.log(state.permissionUrl);
@@ -127,6 +141,18 @@ export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
     });
     return promise;
 }
-//
-// export const AXIO_POST =
+
+ export const AXIO_POST_NODATA = async({ dispatch, commit, state },data)=> {
+
+     const promise = new Promise(function(resolve, reject) {
+         axios.post(url.allurl+data).then(function(res) {
+             if (res.data.retcode === 200) {
+                 resolve(res);
+             }
+         }).catch(function(error){
+             reject(error);
+         });
+     });
+     return promise;
+ }
 
