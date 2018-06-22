@@ -42,8 +42,9 @@ const state = {
         log: (resolve) => {
             require(['@/components/SystemManager/LogManagement'],resolve)
         },
-
-
+        dictonary: (resolve) => {
+            require(['@/components/SystemManager/dictonary'],resolve)
+        }
     },
 
     //路由
