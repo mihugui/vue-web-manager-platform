@@ -22,6 +22,10 @@ global.install = (Vue, router) => {
     axios.interceptors.response.use(res => {
         //对返回数据在使用之前做一次处理
         /*............*/
+        if(res.data.retcode===3200){
+            router.push('/login');
+        }
+
         return res
     })
 

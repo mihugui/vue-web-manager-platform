@@ -28,3 +28,5 @@ export const buttonpermission = state => state.buttonpermission
 export const userroutes = state => state.userroutes
 
 export const dicts = state =>state.dicts
+
+export const permissionUrl= state =>state.permissionUrl;

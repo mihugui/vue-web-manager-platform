@@ -99,3 +99,34 @@ export const SET_ALL_PERMISSION = async({ dispatch, commit, state })=> {
     }));
 }
 
+export const GET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+"/enterprise/findEnterpriseResource",qs.stringify(data)).then(function(res) {
+            if (res.data.retcode === 200) {
+            resolve(res);
+            }
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    console.log(state.permissionUrl);
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+state.permissionUrl,qs.stringify(data)).then(function(res) {
+            if (res.data.retcode === 200) {
+                resolve(res);
+            }
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+//
+// export const AXIO_POST =
+

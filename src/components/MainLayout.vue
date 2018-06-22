@@ -4,7 +4,7 @@
             <div>
                 <div class="fl title" style="display: inline-block;"><img style="margin-top: 9px ;width:125px" src="../assets/img/chinaMessage.png"></div>
                 <div class="fl system">
-                    <mini-system :SystemTitle="SystemTitle"></mini-system>
+                    <mini-system :SystemTitle="SystemTitle" :changeSystem="changeSystem"></mini-system>
                 </div>
             </div>
         </el-header>
@@ -19,7 +19,7 @@
 <script>
     import SystemTitle from '@/components/SystemTitle'
     import AsideTitle from '@/components/AsideTitle'
-    import { mapGetters,mapActions} from 'vuex'
+    import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "MainLayout",
         data(){
@@ -39,8 +39,14 @@
                     this.myWidth = "65px";
                 }
             },
+            changeSystem:function(val){
+                this.setSystemTitle(val);
+            },
             ...mapActions({
                 getUserPermission: 'GET_USER_PERMISSION'
+            }),
+            ...mapMutations({
+                setSystemTitle : 'SET_SYSTEM_TITLE'
             })
         },
         mounted () {
