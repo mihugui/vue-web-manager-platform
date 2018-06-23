@@ -39,8 +39,12 @@ const state = {
         role: (resolve) => {
             require(['@/components/SystemManager/RoleManager'],resolve)
         },
-
-
+        log: (resolve) => {
+            require(['@/components/SystemManager/LogManagement'],resolve)
+        },
+        dictonary: (resolve) => {
+            require(['@/components/SystemManager/dictonary'],resolve)
+        }
     },
 
     //路由

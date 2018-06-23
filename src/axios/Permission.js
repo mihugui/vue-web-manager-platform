@@ -98,18 +98,10 @@ export const Permission = {
             axios.post(url.allurl + url.allpermissionurl)
               .then(res =>{
                   vm.data = res.data.data;
-                  sessionStorage.setItem('alpr',JSON.stringify(res.data.data));
                   resolve(vm.analysis());
               }).catch(error => {
                   console.log(error);
               })
-            // axios.post(url.allurl + url.allpermissionurl).then(function (res) {
-            //     console.log(res)
-            //     vm.data = res.data.data;
-            //     resolve(vm.analysis());
-            // }).catch(function (error) {
-            //     console.log(error)
-            // });
         });
         return promise;
     },
