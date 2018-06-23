@@ -176,7 +176,7 @@
                         c.push(item.id)
                     });
                     console.log(JSON.stringify(c))
-                    sessionStorage.setItem('selectid',JSON.stringify(c))
+                    this.selectid = JSON.stringify(c)
                     this.seltable ={
                         "code":val[0].code,
                         "description":val[0].description,
@@ -220,17 +220,19 @@
                 this.dialogVisible=true;
             },
             deleteList(){
+                let vm = this;
                 this.$confirm('确认删除？')
                     .then(_ => {
                         axios({
                             method: 'post',
                             url:url.allurl+'/dictGroup/delete',
                             params: {
-                                ids: sessionStorage.getItem('selectid'),
+                                ids: JSON.parse(this.selectid)
                             }
                         }).then((res)=>{
                             if (res.data.retcode === 200) {
-                                 alert(1)
+                                vm.$message.success("删除成功");
+                                vm.getTableByOther();
                             }
                         })
 
