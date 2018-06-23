@@ -175,7 +175,8 @@
                     val.forEach((item, index) =>{
                         c.push(item.id)
                     });
-                    sessionStorage.setItem('selectid',c)
+                    console.log(JSON.stringify(c))
+                    sessionStorage.setItem('selectid',JSON.stringify(c))
                     this.seltable ={
                         "code":val[0].code,
                         "description":val[0].description,
