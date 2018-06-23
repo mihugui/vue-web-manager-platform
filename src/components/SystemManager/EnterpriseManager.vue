@@ -28,25 +28,31 @@
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理</el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑
+            </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配
+            </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理
+            </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区管理
+            </el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="handleClose(deleteList)">删除
+            </el-button>
         </section>
-        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
+                    :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
         <div>
             <el-dialog
                 :title="title"
                 :visible.sync="dialogVisible"
                 width="850px"
-                heigth = "80%"
+                heigth="80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <div  class="dialog-input">
-                    <el-input placeholder="请输入名称"  v-model="dialog.entName">
+                <div class="dialog-input">
+                    <el-input placeholder="请输入名称" v-model="dialog.entName">
                         <template slot="prepend">企业名称</template>
                     </el-input>
                 </div>
@@ -74,9 +80,9 @@
                     </div>
                 </div>
                 <!--<div class="dialog-input" style="margin-top: 15px;">-->
-                    <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
-                        <!--<template slot="prepend">企业开票名称</template>-->
-                    <!--</el-input>-->
+                <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
+                <!--<template slot="prepend">企业开票名称</template>-->
+                <!--</el-input>-->
                 <!--</div>-->
                  <div class="dialog-input" style="margin-top: 15px;">
                     <el-input placeholder="请输入企业税号" v-model="dialog.entNo">
@@ -89,14 +95,17 @@
                     </el-input>
                 </div>
                  <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入父级企业" v-model="dialog.entParentId">
-                        <template slot="prepend">父级企业</template>
-                    </el-input>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入入驻园区" v-model="dialog.businessScope">
-                        <template slot="prepend">入驻园区</template>
-                    </el-input>
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">父企业</div>
+                    <el-select v-model="dialog.entParentId" clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in allEnt"
+                            :key="item.id"
+                            :label="item.entName"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                    </div>
                 </div>
             </span>
                 <span slot="footer" class="dialog-footer">
@@ -109,15 +118,15 @@
                 :title="title_permission"
                 :visible.sync="dialogVisible_permission"
                 width="300px"
-                heigth = "80%"
+                heigth="80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog_permission'
                 style="z-index: 99999;">
             <span>
                 <el-tree
                     :data="allPermission"
                     show-checkbox
+                    default-expand-all
                     node-key="id"
                     ref="tree"
                     :default-checked-keys="entIds"
@@ -133,29 +142,58 @@
             </el-dialog>
 
             <el-dialog
+                :title="title_places"
+                :visible.sync="dialogVisible_places"
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                @close='closeDialog'
+                style="z-index: 99999;">
+            <span>
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">归属园区</div>
+                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in allPlace"
+                            :key="item.id"
+                            :label="item.placeName"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                    </div>
+                </div>
+            </span>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible_places = false">取 消</el-button>
+                <el-button type="primary" @click="surePlaces">确 定</el-button>
+            </span>
+            </el-dialog>
+
+            <el-dialog
                 :title="title_permission"
                 :visible.sync="dialogVisible_Organization"
                 width="300px"
-                heigth = "80%"
+                heigth="80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog_permission'
                 style="z-index: 99999;">
             <span>
                 <el-tree
                     :data="allPermission"
                     show-checkbox
+                    default-expand-all
                     node-key="id"
                     ref="tree"
                     :default-checked-keys="entIds"
                     check-strictly
                     :props="defaultProps"
                     @check-change="gettreeid"
-                    >
+                >
                  </el-tree>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_permission = false">取 消</el-button>
+                <el-button @click="dialogVisible_Organization = false">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
@@ -165,161 +203,169 @@
 <script>
     import Table from '@/components/Table'
     import TreeMenu from '@/components/TreeMenu'
-    import { mapGetters,mapActions,mapMutations} from 'vuex'
-    import Vue from 'vue'
+    import {mapGetters, mapActions, mapMutations} from 'vuex'
+    import {base} from '../../axios/base'
+
     export default {
         name: "EnterpriseManager",
-        data(){
+        data() {
             return {
 
                 //弹出框
-                title:'',
-                dialog:{
-                    entName:'',
-                    entCode:'',
-                    entLerep:'',
-                    entType:'',
-                    entNo:'',
-                    entTel:'',
-                    entParentId:'',
-                    businessScope:'',
-                    entDimension:'',
+                title: '',
+                dialog: {
+                    entName: '',
+                    entCode: '',
+                    entLerep: '',
+                    entType: '',
+                    entNo: '',
+                    entTel: '',
+                    entParentId: '',
+                    placeIds: [],
                 },
-                dialogVisible:false,
-                soururl:'',
+
+                place:{
+                    defaultplace:'',
+                    otherplace:''
+                },
+                dialogVisible: false,
+                soururl: '',
+                allEnt: [],
+                allPlace: [],
 
                 //权限弹出框
-                title_permission:'',
-                dialogVisible_permission:false,
-                dialogVisible_Organization:false,
+                title_permission: '资源管理',
+                title_places:'园区管理',
+                dialogVisible_permission: false,
+                dialogVisible_Organization: false,
+                dialogVisible_places:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
                 },
-                entIds:[],
+                entIds: [],
 
                 //表格
-                page:{
-                    page:1,
-                    pageSize:20,
+                page: {
+                    page: 1,
+                    pageSize: 20,
                 },
-                showEdit:false,
-                showDetele:false,
-                url:'/enterprise/list',
+                showEdit: false,
+                showDetele: false,
+                url: '/enterprise/list',
                 tableKey: [{
                     name: '序号',
                     type: 'index',
                     operate: true
-                },{
+                }, {
                     name: '企业编号',
                     value: 'entCode',
                     operate: true
-                },{
+                }, {
                     name: '企业名称',
                     value: 'entName',
                     operate: true
-                },{
+                }, {
                     name: '企业法人',
                     value: 'entLerep',
                     operate: true
-                },{
+                }, {
                     name: '企业类型',
                     value: 'placeArea',
                     operate: true,
-                    formatter:function(row){
-                        if(row.entType==='in')
-                        {
+                    formatter: function (row) {
+                        if (row.entType === 'in') {
                             return "内部企业"
-                        }else{
+                        } else {
                             return "外部企业"
                         }
                     }
-                },{
+                }, {
                     name: '企业税号',
                     value: 'entNo',
                     operate: true
-                },{
+                }, {
                     name: '负责人电话',
                     value: 'entTel',
                     operate: true
-                },{
+                }, {
                     name: '父级企业',
-                    value: 'placeDescription',
-                    operate: true
-                },{
-                    name: '入驻园区',
-                    value: 'placeDescription',
-                    operate: true
-                },{
-                    name: '组织管理',
-                    value: 'placeDescription',
+                    value: 'entParentId',
                     operate: true,
-                    formatter:function(){
-                        return "测试"
-                    }
+                }, {
+                    name: '入驻园区',
+                    value: 'placeNames',
+                    operate: true
                 }],
-                param:null,
+                param: null,
 
-                enttype:'',
-                placename:'',
-                seltable:''
+                enttype: '',
+                placename: '',
+                seltable: '',
+                selall: []
             }
         },
-        components:{
-            'mini-table':Table,
+        components: {
+            'mini-table': Table,
         },
-        computed:{
+        computed: {
             ...mapGetters({
-                tableData:'tableData',
-                total:'total',
-                dicts:'dicts',
-                allPermission :'permission'
+                tableData: 'tableData',
+                total: 'total',
+                dicts: 'dicts',
+                allPermission: 'permission'
             }),
         },
-        methods:{
+        methods: {
 
             ...mapMutations({
                 setTableUrl: 'SET_TABLE_URL',
-                setSureUrl:'SET_SURE_URL',
+                setSureUrl: 'SET_SURE_URL',
                 settreeids: 'SET_TREE_IDS',
-                setPermissionUrl:'SET_PERMISSION_URL',
+                setPermissionUrl: 'SET_PERMISSION_URL',
             }),
             ...mapActions({
-                getTableData : 'GET_TABLE_DATA',
-                updateSureOK : 'UPDATE_TABLE_DATA',
-                getEntPermission : 'GET_ENT_PERMISSION',
-                getAllPermission : 'GET_ALL_PERMISSION',
+                getTableData: 'GET_TABLE_DATA',
+                updateSureOK: 'UPDATE_TABLE_DATA',
+                getEntPermission: 'GET_ENT_PERMISSION',
+                getAllPermission: 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
+                axioPostNoData: 'AXIO_POST_NODATA'
             }),
 
-            gettreeid(){
+            gettreeid() {
                 let vm = this;
-                let tree = [...this.$refs.tree.getCheckedNodes(),...this.$refs.tree.getHalfCheckedNodes()];
+                let tree = [...this.$refs.tree.getCheckedNodes(), ...this.$refs.tree.getHalfCheckedNodes()];
                 let ids = [];
-                for( var item of tree){
+                for (var item of tree) {
                     ids.push(item.id);
                 }
                 let a = JSON.stringify(ids);
-                let pids = a.substring(1,a.length-1);
-                this.params = {'entId': vm.seltable.Id,'resourceId':pids}
+                let pids = a.substring(1, a.length - 1);
+                this.params = {'entId': vm.seltable.Id, 'resourceId': pids}
             },
 
-            selectedChange(val){
+            selectedChange(val) {
                 var vm = this;
-                if(val.length>0){
-                this.seltable ={
-                    "entName":val[0].entName,
-                    "entCode":val[0].entCode,
-                    "entLerep":val[0].entLerep,
-                    "entType":val[0].entType,
-                    "entNo":val[0].entNo,
-                    "entTel":val[0].entTel,
-                    "entParentId":val[0].entParentId,
-                    "businessScope":val[0].businessScope,
-                    "entDimension":val[0].entDimension,
-                    "Id":val[0].id,
-                };}
-                switch(val.length){
+                this.selall = val;
+                if (val.length > 0) {
+                    let result =[];
+                    if(val[0].placeIds != null) {
+                        result = base.toNum(val[0].placeIds);
+                    }
+                    this.seltable = {
+                        "entName": val[0].entName,
+                        "entCode": val[0].entCode,
+                        "entLerep": val[0].entLerep,
+                        "entType": val[0].entType,
+                        "entNo": val[0].entNo,
+                        "entTel": val[0].entTel,
+                        "entParentId": val[0].entParentId,
+                        "placeIds": result,
+                        "Id": val[0].id,
+                    };
+                }
+                switch (val.length) {
                     case 0:
                         vm.showEdit = false;
                         vm.showDetele = false;
@@ -334,117 +380,168 @@
                 }
             },
 
-            sizeChange(val){
+            sizeChange(val) {
                 this.page.pageSize = val;
 
-                this.getTableData({...this.page,...this.placename});
+                this.getTableData({...this.page, ...this.placename});
             },
-            currentChange(val){
+            currentChange(val) {
                 this.page.pageNum = val;
                 this.getTableData(this.page);
             },
-            showAddModal(){
+            showAddModal() {
                 this.closeDialog();
-                this.title="新增";
+                this.title = "新增";
                 this.setSureUrl('/enterprise/add');
-                this.dialogVisible=true;
+                this.dialogVisible = true;
             },
-            showEditModal(){
-                this.dialog={...this.seltable};
-                this.title="编辑";
+            showEditModal() {
+                this.dialog = {...this.seltable};
+                this.title = "编辑";
                 this.setSureUrl('/enterprise/update');
-                this.dialogVisible=true;
+                this.dialogVisible = true;
             },
 
-            showPerMission(){
+            showPerMission() {
                 this.setPermissionUrl('/enterprise/updateResource');
-                let vm = this ;
-                this.title_permission="权限分配";
+                let vm = this;
+                this.title_permission = "权限分配";
                 this.params = {'Id': vm.seltable.Id}
-                this.dialogVisible_permission=true;
-                this.getEntPermission(this.params).then(function(val){
+                this.dialogVisible_permission = true;
+                this.getEntPermission(this.params).then(function (val) {
                     let ids = [];
-                    for( var item of val.data.data){
-                            ids.push(item.id)
-                    }
-                    console.log(ids)
-                    vm.$refs.tree.setCheckedKeys(ids);
-                });
-            },
-            showOrganization(){
-                let vm = this ;
-                this.title_permission="组织管理";
-                this.params = {'Id': vm.seltable.Id}
-                this.dialogVisible_Organization = true;
-                this.getEntPermission(this.params).then(function(val){
-                    let ids = [];
-                    for( var item of val.data.data){
+                    for (var item of val.data.data) {
                         ids.push(item.id)
                     }
-                    console.log(ids)
                     vm.$refs.tree.setCheckedKeys(ids);
                 });
             },
-            deleteList(){
-
+            showPlaces() {
+                this.dialog = {...this.seltable};
+                this.setSureUrl('/enterprise/updatePlaces');
+                this.dialogVisible_places=true;
+            },
+            showOrganization() {
+                let vm = this;
+                this.title_permission = "组织管理";
+                this.params = {'Id': vm.seltable.Id}
+                this.dialogVisible_Organization = true;
+                this.getEntPermission(this.params).then(function (val) {
+                    let ids = base.toNum(val.data.data)
+                    vm.$refs.tree.setCheckedKeys(ids);
+                });
+            },
+            deleteList() {
+                let vm = this;
+                this.setSureUrl('/enterprise/delete');
+                let ids = [];
+                for (var item of vm.selall) {
+                    ids.push(item.id)
+                }
+                let a = JSON.stringify(ids);
+                let pids = a.substring(1, a.length - 1);
+                let result = {'ids': pids}
+                vm.updateSureOK(result).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.$message.success("删除成功");
+                        vm.getTableByOther();
+                    } else {
+                        vm.$message.error("删除失败");
+                    }
+                })
             },
 
             handleClose(done) {
-                this.$confirm('确认关闭？')
+                this.$confirm('确认删除？')
                     .then(_ => {
                         done();
                     })
-                    .catch(_ => {});
+                    .catch(_ => {
+                    });
             },
 
-            surePermission:function(){
-                let vm = this ;
-                this.setPermission(this.params).then(function(val){
-                    if(val.data.retcode = 200){
+            surePlaces:function(){
+                let vm = this;
+                let a = JSON.stringify(vm.dialog.placeIds);
+                let pids = a.substring(1, a.length - 1);
+                this.params = { "entId":vm.selall[0].id,"placeIds":pids}
+                vm.updateSureOK(vm.params).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.dialogVisible_places = false;
+                        vm.$message.success(val.data.retmsg)
+                        vm.getTableByOther();
+                    }else{
+                        vm.dialogVisible_places = false;
+                        vm.$message.error(val.data.retmsg)
+                    }
+                })
+            },
+
+            surePermission: function () {
+                let vm = this;
+                this.setPermission(this.params).then(function (val) {
+                    if (val.data.retcode = 200) {
                         vm.$message.success(val.data.data);
                         vm.dialogVisible_permission = false;
-                    }else{
+                    } else {
                         vm.$message.error(val.data.data);
                         vm.dialogVisible_permission = false;
                     }
                 })
             },
 
-            sureok:function(){
-                let vm =this;
-                vm.updateSureOK(vm.dialog).then(function(val){
-                    if(val.data.retcode===200){
-                        vm.dialogVisible=false;
+            sureok: function () {
+                let vm = this;
+                vm.updateSureOK(vm.dialog).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.dialogVisible = false;
+                        vm.$message.success(val.data.retmsg)
                         vm.getTableByOther();
+                    }else{
+                        vm.$message.error(val.data.retmsg)
                     }
                 })
             },
 
-            closeDialog:function(){
-                this.entName='';
-                this.entCode='';
-                this.entLerep='';
-                this.entType='';
-                this.entNo='';
-                this.entTel='';
-                this.entParentId='';
-                this.businessScope='';
-                this.entDimension='';
-                if(this.dialog.Id){
+            closeDialog: function () {
+                this.entName = '';
+                this.entCode = '';
+                this.entLerep = '';
+                this.entType = '';
+                this.entNo = '';
+                this.entTel = '';
+                this.entParentId = '';
+                this.businessScope = '';
+                this.placeIds = [];
+                if (this.dialog.Id) {
                     delete this.dialog.Id;
                 }
             },
 
-            closeDialog_permission:function(){
+            closeDialog_permission: function () {
 
             },
 
-            getTableByOther:function(){
+            getTableByOther: function () {
                 this.getTableData(this.page);
-            }
+            },
+            getAllEnt: function () {
+                let vm = this;
+                this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                    vm.allEnt = val.data.data
+                })
+            },
+            getAllPlace: function () {
+                let vm = this;
+                this.axioPostNoData("/places/getAllPlaces").then(function (val) {
+                    vm.allPlace = val.data.data
+                })
+            },
 
         },
-        mounted () {
+        mounted() {
+            this.getAllPlace();
+            this.getAllEnt();
             this.getAllPermission();
             this.setTableUrl(this.url);
             this.getTableByOther();
@@ -455,7 +552,7 @@
     .content-search {
         text-align: left;
         background-color: #fff;
-        border-bottom: 1px solid hsla(0,0%,92%,.9);
+        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
         padding: 15px 20px 0;
         display: block;
         margin: 0;
@@ -464,11 +561,12 @@
         font: inherit;
         vertical-align: baseline;
     }
+
     .content-operate {
         margin-bottom: 10px;
         text-align: left;
         background-color: #fff;
-        border-bottom: 1px solid hsla(0,0%,92%,.9);
+        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
         display: block;
         padding-left: 30px;
         border: 0;
@@ -477,19 +575,19 @@
         vertical-align: baseline;
     }
 
-    .el-dialog{
-        max-height:calc(100% - 300px);
-        max-width:calc(100% - 30px);
-        display:flex;
-        flex-direction:column;
+    .el-dialog {
+        max-height: calc(100% - 300px);
+        max-width: calc(100% - 30px);
+        display: flex;
+        flex-direction: column;
 
     }
-    .el-dialog__body
-    {
-        overflow:auto;
+
+    .el-dialog__body {
+        overflow: auto;
     }
 
-    .dialog-input{
+    .dialog-input {
         width: 80%;
         padding-left: 50px;
     }

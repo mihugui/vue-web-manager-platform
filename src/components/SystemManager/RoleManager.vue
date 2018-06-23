@@ -3,7 +3,7 @@
         <section class="content-search">
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
-                    label="企业名称" label-width="80px">
+                    label="角色名称" label-width="80px">
                     <el-input
                         placeholder="请输入角色名称"
                         v-model="roleName"
@@ -11,7 +11,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
                 </el-form-item>
             </el-form>
         </section>
@@ -19,8 +19,7 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理</el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除</el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="handleClose(deleteList)">删除</el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
         <div>
@@ -30,7 +29,6 @@
                 width="850px"
                 heigth = "80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
@@ -75,13 +73,13 @@
                 width="300px"
                 heigth = "80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog_permission'
                 style="z-index: 99999;">
             <span>
                 <el-tree
                     :data="allPermission"
                     show-checkbox
+                    default-expand-all
                     node-key="id"
                     ref="tree"
                     :default-checked-keys="entIds"
@@ -169,7 +167,8 @@
                 allPlace:[],
                 enttype:'',
                 roleName:'',
-                seltable:''
+                seltable:'',
+                selall:[],
             }
         },
         components:{
@@ -214,10 +213,11 @@
 
             selectedChange(val){
                 var vm = this;
+                this.selall=val;
                 if(val.length>0){
                     this.seltable ={
                         "roleName":val[0].roleName,
-                        "roleCode":val[0].entCode,
+                        "roleCode":val[0].roleCode,
                         "roleDescription":val[0].roleDescription,
                         "roleForbidden":val[0].roleForbidden,
                         "Id":val[0].id,
@@ -240,11 +240,15 @@
             sizeChange(val){
                 this.page.pageSize = val;
 
-                this.getTableData({...this.page,...this.placename});
+                this.getTableData({...this.page,"roleName":this.roleName});
             },
             currentChange(val){
                 this.page.pageNum = val;
-                this.getTableData(this.page);
+                this.getTableData({...this.page,"roleName":this.roleName});
+            },
+
+            searchTable(){
+                this.getTableData({...this.page,"roleName":this.roleName});
             },
             showAddModal(){
                 this.closeDialog();
@@ -275,11 +279,27 @@
                 });
             },
             deleteList(){
-
+                let vm = this;
+                this.setSureUrl('/role/delete');
+                let ids = [];
+                for( var item of vm.selall){
+                    ids.push(item.id)
+                }
+                let a = JSON.stringify(ids);
+                let pids = a.substring(1,a.length-1);
+                let result = {'ids': pids}
+                vm.updateSureOK(result).then(function(val){
+                    if(val.data.retcode===200){
+                        vm.$message.success("删除成功");
+                        vm.getTableByOther();
+                    }else{
+                        vm.$message.error("删除失败");
+                    }
+                })
             },
 
             handleClose(done) {
-                this.$confirm('确认关闭？')
+                this.$confirm('确认删除？')
                     .then(_ => {
                         done();
                     })
