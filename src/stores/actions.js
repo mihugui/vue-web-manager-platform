@@ -48,7 +48,7 @@ export const UPDATE_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
     let tableurl = state.sureurl;
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
-    axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
+    axios.post(url.allurl+tableurl,qs.stringify(data,{arrayFormat: 'brackets'})).then(function(res){
         resolve(res);
     }).catch(function(error){
         reject(error);

@@ -43,6 +43,8 @@
             </el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配
             </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配
+            </el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除
             </el-button>
         </section>
@@ -60,24 +62,24 @@
                 style="z-index: 99999;">
             <span>
                 <div class="dialog-input">
-                    <el-input placeholder="请输入姓名" v-model="dialog.entName">
+                    <el-input placeholder="请输入姓名" v-model="dialog.userRealname">
                         <template slot="prepend">姓名</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入编号" v-model="dialog.entCode">
+                    <el-input placeholder="请输入编号" v-model="dialog.userNo">
                         <template slot="prepend">编号</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入用户名" v-model="dialog.entLerep">
+                    <el-input placeholder="请输入用户名" v-model="dialog.userName">
                         <template slot="prepend">用户名</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
                     <div class="el-input el-input-group el-input-group--prepend">
                     <div class="el-input-group__prepend">用户角色</div>
-                    <el-select v-model="dialog.entType" clearable placeholder="请选择">
+                    <el-select v-model="dialog.userRoleIds" clearable placeholder="请选择">
                         <el-option
                             v-for="item in allRole"
                             :key="item.id"
@@ -93,19 +95,19 @@
                 <!--</el-input>-->
                 <!--</div>-->
                  <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入手机号" v-model="dialog.entNo">
+                    <el-input placeholder="请输入手机号" v-model="dialog.userMobile">
                         <template slot="prepend">手机号</template>
                     </el-input>
                 </div>
                  <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入身份证号" v-model="dialog.entTel">
+                    <el-input placeholder="请输入身份证号" v-model="dialog.userCardno">
                         <template slot="prepend">身份证号</template>
                     </el-input>
                 </div>
                  <div class="dialog-input" style="margin-top: 15px;">
                     <div class="el-input el-input-group el-input-group--prepend">
                     <div class="el-input-group__prepend">入住园区</div>
-                    <el-select v-model="dialog.entType" multiple clearable placeholder="请选择">
+                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
                         <el-option
                             v-for="item in allPlace"
                             :key="item.id"
@@ -176,30 +178,31 @@
             </el-dialog>
 
             <el-dialog
-                :title="title_permission"
-                :visible.sync="dialogVisible_Organization"
-                width="300px"
-                heigth = "80%"
+                :title="title_places"
+                :visible.sync="dialogVisible_places"
+                width="500px"
+                heigth="80%"
                 :modal-append-to-body="false"
-                @close='closeDialog_permission'
+                @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <el-tree
-                    :data="allPermission"
-                    show-checkbox
-                    default-expand-all
-                    node-key="id"
-                    ref="tree"
-                    :default-checked-keys="entIds"
-                    check-strictly
-                    :props="defaultProps"
-                    @check-change="gettreeid"
-                >
-                 </el-tree>
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">归属园区</div>
+                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in allPlace"
+                            :key="item.id"
+                            :label="item.placeName"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                    </div>
+                </div>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_Organization = false">取 消</el-button>
-                <el-button type="primary" @click="sureok">确 定</el-button>
+                <el-button @click="dialogVisible_places = false">取 消</el-button>
+                <el-button type="primary" @click="surePlaces">确 定</el-button>
             </span>
             </el-dialog>
         </div>
@@ -209,6 +212,7 @@
     import Table from '@/components/Table'
     import TreeMenu from '@/components/TreeMenu'
     import {mapGetters, mapActions, mapMutations} from 'vuex'
+    import {base} from '../../axios/base'
     import Vue from 'vue'
 
     export default {
@@ -217,16 +221,18 @@
             return {
                 //弹出框
                 title: '',
+                title_places:'',
                 dialog: {
-                    entName: '',
-                    entCode: '',
-                    entLerep: '',
-                    entType: '',
-                    entNo: '',
-                    entTel: '',
-                    entParentId: '',
-                    businessScope: '',
-                    entDimension: '',
+                    userRealname:'',
+                    userNo:'',
+                    userName:'',
+                    userRoleIds: '',
+                    placeIds: '',
+                    userCardno:'',
+                    userMobile:'',
+                    manageEntId: '',
+                    consumeEntId: '',
+                    userStatus: '',
                 },
                 dialogVisible: false,
                 soururl: '',
@@ -234,6 +240,7 @@
                 //权限弹出框
                 title_permission: '',
                 dialogVisible_permission: false,
+                dialogVisible_places:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -307,7 +314,8 @@
 
                 enttype: '',
                 placename: '',
-                seltable: ''
+                seltable: '',
+                selall:[],
             }
         },
         components: {
@@ -353,18 +361,31 @@
 
             selectedChange(val) {
                 var vm = this;
-                this.seltable = {
-                    "entName": val[0].entName,
-                    "entCode": val[0].entCode,
-                    "entLerep": val[0].entLerep,
-                    "entType": val[0].entType,
-                    "entNo": val[0].entNo,
-                    "entTel": val[0].entTel,
-                    "entParentId": val[0].entParentId,
-                    "businessScope": val[0].businessScope,
-                    "entDimension": val[0].entDimension,
-                    "Id": val[0].id,
-                };
+                this.selall = val;
+                if (val.length > 0) {
+                    let result =[];
+                    let result2 =[];
+                    console.log(val[0].placeIds);
+                    if(val[0].placeIds != null) {
+                        result = base.toNum(val[0].placeIds);
+                        console.log(result);
+                    }
+                    if(val[0].userRoleIds != null) {
+                        result2 = base.toNum(val[0].userRoleIds);
+                    }
+                    this.seltable = {
+                        "userRealname": val[0].userRealname,
+                        "userNo": val[0].userNo,
+                        "userName": val[0].userName,
+                        "userRoleIds": result2,
+                        "placeIds": result,
+                        "userMobile": val[0].userMobile,
+                        "userCardno": val[0].userCardno,
+                        "manageEntId": val[0].manageEntId,
+                        "consumeEntId": val[0].consumeEntId,
+                        "userStatus": val[0].userStatus,
+                        "Id": val[0].id,
+                    };}
                 switch (val.length) {
                     case 0:
                         vm.showEdit = false;
@@ -389,16 +410,21 @@
                 this.page.pageNum = val;
                 this.getTableData(this.page);
             },
+
+            showPlaces(){
+
+            },
+
             showAddModal() {
                 this.closeDialog();
                 this.title = "新增";
-                this.setSureUrl('/enterprise/add');
+                this.setSureUrl('/user/add');
                 this.dialogVisible = true;
             },
             showEditModal() {
                 this.dialog = {...this.seltable};
                 this.title = "编辑";
-                this.setSureUrl('/enterprise/update');
+                this.setSureUrl('/user/update');
                 this.dialogVisible = true;
             },
 
@@ -418,7 +444,21 @@
                 });
             },
             deleteList() {
-
+                let vm = this;
+                this.setSureUrl('/user/delete');
+                let ids = [];
+                for (var item of vm.selall) {
+                    ids.push(item.id)
+                }
+                let result = {'ids': pids}
+                vm.updateSureOK(result).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.$message.success("删除成功");
+                        vm.getTableByOther();
+                    } else {
+                        vm.$message.error("删除失败");
+                    }
+                })
             },
 
             handleClose(done) {
@@ -428,6 +468,10 @@
                     })
                     .catch(_ => {
                     });
+            },
+
+            surePlaces:function(){
+
             },
 
             surePermission:function(){
@@ -445,6 +489,13 @@
 
             sureok: function () {
                 let vm = this;
+                let a = JSON.stringify(vm.dialog.placeIds);
+                let apids = a.substring(1, a.length - 1);
+                vm.dialog.placeIds=apids;
+                let b = JSON.stringify(vm.dialog.userRoleIds);
+                let bpids = b.substring(1, a.length - 1);
+                vm.dialog.userRoleIds=bpids;
+
                 vm.updateSureOK(vm.dialog).then(function (val) {
                     if (val.data.retcode === 200) {
                         vm.dialogVisible = false;

@@ -285,8 +285,6 @@
                 for( var item of vm.selall){
                     ids.push(item.id)
                 }
-                let a = JSON.stringify(ids);
-                let pids = a.substring(1,a.length-1);
                 let result = {'ids': pids}
                 vm.updateSureOK(result).then(function(val){
                     if(val.data.retcode===200){
