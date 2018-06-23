@@ -127,6 +127,20 @@ export const GET_ROLE_PERMISSION = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
+export const GET_SUSER_PERMISSION = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+"/user/findUserResource",qs.stringify(data)).then(function(res) {
+            if (res.data.retcode === 200) {
+                resolve(res);
+            }
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
 export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     console.log(state.permissionUrl);
