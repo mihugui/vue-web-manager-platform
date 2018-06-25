@@ -35,17 +35,17 @@
             </el-form>
         </section>
         <section class="content-operate">
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile">导入</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/user/add'}).length!=0" >新增</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/edit'}).length!=0)" @click="showEditModal">编辑
             </el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配
             </el-button>
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="pwdreset">密码重置-->
             <!--</el-button>-->
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配-->
             <!--</el-button>-->
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit" @click="handleClose(deleteList)">删除
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/del'}).length!=0)" @click="handleClose(deleteList)">删除
             </el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
@@ -57,7 +57,6 @@
                 width="850px"
                 heigth="80%"
                 :modal-append-to-body="false"
-                :before-close="handleClose"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
@@ -344,7 +343,8 @@
                 tableData: 'tableData',
                 total: 'total',
                 dicts: 'dicts',
-                allPermission :'permission'
+                allPermission :'permission',
+                button:'buttonpermission'
             }),
         },
         methods: {
@@ -506,6 +506,7 @@
                     if(val.data.retcode = 200){
                         vm.$message.success(val.data.data);
                         vm.dialogVisible_permission = false;
+                        sessionStorage.removeItem("permission");
                     }else{
                         vm.$message.error(val.data.data);
                         vm.dialogVisible_permission = false;
@@ -583,7 +584,7 @@
         },
     }
 </script>
-<style>
+<style scoped>
     .content-search {
         text-align: left;
         background-color: #fff;

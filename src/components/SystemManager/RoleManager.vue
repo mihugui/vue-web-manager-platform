@@ -16,10 +16,10 @@
             </el-form>
         </section>
         <section class="content-operate">
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配</el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="handleClose(deleteList)">删除</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="button.filter(btn =>{return btn.path === '/role/add'}).length!=0" @click="showAddModal">新增</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/role/del'}).length!=0)" @click="handleClose(deleteList)">删除</el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
         <div>
@@ -179,7 +179,8 @@
                 tableData:'tableData',
                 total:'total',
                 dicts:'dicts',
-                allPermission :'permission'
+                allPermission :'permission',
+                button:'buttonpermission'
             }),
         },
         methods:{
@@ -310,6 +311,7 @@
                     if(val.data.retcode = 200){
                         vm.$message.success(val.data.data);
                         vm.dialogVisible_permission = false;
+                        sessionStorage.removeItem("permission");
                     }else{
                         vm.$message.error(val.data.data);
                         vm.dialogVisible_permission = false;
@@ -383,7 +385,7 @@
         },
     }
 </script>
-<style>
+<style scoped>
     .content-search {
         text-align: left;
         background-color: #fff;
