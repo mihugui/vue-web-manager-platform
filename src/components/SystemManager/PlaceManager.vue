@@ -18,7 +18,7 @@
     <section class="content-operate">
     <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/places/add'}).length!=0">新增</el-button>
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal" v-else-if="button.filter(btn =>{return btn.path === '/places/edit'}).length!=0">编辑</el-button>
-    <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList" v-else-if="button.filter(btn =>{return btn.path === '/places/del'}).length!=0">删除</el-button>
+    <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="handleClose(deleteList)" v-else-if="button.filter(btn =>{return btn.path === '/places/del'}).length!=0">删除</el-button>
     </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
     <div>
@@ -123,7 +123,8 @@
 
                 param:null,
                 placename:'',
-                seltable:''
+                seltable:'',
+                selall:[],
             }
         },
         components:{
@@ -149,6 +150,7 @@
 
             selectedChange(val){
                 var vm = this;
+                this.selall = val;
                 if(val.length>0){
                 this.seltable ={
                     "placeName":val[0].placeName,
@@ -195,12 +197,21 @@
             },
             deleteList(){
 
+                let vm = this;
                 this.setSureUrl('/places/delete');
-                this.$confirm('确认删除？')
-                    .then(_ => {
-                        console.log(123);
-                    })
-                    .catch(_ => {});
+                var ids = new Array();
+                for (var item of vm.selall) {
+                    ids.push(item.id)
+                }
+                let result = {'ids':ids}
+                vm.updateSureOK(result).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.$message.success("删除成功");
+                        vm.getTableByOther();
+                    } else {
+                        vm.$message.error("删除失败");
+                    }
+                })
             },
 
             handleClose(done) {
