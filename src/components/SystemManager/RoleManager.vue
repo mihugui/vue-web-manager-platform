@@ -281,7 +281,7 @@
             deleteList(){
                 let vm = this;
                 this.setSureUrl('/role/delete');
-                let ids = [];
+                let ids = new Array();
                 for( var item of vm.selall){
                     ids.push(item.id)
                 }

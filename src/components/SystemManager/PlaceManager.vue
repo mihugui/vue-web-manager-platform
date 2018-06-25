@@ -17,7 +17,7 @@
     </section>
     <section class="content-operate">
     <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/places/add'}).length!=0">新增</el-button>
-    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal" v-else-if="button.filter(btn =>{return btn.path === '/places/edit'}).length!=0">编辑</el-button>
+    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="handleClose(deleteList)" v-else-if="button.filter(btn =>{return btn.path === '/places/del'}).length!=0">删除</el-button>
     </section>
     <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>

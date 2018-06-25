@@ -440,11 +440,11 @@
             deleteList() {
                 let vm = this;
                 this.setSureUrl('/enterprise/delete');
-                let ids = [];
+                let ids = new Array();
                 for (var item of vm.selall) {
                     ids.push(item.id)
                 }
-                let result = {'ids': pids}
+                let result = {'ids': ids}
                 vm.updateSureOK(result).then(function (val) {
                     if (val.data.retcode === 200) {
                         vm.$message.success("删除成功");
@@ -545,14 +545,14 @@
             },
 
             closeDialog: function () {
-                this.entName = '';
-                this.entCode = '';
-                this.entLerep = '';
-                this.entType = '';
-                this.entNo = '';
-                this.entTel = '';
-                this.entParentId = '';
-                this.placeIds = [];
+                this.dialog.entName = '';
+                this.dialog.entCode = '';
+                this.dialog.entLerep = '';
+                this.dialog.entType = '';
+                this.dialog.entNo = '';
+                this.dialog.entTel = '';
+                this.dialog.entParentId = '';
+                this.dialog.placeIds = [];
                 if (this.dialog.Id) {
                     delete this.dialog.Id;
                 }

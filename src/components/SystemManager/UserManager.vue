@@ -41,9 +41,11 @@
             </el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配
             </el-button>
+            <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="pwdreset">密码重置-->
+            <!--</el-button>-->
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配-->
             <!--</el-button>-->
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit" @click="handleClose(deleteList)">删除
             </el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
@@ -137,6 +139,19 @@
                             :key="item.id"
                             :label="item.entName"
                             :value="item.id">
+                        </el-option>
+                    </el-select>
+                    </div>
+                </div>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">用户状态</div>
+                    <el-select v-model="dialog.userStatus" clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in dicts.statue"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.code">
                         </el-option>
                     </el-select>
                     </div>
@@ -452,13 +467,9 @@
             deleteList() {
                 let vm = this;
                 this.setSureUrl('/user/delete');
-                let ids = [];
-                for (var item of vm.selall) {
-                    ids.push(item.id)
-                }
-                let result = {'ids': pids}
+                let result = {'id': vm.selall[0].id}
                 vm.updateSureOK(result).then(function (val) {
-                    if (val.data.retcode === 200) {
+                    if (val.data.returnCode === "0") {
                         vm.$message.success("删除成功");
                         vm.getTableByOther();
                     } else {
@@ -467,8 +478,12 @@
                 })
             },
 
+            pwdreset(){
+
+            },
+
             handleClose(done) {
-                this.$confirm('确认关闭？')
+                this.$confirm('确认删除？')
                     .then(_ => {
                         done();
                     })
@@ -508,7 +523,7 @@
                 vm.dialog.userRoleIds=bpids;
 
                 vm.updateSureOK(vm.dialog).then(function (val) {
-                    if (val.data.retcode === 200) {
+                    if (val.data.returnCode === "0") {
                         vm.dialogVisible = false;
                         vm.getTableByOther();
                     }
@@ -516,16 +531,16 @@
             },
 
             closeDialog: function () {
-                this.userRealname=''
-                this.userNo=''
-                this.userName=''
-                this.userRoleIds= ''
-                this.placeIds= ''
-                this.userIdno=''
-                this.userMobile=''
-                this.manageEntId= ''
-                this.consumeEntId= ''
-                this.userStatus= ''
+                this.dialog.userRealname=''
+                this.dialog.userNo=''
+                this.dialog.userName=''
+                this.dialog.userRoleIds= ''
+                this.dialog.placeIds= ''
+                this.dialog.userIdno=''
+                this.dialog.userMobile=''
+                this.dialog.manageEntId= ''
+                this.dialog.consumeEntId= ''
+                this.dialog.userStatus= ''
                 if (this.dialog.Id) {
                     delete this.dialog.Id;
                 }
