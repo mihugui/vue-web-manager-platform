@@ -7,16 +7,38 @@
                </el-form-item>
            </el-form>
        </section>
+       <!--<section>-->
+           <!--<el-row>-->
+               <!--<el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>-->
+               <!--<el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>-->
+               <!--<el-button type="primary" size="mini" icon="el-icon-tickets" @click="showexcel" v-if="showlook">查看子表</el-button>-->
+               <!--<el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>-->
+           <!--</el-row>-->
+       <!--</section>-->
        <section>
-           <el-row>
-               <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>
-               <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>
-               <el-button type="primary" size="mini" icon="el-icon-tickets" >查看子表</el-button>
-               <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>
-           </el-row>
-       </section>
-       <section>
-           <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+           <div>
+               <div style="display: inline-block;float: left" :style="stylefa">
+                   <section>
+                       <el-row>
+                           <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>
+                           <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>
+                           <el-button type="primary" size="mini" icon="el-icon-tickets" @click="showexcel" v-if="showlook">查看子表</el-button>
+                           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>
+                       </el-row>
+                   </section>
+                   <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+               </div>
+               <div style="display: inline-block;float: left;width: 50%" v-if="showson">
+                   <section>
+                       <el-row>
+                           <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>
+                           <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>
+                           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>
+                       </el-row>
+                   </section>
+                   <mini-table :tableData="tableDatason" :tableKey="tableKeyson" :total="totalson" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+               </div>
+           </div>
            <div>
                <el-dialog
                    :title="title"
@@ -49,56 +71,6 @@
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
                </el-dialog>
-
-
-               <!--<el-dialog-->
-                   <!--title="查看字表"-->
-                   <!--:modal-append-to-body="false"-->
-                   <!--:visible.sync="dialogVisible_1"-->
-                   <!--width="60%"-->
-                   <!--:before-close="handleClose_1">-->
-            <!--<span>-->
-                <!--<el-form ref="form"  label-width="80px">-->
-                       <!--<el-input placeholder="请输入资源名称" v-model="form1.resourceName" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">资源名称</template>-->
-                      <!--</el-input>-->
-                      <!--<el-input placeholder="请输入组件名称" v-model="form1.component" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">组件名称</template>-->
-                      <!--</el-input>-->
-                     <!--<el-input placeholder="请输入资源标识符" v-model="form1.resourceCode" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">资源标识符</template>-->
-                      <!--</el-input>-->
-                     <!--<el-input placeholder="请输入排序号" v-model="form1.resourceIndex" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">排序号</template>-->
-                      <!--</el-input>-->
-                     <!--<el-input placeholder="请输入图标" v-model="form1.resourceIcon" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">图标</template>-->
-                      <!--</el-input>-->
-                    <!--<el-input placeholder="请输入访问地址" v-model="form1.resourceUrl" style="margin-bottom: 10px">-->
-                         <!--<template slot="prepend">访问地址</template>-->
-                      <!--</el-input>-->
-                <!--</el-form>-->
-                <!--<el-checkbox-group v-model="checkList">-->
-                    <!--<el-row style="margin-top: 10px">-->
-                             <!--<el-switch-->
-                                 <!--style="margin-right: 10px"-->
-                                 <!--v-model="form1.value3"-->
-                                 <!--active-text="应用级资源"-->
-                                 <!--inactive-text="按钮">-->
-                        <!--</el-switch>-->
-                            <!--<el-switch-->
-                                <!--v-model="form1.isShow"-->
-                                <!--active-text="显示"-->
-                                <!--inactive-text="不显示">-->
-                        <!--</el-switch>-->
-                    <!--</el-row>-->
-                <!--</el-checkbox-group>-->
-            <!--</span>-->
-                   <!--<span slot="footer" class="dialog-footer">-->
-    <!--<el-button @click="close">取 消</el-button>-->
-    <!--<el-button type="primary" @click="makesure_1">确 定</el-button>-->
-            <!--</span>-->
-               <!--</el-dialog>-->
            </div>
        </section>
    </div>
@@ -119,13 +91,35 @@
                 dialogVisible:false,
                 showEdit:false,
                 showDetele:false,
+                showson: false,
+                showlook: false,
+                stylefa: 'width:100%',
                 url:'/dictGroup/list',
+                urlson:'/dict/list',
                 page:{
                     page:1,
                     pageSize:20,
                     name: ''
                 },
+
                 tableKey: [{
+                    name: '序号',
+                    type: 'index',
+                    operate: true
+                },{
+                    name: '字典类型名称',
+                    value: 'name',
+                    operate: false
+                },{
+                    name: '字典类型编码',
+                    value: 'code',
+                    operate: false
+                },{
+                    name: '字典类型描述',
+                    value: 'description',
+                    operate: true
+                }],
+                tableKeyson: [{
                     name: '序号',
                     type: 'index',
                     operate: true
@@ -151,7 +145,9 @@
         computed:{
             ...mapGetters({
                 tableData:'tableData',
+//                tableDatason:'tableDatason',
                 total:'total',
+                totalson:'total',
             }),
         },
         methods:{
@@ -167,16 +163,46 @@
                 this.page.name = val;
                 this.getTableData(this.page);
             },
+            showexcel(){
+                axios({
+                    method: 'post',
+                    url:url.allurl+'/dict/list',
+                    params: {
+                        page:1,
+                        pageSize:20,
+                        code: this.codeone
+                    }
+                }).then((res)=>{
+                  let  vm = this
+                    if (res.data.retcode === 200) {
+                        console.log(res);
+//                        vm.$message.success("删除成功");
+//                        vm.getTableByOther();
+                    } else {
+//                        vm.$message.warning("删除失败");
+                    }
+                })
+//                this.setTableUrl(this.urlson);
+//                this.getTableData({page:1,pageSize:20, code: this.codeone});
+                if(this.showson){
+                    this.showson = false;
+                    this.stylefa= 'width:100%';
+                } else {
+                    this.showson = true;
+                    this.stylefa= 'width:50%';
+                }
+            },
             selectedChange(val){
                 var vm = this;
                 if(val.length>0){
                     console.log(val)
                     let c = [];
                     val.forEach((item, index) =>{
-                        c.push(item.id)
+                            c.push(item.id)
                     });
                     console.log(JSON.stringify(c))
-                    this.selectid = JSON.stringify(c)
+                    this.selectid = JSON.stringify(c);
+                    this.codeone =  JSON.stringify(val[0].code);
                     this.seltable ={
                         "code":val[0].code,
                         "description":val[0].description,
@@ -187,14 +213,21 @@
                     case 0:
                         vm.showEdit = false;
                         vm.showDetele = false;
+                        vm.showlook = false
+                        this.showson = false;
+                        this.stylefa= 'width:100%';
                         break;
                     case 1:
                         vm.showEdit = true
                         vm.showDetele = true;
+                        vm.showlook = true
                         break;
                     default:
                         vm.showEdit = false;
                         vm.showDetele = true;
+                        vm.showlook = false;
+                        this.showson = false;
+                        this.stylefa= 'width:100%';
                 }
             },
 
@@ -233,6 +266,8 @@
                             if (res.data.retcode === 200) {
                                 vm.$message.success("删除成功");
                                 vm.getTableByOther();
+                            } else {
+                                vm.$message.warning("删除失败");
                             }
                         })
 
@@ -265,6 +300,9 @@
 
             getTableByOther:function(){
                 this.getTableData(this.page);
+            },
+            getTableSON:function(){
+                this.getTableData(this.page1);
             }
 
         },
