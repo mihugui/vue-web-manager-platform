@@ -6,26 +6,23 @@
                     label="姓名" label-width="80px">
                     <el-input
                         placeholder="请输入姓名"
+                        v-model="username"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item
+                    label="园区名称" label-width="80px">
+                    <el-input
+                        placeholder="请输入园区名称"
                         v-model="placename"
                         clearable>
                     </el-input>
                 </el-form-item>
                 <el-form-item
-                    label="所在园区" label-width="80px">
-                    <el-select v-model="enttype" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in dicts.enttype"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.code">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item
                     label="状态" label-width="80px">
-                    <el-select v-model="enttype" clearable placeholder="请选择">
+                    <el-select v-model="statue" clearable placeholder="请选择">
                         <el-option
-                            v-for="item in dicts.enttype"
+                            v-for="item in dicts.statue"
                             :key="item.id"
                             :label="item.name"
                             :value="item.code">
@@ -33,18 +30,19 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
                 </el-form-item>
             </el-form>
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal">新增</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile">导入</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showEditModal">编辑
             </el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPerMission">权限分配
             </el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配
-            </el-button>
+            <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配-->
+            <!--</el-button>-->
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele" @click="deleteList">删除
             </el-button>
         </section>
@@ -79,7 +77,7 @@
                 <div class="dialog-input" style="margin-top: 15px;">
                     <div class="el-input el-input-group el-input-group--prepend">
                     <div class="el-input-group__prepend">用户角色</div>
-                    <el-select v-model="dialog.userRoleIds" clearable placeholder="请选择">
+                    <el-select v-model="dialog.userRoleIds" multiple clearable placeholder="请选择">
                         <el-option
                             v-for="item in allRole"
                             :key="item.id"
@@ -100,7 +98,7 @@
                     </el-input>
                 </div>
                  <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入身份证号" v-model="dialog.userCardno">
+                    <el-input placeholder="请输入身份证号" v-model="dialog.userIdno">
                         <template slot="prepend">身份证号</template>
                     </el-input>
                 </div>
@@ -213,6 +211,7 @@
     import TreeMenu from '@/components/TreeMenu'
     import {mapGetters, mapActions, mapMutations} from 'vuex'
     import {base} from '../../axios/base'
+    import store from '../../stores'
     import Vue from 'vue'
 
     export default {
@@ -228,7 +227,7 @@
                     userName:'',
                     userRoleIds: '',
                     placeIds: '',
-                    userCardno:'',
+                    userIdno:'',
                     userMobile:'',
                     manageEntId: '',
                     consumeEntId: '',
@@ -276,7 +275,7 @@
                     operate: true
                 }, {
                     name: '用户角色 ',
-                    value: 'placeArea',
+                    value: 'userRoleNames',
                     operate: true,
                 }, {
                     name: '手机',
@@ -303,17 +302,20 @@
                     value: 'userStatus',
                     operate: true,
                     formatter:function(row){
-                        if(row.userStatus==0){
-                            return '启用'
-                        }else{
-                            return '禁用'
+                        for(let type  of store.getters.dicts.statue){
+                            if(type.code === row.userStatus){
+                                return type.name
+                            }
                         }
                     }
                 }],
                 param: null,
 
                 enttype: '',
-                placename: '',
+                placeid: '',
+                placename:'',
+                username:'',
+                statue:'',
                 seltable: '',
                 selall:[],
             }
@@ -380,7 +382,7 @@
                         "userRoleIds": result2,
                         "placeIds": result,
                         "userMobile": val[0].userMobile,
-                        "userCardno": val[0].userCardno,
+                        "userIdno": val[0].userIdno,
                         "manageEntId": val[0].manageEntId,
                         "consumeEntId": val[0].consumeEntId,
                         "userStatus": val[0].userStatus,
@@ -404,11 +406,15 @@
             sizeChange(val) {
                 this.page.pageSize = val;
 
-                this.getTableData({...this.page, ...this.placename});
+                this.getTableData({...this.page, "userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
             },
             currentChange(val) {
                 this.page.pageNum = val;
-                this.getTableData(this.page);
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
+            },
+
+            searchTable(){
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
             },
 
             showPlaces(){
@@ -474,6 +480,11 @@
 
             },
 
+
+            importfile:function(){
+
+            },
+
             surePermission:function(){
                 let vm = this ;
                 this.setPermission(this.params).then(function(val){
@@ -493,7 +504,7 @@
                 let apids = a.substring(1, a.length - 1);
                 vm.dialog.placeIds=apids;
                 let b = JSON.stringify(vm.dialog.userRoleIds);
-                let bpids = b.substring(1, a.length - 1);
+                let bpids = b.substring(1, b.length - 1);
                 vm.dialog.userRoleIds=bpids;
 
                 vm.updateSureOK(vm.dialog).then(function (val) {
@@ -505,15 +516,16 @@
             },
 
             closeDialog: function () {
-                this.entName = '';
-                this.entCode = '';
-                this.entLerep = '';
-                this.entType = '';
-                this.entNo = '';
-                this.entTel = '';
-                this.entParentId = '';
-                this.businessScope = '';
-                this.entDimension = '';
+                this.userRealname=''
+                this.userNo=''
+                this.userName=''
+                this.userRoleIds= ''
+                this.placeIds= ''
+                this.userIdno=''
+                this.userMobile=''
+                this.manageEntId= ''
+                this.consumeEntId= ''
+                this.userStatus= ''
                 if (this.dialog.Id) {
                     delete this.dialog.Id;
                 }

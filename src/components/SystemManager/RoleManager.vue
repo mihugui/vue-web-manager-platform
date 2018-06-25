@@ -319,6 +319,29 @@
 
             sureok:function(){
                 let vm =this;
+
+                if(vm.dialog.placeName == '')
+                {
+                    vm.$message.error("角色名称不能为空");
+                    return;
+                }
+                if(vm.dialog.placeCode == '')
+                {
+                    vm.$message.error("园区编号不能为空");
+                    return;
+                }
+
+                if(vm.dialog.placeAddress == '')
+                {
+                    vm.$message.error("园区地址不能为空");
+                    return;
+                }
+                if(vm.dialog.placeArea == '')
+                {
+                    vm.$message.error("园区面积不能为空");
+                    return;
+                }
+
                 vm.updateSureOK(vm.dialog).then(function(val){
                     if(val.data.retcode===200){
                         vm.dialogVisible=false;

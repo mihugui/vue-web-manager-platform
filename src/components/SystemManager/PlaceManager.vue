@@ -11,7 +11,7 @@
             </el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" icon="el-icon-search" >查询</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
         </el-form-item>
     </el-form>
     </section>
@@ -48,7 +48,7 @@
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入面积" v-model="dialog.placeArea">
+                    <el-input type="number" placeholder="请输入面积" v-model="dialog.placeArea">
                         <template slot="prepend">园区面积</template>
                         <el-button slot="append">平方</el-button>
                     </el-input>
@@ -183,6 +183,11 @@
                 this.page.pageNum = val;
                 this.getTableData(this.page);
             },
+
+            searchTable(){
+                this.getTableData({...this.page,"placeName":this.placename});
+            },
+
             showAddModal(){
                 this.closeDialog();
                 this.title="新增";
@@ -223,6 +228,34 @@
             },
             sureok:function(){
                 let vm =this;
+
+                if(vm.dialog.placeName == '')
+                {
+                    vm.$message.error("园区名称不能为空");
+                    return;
+                }
+                if(vm.dialog.placeCode == '')
+                {
+                    vm.$message.error("园区编号不能为空");
+                    return;
+                }
+
+                if(vm.dialog.placeAddress == '')
+                {
+                    vm.$message.error("园区地址不能为空");
+                    return;
+                }
+                if(vm.dialog.placeArea == '')
+                {
+                    vm.$message.error("园区面积不能为空");
+                    return;
+                }
+                if(vm.dialog.placeDescription == '')
+                {
+                    vm.$message.error("园区描述不能为空");
+                    return;
+                }
+
                 vm.updateSureOK(vm.dialog).then(function(val){
                     if(val.data.retcode===200){
                         vm.dialogVisible=false;

@@ -98,7 +98,7 @@
                             vm.$router.push('/');
                         });
                     }else{
-                        vm.$message.error('登录异常！请稍后重试');
+                        vm.$message.error(res.data.retmsg);
                         return Promise.reject({
                             message: '登录异常！'
                         });

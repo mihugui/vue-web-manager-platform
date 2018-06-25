@@ -6,7 +6,7 @@
                     label="企业名称" label-width="80px">
                     <el-input
                         placeholder="请输入企业名称"
-                        v-model="placename"
+                        v-model="entName"
                         clearable>
                     </el-input>
                 </el-form-item>
@@ -22,7 +22,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
                 </el-form-item>
             </el-form>
         </section>
@@ -205,6 +205,7 @@
     import TreeMenu from '@/components/TreeMenu'
     import {mapGetters, mapActions, mapMutations} from 'vuex'
     import {base} from '../../axios/base'
+    import store from '../../stores'
 
     export default {
         name: "EnterpriseManager",
@@ -274,10 +275,10 @@
                     value: 'placeArea',
                     operate: true,
                     formatter: function (row) {
-                        if (row.entType === 'in') {
-                            return "内部企业"
-                        } else {
-                            return "外部企业"
+                        for(let type  of store.getters.dicts.enttype){
+                            if(type.code === row.entType){
+                                return type.name
+                            }
                         }
                     }
                 }, {
@@ -300,7 +301,7 @@
                 param: null,
 
                 enttype: '',
-                placename: '',
+                entName:'',
                 seltable: '',
                 selall: []
             }
@@ -383,12 +384,17 @@
             sizeChange(val) {
                 this.page.pageSize = val;
 
-                this.getTableData({...this.page, ...this.placename});
+                this.getTableData({...this.page, ...this.enttype,...this.entName});
             },
             currentChange(val) {
                 this.page.pageNum = val;
-                this.getTableData(this.page);
+                this.getTableData({...this.page, ...this.enttype,...this.entName});
             },
+
+            searchTable(){
+                this.getTableData({...this.page,"entType":this.enttype,"entName":this.entName});
+            },
+
             showAddModal() {
                 this.closeDialog();
                 this.title = "新增";
@@ -490,6 +496,43 @@
 
             sureok: function () {
                 let vm = this;
+                delete vm.dialog.placeIds;
+
+                if(vm.dialog.entName == '')
+                {
+                    vm.$message.error("企业名称不能为空");
+                    return;
+                }
+                if(vm.dialog.entCode == '')
+                {
+                    vm.$message.error("企业编号不能为空");
+                    return;
+                }
+
+                if(vm.dialog.entLerep == '')
+                {
+                    vm.$message.error("企业法人不能为空");
+                    return;
+                }
+                if(vm.dialog.entType == '')
+                {
+                    vm.$message.error("企业类型不能为空");
+                    return;
+                }
+                if(vm.dialog.entNo == '')
+                {
+                    vm.$message.error("企业税号不能为空");
+                    return;
+                }
+                if(vm.dialog.entTel == '')
+                {
+                    vm.$message.error("负责人电话不能为空");
+                    return;
+                }else if(vm.dialog.entTel.length==11){
+                    vm.$message.error("负责人电话长度为11位");
+                    return;
+                }
+
                 vm.updateSureOK(vm.dialog).then(function (val) {
                     if (val.data.retcode === 200) {
                         vm.dialogVisible = false;
@@ -509,7 +552,6 @@
                 this.entNo = '';
                 this.entTel = '';
                 this.entParentId = '';
-                this.businessScope = '';
                 this.placeIds = [];
                 if (this.dialog.Id) {
                     delete this.dialog.Id;
