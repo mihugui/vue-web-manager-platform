@@ -15,7 +15,11 @@ global.install = (Vue, router) => {
         //对数据在请求值服务器前做一次处理
         /*..........*/
         if (sessionStorage.getItem("token")) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
-            config.data = config.data+'&token='+sessionStorage.getItem("token");
+            if(config.data === undefined){
+                config.data ='token=' + sessionStorage.getItem("token");
+            }else {
+                config.data = config.data + '&token=' + sessionStorage.getItem("token");
+            }
         }
         return config
     })

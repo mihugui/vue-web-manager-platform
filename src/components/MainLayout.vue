@@ -6,6 +6,18 @@
                 <div class="fl system">
                     <mini-system :SystemTitle="SystemTitle" :changeSystem="changeSystem"></mini-system>
                 </div>
+                <div class="fr">
+                <el-menu  class="el-menu-demo"
+                          mode="horizontal"
+                          background-color="#36a8fc"
+                          text-color="#fff"
+                          active-text-color="#ffd04b" >
+                <el-submenu index="1">
+                    <template slot="title">{{username}}</template>
+                    <el-menu-item index="1-1" @click="logout">退出</el-menu-item>
+                </el-submenu>
+                </el-menu>
+            </div>
             </div>
         </el-header>
         <el-container class="maintype">
@@ -19,15 +31,19 @@
 <script>
     import SystemTitle from '@/components/SystemTitle'
     import AsideTitle from '@/components/AsideTitle'
+    import {loginpage} from '../axios/Login'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "MainLayout",
         data(){
             return {
                 isCollapse:true,
-                myWidth:"65px"
+                myWidth:"65px",
+                username:sessionStorage.getItem("username")
             }
         },
+
+
         methods:{
             changertitle(){
                 if(window.innerWidth>800) {
@@ -41,6 +57,10 @@
             },
             changeSystem:function(val){
                 this.setSystemTitle(val);
+            },
+            logout:function(){
+                loginpage.logout();
+                this.$router.push('/login')
             },
             ...mapActions({
                 getUserPermission: 'GET_USER_PERMISSION'

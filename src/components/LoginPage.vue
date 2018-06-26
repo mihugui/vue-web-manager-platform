@@ -61,8 +61,8 @@
             }),
 
             ...mapMutations({
-                setUserRoutes : 'SET_USER_ROUTES'
-
+                setUserRoutes : 'SET_USER_ROUTES',
+                setUserName : 'SET_USER_NAME'
             })
 
         },
@@ -88,13 +88,13 @@
                 loginpage.loginget(loginParams).then(res => {
                     vm.isBtnLoading = false;
                     if(res.data.retcode==200){
-                        sessionStorage.setItem("token",res.data.data);
+                        let result = res.data.data.split(",");
+                        sessionStorage.setItem("token",result[0]);
+                        sessionStorage.setItem("username",result[1]);
                         vm.getDictsData();
                         Permission.getUserPermission(1).then(function(val){
                             let userRoutes = Permission.getrouter(val,vm.myComponents);
-                            //console.log(userRoutes)
                             vm.$router.addRoutes(userRoutes);
-                            //vm.setUserRoutes(true);
                             vm.$router.push('/');
                         });
                     }else{

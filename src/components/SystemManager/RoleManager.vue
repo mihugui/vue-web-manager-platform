@@ -286,7 +286,7 @@
                 for( var item of vm.selall){
                     ids.push(item.id)
                 }
-                let result = {'ids': pids}
+                let result = {'ids': ids}
                 vm.updateSureOK(result).then(function(val){
                     if(val.data.retcode===200){
                         vm.$message.success("删除成功");

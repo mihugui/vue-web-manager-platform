@@ -10,9 +10,9 @@ import global from './globbal/index'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'font-awesome/css/font-awesome.css'
+import $ from 'jquery'
 
-
-Vue.config.productionTip = true
+Vue.config.productionTip = false
 
 
 const options = { name: 'lodash' }

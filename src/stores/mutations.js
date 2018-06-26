@@ -66,7 +66,10 @@ const mutations = {
 
     [types.SET_PERMISSION_URL](status,data){
         status.permissionUrl = data;
-    }
+    },
+
+
+
 
 
 

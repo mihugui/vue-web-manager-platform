@@ -530,7 +530,7 @@
                 {
                     vm.$message.error("负责人电话不能为空");
                     return;
-                }else if(vm.dialog.entTel.length==11){
+                }else if(vm.dialog.entTel.length !=11){
                     vm.$message.error("负责人电话长度为11位");
                     return;
                 }

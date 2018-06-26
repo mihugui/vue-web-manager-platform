@@ -36,7 +36,7 @@
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/user/add'}).length!=0" >新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>
+            <!--<el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>-->
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/edit'}).length!=0)" @click="showEditModal">编辑
             </el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配
@@ -217,6 +217,60 @@
                 <el-button type="primary" @click="surePlaces">确 定</el-button>
             </span>
             </el-dialog>
+            <el-dialog
+                :title="title_places"
+                :visible.sync="dialogVisible_places"
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                @close='closeDialog'
+                style="z-index: 99999;">
+            <span>
+                <div class="dialog-input" style="margin-top: 15px;">
+                    <div class="el-input el-input-group el-input-group--prepend">
+                    <div class="el-input-group__prepend">归属园区</div>
+                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
+                        <el-option
+                            v-for="item in allPlace"
+                            :key="item.id"
+                            :label="item.placeName"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+                    </div>
+                </div>
+            </span>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible_places = false">取 消</el-button>
+                <el-button type="primary" @click="surePlaces">确 定</el-button>
+            </span>
+            </el-dialog>
+            <el-dialog
+                :title="title_file"
+                :visible.sync="dialogVisible_file"
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                @close='closeDialog'
+                style="z-index: 99999;">
+            <span>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                    <div data-v-f48b85f8="" class="el-input el-input-group el-input-group--append el-input-group--prepend">
+                        <div class="el-input-group__prepend">导入文件</div>
+                        <form id="tf" action="/user/importUser"  method="post" enctype ="multipart/form-data" >
+                        <input type="file" name="file" autocomplete="off" placeholder="请导入文件" class="el-input__inner" @change="getFile">
+                        </form>
+                        <div class="el-input-group__append">
+                        <a data-v-f48b85f8="" target="_blank" :href="downurl" class="el-icon-download" style="color: rgb(144, 147, 153);"></a>
+                        </div>
+                    </div>
+                </div>
+            </span>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible_file = false">取 消</el-button>
+                <el-button type="primary" @click="upfile">确 定</el-button>
+            </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -226,6 +280,8 @@
     import {mapGetters, mapActions, mapMutations} from 'vuex'
     import {base} from '../../axios/base'
     import store from '../../stores'
+    import geturl from '../../globbal/url'
+    import axios from 'axios'
     import Vue from 'vue'
 
     export default {
@@ -235,12 +291,13 @@
                 //弹出框
                 title: '',
                 title_places:'',
+                title_file:"导入文件",
                 dialog: {
                     userRealname:'',
                     userNo:'',
                     userName:'',
-                    userRoleIds: '',
-                    placeIds: '',
+                    userRoleIds: [],
+                    placeIds: [],
                     userIdno:'',
                     userMobile:'',
                     manageEntId: '',
@@ -249,11 +306,13 @@
                 },
                 dialogVisible: false,
                 soururl: '',
+                downurl:'',
 
                 //权限弹出框
                 title_permission: '',
                 dialogVisible_permission: false,
                 dialogVisible_places:false,
+                dialogVisible_file:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -268,8 +327,8 @@
                     page: 1,
                     pageSize: 20,
                 },
-                showEdit: true,
-                showDetele: true,
+                showEdit: false,
+                showDetele: false,
                 url: '/user/query',
                 tableKey: [{
                     name: '序号',
@@ -332,6 +391,7 @@
                 statue:'',
                 seltable: '',
                 selall:[],
+                files:'',
             }
         },
         components: {
@@ -382,7 +442,6 @@
                 if (val.length > 0) {
                     let result =[];
                     let result2 =[];
-                    console.log(val[0].placeIds);
                     if(val[0].placeIds != null) {
                         result = base.toNum(val[0].placeIds);
                         console.log(result);
@@ -478,9 +537,6 @@
                 })
             },
 
-            pwdreset(){
-
-            },
 
             handleClose(done) {
                 this.$confirm('确认删除？')
@@ -497,7 +553,9 @@
 
 
             importfile:function(){
-
+                this.setSureUrl('');
+                this.downurl = geturl.allurl + '/templateFile/userTemplate.xlsx';
+                this.dialogVisible_file = true;
             },
 
             surePermission:function(){
@@ -514,8 +572,59 @@
                 })
             },
 
+            getFile:function(e){
+                 this.files = e.target.files;
+
+            },
+
+            upfile:function(){
+                let vm = this;
+                let param = new FormData();
+                console.log(vm.files[0]);
+                param.append('file', vm.files[0])
+                // let config = {
+                //     headers: {'Content-Type': 'multipart/form-data'}
+                // }
+                // axios.post(geturl.allurl+"/user/importUser?token="+sessionStorage.getItem('token'), param, config).then(function(val){
+                //     console.log(val)
+                // }).catch(function(error){
+                //     console.log(error)
+                // });
+                $('#tf').ajaxSubmit();
+            },
+
+            downtemp:function(){
+
+            },
+
             sureok: function () {
                 let vm = this;
+
+                if(vm.dialog.userRealname == '')
+                {
+                    vm.$message.error("用户姓名不能为空");
+                    return;
+                }
+                if(vm.dialog.userNo == '')
+                {
+                    vm.$message.error("用户编号不能为空");
+                    return;
+                }
+
+                if(vm.dialog.userName == '')
+                {
+                    vm.$message.error("用户名不能为空");
+                    return;
+                }
+                if(vm.dialog.userMobile == '')
+                {
+                    vm.$message.error("联系人电话不能为空");
+                    return;
+                }else if(vm.dialog.userMobile.length !=11){
+                    vm.$message.error("联系人电话必须为11位");
+                    return
+                }
+
                 let a = JSON.stringify(vm.dialog.placeIds);
                 let apids = a.substring(1, a.length - 1);
                 vm.dialog.placeIds=apids;
@@ -535,8 +644,8 @@
                 this.dialog.userRealname=''
                 this.dialog.userNo=''
                 this.dialog.userName=''
-                this.dialog.userRoleIds= ''
-                this.dialog.placeIds= ''
+                this.dialog.userRoleIds= []
+                this.dialog.placeIds= []
                 this.dialog.userIdno=''
                 this.dialog.userMobile=''
                 this.dialog.manageEntId= ''

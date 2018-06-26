@@ -25,7 +25,7 @@
            :modal-append-to-body="false"
            :visible.sync="dialogVisible"
            width="60%"
-           :before-close="handleClose">
+           @close="handleClose">
             <span>
                 <el-form ref="form"  label-width="80px">
                       <el-input placeholder="请点击要操作的资源" v-model="form.name" style="margin-bottom: 10px" disabled>
@@ -50,21 +50,24 @@
                          <template slot="prepend">访问地址</template>
                       </el-input>
                 </el-form>
-                <el-checkbox-group v-model="checkList">
-                    <el-row style="margin-top: 10px">
-                             <el-switch
-                                 style="margin-right: 10px"
-                                 v-model="form.value3"
-                                 active-text="应用级资源"
-                                 inactive-text="按钮">
-                        </el-switch>
-                            <el-switch
-                                v-model="form.isShow"
-                                active-text="显示"
-                                inactive-text="不显示">
-                        </el-switch>
-                    </el-row>
-                </el-checkbox-group>
+                <!--<el-checkbox-group v-model="checkList">-->
+                    <!--<el-row style="margin-top: 10px">-->
+                             <!--<el-switch-->
+                                 <!--style="margin-right: 10px"-->
+                                 <!--v-model="form.value3"-->
+                                 <!--active-text="应用级资源"-->
+                                 <!--inactive-text="按钮">-->
+                        <!--</el-switch>-->
+                            <!--<el-switch-->
+                                <!--v-model="form.isShow"-->
+                                <!--active-text="显示"-->
+                                <!--inactive-text="不显示">-->
+                        <!--</el-switch>-->
+                    <!--</el-row>-->
+                <!--</el-checkbox-group>-->
+                <el-checkbox label="应用级资源" v-model="form.isOne"></el-checkbox>
+                <el-checkbox label="按钮" v-model="form.isButton"></el-checkbox>
+                <el-checkbox label="显示" v-model="form.isShow"></el-checkbox>
             </span>
            <span slot="footer" class="dialog-footer">
     <el-button @click="close">取 消</el-button>
@@ -76,7 +79,7 @@
            :modal-append-to-body="false"
            :visible.sync="dialogVisible_1"
            width="60%"
-           :before-close="handleClose_1">
+           @close="handleClose_1">
             <span>
                 <el-form ref="form"  label-width="80px">
                        <el-input placeholder="请输入资源名称" v-model="form1.resourceName" style="margin-bottom: 10px">
@@ -98,21 +101,24 @@
                          <template slot="prepend">访问地址</template>
                       </el-input>
                 </el-form>
-                <el-checkbox-group v-model="checkList">
-                    <el-row style="margin-top: 10px">
-                             <el-switch
-                                 style="margin-right: 10px"
-                                 v-model="form1.value3"
-                                 active-text="应用级资源"
-                                 inactive-text="按钮">
-                        </el-switch>
-                            <el-switch
-                                v-model="form1.isShow"
-                                active-text="显示"
-                                inactive-text="不显示">
-                        </el-switch>
-                    </el-row>
-                </el-checkbox-group>
+                <!--<el-checkbox-group v-model="checkList">-->
+                    <!--<el-row style="margin-top: 10px">-->
+                             <!--<el-switch-->
+                                 <!--style="margin-right: 10px"-->
+                                 <!--v-model="form1.value3"-->
+                                 <!--active-text="应用级资源"-->
+                                 <!--inactive-text="按钮">-->
+                        <!--</el-switch>-->
+                            <!--<el-switch-->
+                                <!--v-model="form1.isShow"-->
+                                <!--active-text="显示"-->
+                                <!--inactive-text="不显示">-->
+                        <!--</el-switch>-->
+                    <!--</el-row>-->
+                <!--</el-checkbox-group>-->
+                <el-checkbox label="应用级资源" v-model="form1.isOne"></el-checkbox>
+                <el-checkbox label="按钮" v-model="form1.isButton"></el-checkbox>
+                <el-checkbox label="显示" v-model="form1.isShow"></el-checkbox>
             </span>
            <span slot="footer" class="dialog-footer">
     <el-button @click="close">取 消</el-button>
@@ -193,7 +199,7 @@
            },
            getCheckedKeys(data) {
                console.log(data)
-               this.form1.parentResourceId = data.id
+               this.form1.id = data.id
                this.form.parentResourceId = data.id
                this.form.name = data.name
            },
@@ -210,47 +216,49 @@
            },
            update() {
                this.dialogVisible_1 = true
-               console.log(this.form1)
                axios({
                    method: 'post',
                    url:url.allurl+'/resource/findResourceById',
                    params: {
-                       id:this.form1.parentResourceId,
+                       id:this.form1.id,
                    }
                }).then((res)=>{
-                   this.form=[]
                    if (res.data.retcode === 200) {
-                       console.log(res.data.data)
-
-                       this.form1.parentResourceId = res.data.data.id
-                       this.form1.name = res.data.data.name
-                       this.form1.resourceName = res.data.data.resourceName
-                       this.form1.resourceIcon = res.data.data.resourceIcon
-                       this.form1.resourceUrl = res.data.data.resourceUrl
-                       this.form1.component = res.data.data.component
-                       this.form1.resourceCode = res.data.data.resourceCode
+                       // this.form1.parentResourceId = res.data.data.id
+                       // this.form1.name = res.data.data.name
+                       // this.form1.resourceName = res.data.data.resourceName
+                       // this.form1.resourceIcon = res.data.data.resourceIcon
+                       // this.form1.resourceUrl = res.data.data.resourceUrl
+                       // this.form1.component = res.data.data.component
+                       // this.form1.resourceCode = res.data.data.resourceCode
+                       this.form1 = {...res.data.data}
                        if(res.data.data.isShow === '1'){
                            this.form1.isShow = true
                        } else {
                            this.form1.isShow = false
                        }
-                       if(res.data.data.isOne === '1'){
-                           this.form1.value3 = false
+                       if(res.data.data.isOne === 1){
+                           this.form1.isOne = true
                        } else {
-                           this.form1.value3 = true
+                           this.form1.isOne = false
+                       }
+
+                       if(res.data.data.isButton === 1){
+                           this.form1.isButton = true
+                       } else {
+                           this.form1.isButton = false
                        }
                    }
-                   console.log(this.form1)
                })
            },
-           handleClose(done) {
-              done();
+           handleClose() {
+               console.log('新增关闭')
               this.form.resourceCode = '';
               this.form.resourceIndex = '';
               this.form.resourceUrl = '';
-              this.form.isShow = '';
-              this.form.isOne = '';
-              this.form.isButton = '';
+              this.form.isShow = false;
+              this.form.isOne = false;
+              this.form.isButton = false;
               this.form.resourceIcon = '';
               this.form.component = '';
 //              this.form=[]
@@ -258,25 +266,52 @@
                console.log(this.form)
            },
 
-           handleClose_1(done) {
-               done();
+           handleClose_1() {
+               console.log('修改关闭')
                console.log(this.form)
-               this.form1=[]
+               this.form1.resourceCode = '';
+               this.form1.resourceIndex = '';
+               this.form1.resourceUrl = '';
+               this.form1.isShow = '';
+               this.form1.isOne = '';
+               this.form1.isButton = '';
+               this.form1.resourceIcon = '';
+               this.form1.component = '';
+
                this.setAllPermission()
            },
            makesure() {
-               if(this.form.value3 === true) {
-                   this.form.isOne = 0
-                   this.form.isButton = 1
-               } else {
+               // if(this.form.value3 === true) {
+               //     this.form.isOne = 0
+               //     this.form.isButton = 1
+               // } else {
+               //     this.form.isOne = 1
+               //     this.form.isButton = 0
+               // }
+               // if(this.form.isShow === true){
+               //     this.form.isShow =1
+               // } else {
+               //     this.form.isShow =0
+               // }
+
+               if(this.form.isOne=== true){
                    this.form.isOne = 1
+               }else{
+                   this.form.isOne = 0
+               }
+
+               if(this.form.isButton=== true){
+                   this.form.isButton = 1
+               }else{
                    this.form.isButton = 0
                }
-               if(this.form.isShow === true){
-                   this.form.isShow =1
-               } else {
-                   this.form.isShow =0
+
+               if(this.form.isShow=== true){
+                   this.form.isShow = 1
+               }else{
+                   this.form.isShow = 0
                }
+
                axios({
                    method: 'post',
                    url:url.allurl+'/resource/add',
@@ -306,24 +341,44 @@
            },
            makesure_1() {
                console.log(this.form1)
-               if(this.form1.value3 === true) {
-                   this.form1.isOne = 1
-                   this.form1.isButton = 0
-               } else {
-                   this.form1.isOne = 0
-                   this.form1.isButton = 1
+               // if(this.form1.value3 === true) {
+               //     this.form1.isOne = 1
+               //     this.form1.isButton = 0
+               // } else {
+               //     this.form1.isOne = 0
+               //     this.form1.isButton = 1
+               // }
+               // if(this.form1.isShow === true){
+               //     this.form1.isShow =1
+               // } else {
+               //     this.form1.isShow =0
+               // }
+
+               if(this.form1.isOne=== true){
+                   this.form1.isOne = "1"
+               }else{
+                   this.form1.isOne = "0"
                }
-               if(this.form1.isShow === true){
-                   this.form1.isShow =1
-               } else {
-                   this.form1.isShow =0
+
+               if(this.form1.isButton=== true){
+                   this.form1.isButton = "1"
+               }else{
+                   this.form1.isButton = "0"
                }
+
+               if(this.form1.isShow=== true){
+                   this.form1.isShow = "1"
+               }else{
+                   this.form1.isShow = "0"
+               }
+               console.log("testst",this.form1)
+
                axios({
                    method: 'post',
                    url:url.allurl+'/resource/update',
                    params: {
                        resourceCode:this.form1.resourceCode,
-                       id: this.form1.parentResourceId,
+                       id: this.form1.id,
                        isOne:this.form1.isOne,
                        isButton:this.form1.isButton,
                        resourceUrl:this.form1.resourceUrl,
@@ -347,12 +402,14 @@
                })
            },
            removeone() {
-               console.log(this.form.parentResourceId)
+               console.log(this.form1.id)
+               let a= new Array();
+               a.push(this.form1.id);
                axios({
                    method: 'post',
                    url:url.allurl+'/resource/delete',
                    params: {
-                       ids:JSON.stringify(this.form.parentResourceId)
+                       ids:a
                    }
                }).then((res)=>{
                    if (res.data.retcode === 200) {

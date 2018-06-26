@@ -24,5 +24,10 @@ export const loginpage = {
         params.userpwd = this.password(params.userpwd);
         var qs = require('qs');
         return axios.post(url.allurl+'/login',qs.stringify(params));
+    },
+
+    logout:function logout(){
+        axios.post(url.allurl+'/logout');
+        sessionStorage.clear();
     }
 }
