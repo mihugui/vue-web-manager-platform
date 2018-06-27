@@ -36,7 +36,7 @@
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/user/add'}).length!=0" >新增</el-button>
-            <!--<el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>-->
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/edit'}).length!=0)" @click="showEditModal">编辑
             </el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配
@@ -62,7 +62,7 @@
             <span>
                 <div class="dialog-input">
                     <el-input placeholder="请输入姓名" v-model="dialog.userRealname">
-                        <template slot="prepend">姓名</template>
+                        <template slot="prepend" style="width: 125.6px">姓名</template>
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
@@ -71,7 +71,7 @@
                     </el-input>
                 </div>
                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入用户名" v-model="dialog.userName">
+                    <el-input placeholder="请输入用户名" v-model="dialog.userName" :disabled="userStatue">
                         <template slot="prepend">用户名</template>
                     </el-input>
                 </div>
@@ -255,13 +255,17 @@
                 style="z-index: 99999;">
             <span>
                  <div class="dialog-input" style="margin-top: 15px;">
+                    <!--<el-input type="file" @change="getFile" placeholder="请导入文件" v-model="dialog.userNo">-->
+                        <!--<template   slot="prepend">导入文件</template>-->
+                        <!--<template slot="append"><a style="color: rgb(144, 147, 153); "target="_blank" :href="downurl">下载模板</a></template>-->
+                    <!--</el-input>-->
+
+
                     <div data-v-f48b85f8="" class="el-input el-input-group el-input-group--append el-input-group--prepend">
                         <div class="el-input-group__prepend">导入文件</div>
-                        <form id="tf" action="/user/importUser"  method="post" enctype ="multipart/form-data" >
                         <input type="file" name="file" autocomplete="off" placeholder="请导入文件" class="el-input__inner" @change="getFile">
-                        </form>
                         <div class="el-input-group__append">
-                        <a data-v-f48b85f8="" target="_blank" :href="downurl" class="el-icon-download" style="color: rgb(144, 147, 153);"></a>
+                        <a data-v-f48b85f8="" target="_blank" :href="downurl" style="color: rgb(144, 147, 153);">下载模板</a>
                         </div>
                     </div>
                 </div>
@@ -307,6 +311,7 @@
                 dialogVisible: false,
                 soururl: '',
                 downurl:'',
+                userStatue:false,
 
                 //权限弹出框
                 title_permission: '',
@@ -499,12 +504,15 @@
                 this.closeDialog();
                 this.title = "新增";
                 this.setSureUrl('/user/add');
+                this.userStatue = false;
                 this.dialogVisible = true;
+
             },
             showEditModal() {
                 this.dialog = {...this.seltable};
                 this.title = "编辑";
                 this.setSureUrl('/user/update');
+                this.userStatue = true;
                 this.dialogVisible = true;
             },
 
@@ -574,23 +582,35 @@
 
             getFile:function(e){
                  this.files = e.target.files;
-
+                 console.log(this.files)
             },
 
             upfile:function(){
                 let vm = this;
-                let param = new FormData();
-                console.log(vm.files[0]);
-                param.append('file', vm.files[0])
-                // let config = {
-                //     headers: {'Content-Type': 'multipart/form-data'}
-                // }
-                // axios.post(geturl.allurl+"/user/importUser?token="+sessionStorage.getItem('token'), param, config).then(function(val){
-                //     console.log(val)
-                // }).catch(function(error){
-                //     console.log(error)
-                // });
-                $('#tf').ajaxSubmit();
+                let formData = new FormData();
+                formData.append('file', vm.files[0]);
+
+                let config = {
+                    headers: {
+                        'Accept':'*/*',
+                        'Accept-Encoding': 'gzip, deflate',
+                        'Connection': 'keep-alive',
+                        'Content-Length': '36352',
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+
+                axios.post(geturl.allurl+"/user/importUser?token="+sessionStorage.getItem('token'), formData, config).then(function(val){
+                    if (val.data.returnCode === "0") {
+                        vm.dialogVisible_file = false;
+                        vm.$message.success("上传成功")
+                    }else{
+                        vm.dialogVisible_file = false;
+                        vm.$message.success("上传失败")
+                    }
+                }).catch(function(error){
+                    console.log(error)
+                });
             },
 
             downtemp:function(){
@@ -694,6 +714,9 @@
     }
 </script>
 <style scoped>
+    .el-input-group__prepend{
+        width: 90px;
+    }
     .content-search {
         text-align: left;
         background-color: #fff;

@@ -324,7 +324,8 @@
                        resourceIcon:this.form.resourceIcon,
                        isShow:this.form.isShow,
                        resourceName:this.form.resourceName,
-                       component:this.form.component
+                       component:this.form.component,
+                       resourceIndex:this.form.resourceIndex
                    }
                }).then((res)=>{
                    this.form=[]
@@ -385,7 +386,8 @@
                        resourceIcon:this.form1.resourceIcon,
                        isShow:this.form1.isShow,
                        resourceName:this.form1.resourceName,
-                       component:this.form1.component
+                       component:this.form1.component,
+                       resourceIndex:this.form1.resourceIndex
                    }
                }).then((res)=>{
                    this.form=[]

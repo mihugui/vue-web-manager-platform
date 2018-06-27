@@ -1,9 +1,22 @@
 <template>
   <div id="LogManagement">
       <section>
-          <el-form :inline="true" :model="formInline" class="demo-form-inline">
-              <el-form-item label="用户">
-                  <el-input v-model="formInline.user" placeholder="输入用户名查询" @change="inputtext"></el-input>
+          <!--<el-form :inline="true" :model="formInline" class="demo-form-inline">-->
+              <!--<el-form-item label="用户">-->
+                  <!--<el-input v-model="formInline.user" placeholder="输入用户名查询" @change="inputtext"></el-input>-->
+              <!--</el-form-item>-->
+          <!--</el-form>-->
+          <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
+              <el-form-item
+                  label="用户" label-width="80px">
+                  <el-input
+                      placeholder="输入用户名查询"
+                      v-model="formInline.user"
+                      clearable>
+                  </el-input>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" icon="el-icon-search" @click="inputtext">查询</el-button>
               </el-form-item>
           </el-form>
       </section>
@@ -77,7 +90,7 @@
             }),
             inputtext(val){
                 console.log(val)
-                this.page.operatorName = val;
+                this.page.operatorName = this.formInline.user;
                 this.getTableData(this.page);
             },
             selectedChange(val){

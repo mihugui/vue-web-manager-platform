@@ -6,10 +6,10 @@ export const Permission = {
 
     data:'',
     //获取用户资源
-    getUserPermission: async function(action){
+    getUserPermission: async function(action,reset){
         var vm = this;
         const promise = new Promise(function(resolve, reject) {
-        if(!sessionStorage.getItem('permission')){
+        if(!sessionStorage.getItem('permission') || reset ==1){
             axios.post(url.allurl+url.permissionurl).then(function(res){
                 if(res.data.code=200) {
                     sessionStorage.setItem('permission', JSON.stringify(res.data.data));
@@ -44,7 +44,6 @@ export const Permission = {
         }
         });
         return promise;
-
     },
 
     analysis:function(){

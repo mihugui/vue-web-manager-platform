@@ -149,7 +149,7 @@
                     operate: true
                 },{
                     name: '角色描述',
-                    value: 'roleForbidden',
+                    value: 'roleDescription',
                     operate: true
                 },{
                     name: '状态',

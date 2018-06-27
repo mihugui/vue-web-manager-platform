@@ -94,6 +94,7 @@
                         vm.getDictsData();
                         Permission.getUserPermission(1).then(function(val){
                             let userRoutes = Permission.getrouter(val,vm.myComponents);
+                            console.log(userRoutes)
                             vm.$router.addRoutes(userRoutes);
                             vm.$router.push('/');
                         });

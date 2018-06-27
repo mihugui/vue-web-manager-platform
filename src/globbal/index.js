@@ -14,6 +14,7 @@ global.install = (Vue, router) => {
     axios.interceptors.request.use(config => {
         //对数据在请求值服务器前做一次处理
         /*..........*/
+        if(config.url.indexOf("/user/importUser")==-1)
         if (sessionStorage.getItem("token")) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             if(config.data === undefined){
                 config.data ='token=' + sessionStorage.getItem("token");

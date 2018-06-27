@@ -1,12 +1,12 @@
 <template>
    <div class="dictonary">
-       <section>
-           <el-form :inline="true"  class="demo-form-inline">
-               <el-form-item label="字典数据类型">
-                   <el-input  placeholder="字典数据类型" @change="dictype"></el-input>
-               </el-form-item>
-           </el-form>
-       </section>
+       <!--<section>-->
+           <!--<el-form :inline="true"  class="demo-form-inline">-->
+               <!--<el-form-item label="字典数据类型">-->
+                   <!--<el-input  placeholder="字典数据类型" @change="dictype"></el-input>-->
+               <!--</el-form-item>-->
+           <!--</el-form>-->
+       <!--</section>-->
        <!--<section>-->
            <!--<el-row>-->
                <!--<el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>-->
@@ -15,6 +15,19 @@
                <!--<el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>-->
            <!--</el-row>-->
        <!--</section>-->
+       <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
+           <el-form-item
+               label="字典数据名称" label-width="120px">
+               <el-input
+                   placeholder="输入字典数据类型"
+                   v-model="indicttype"
+                   clearable>
+               </el-input>
+           </el-form-item>
+           <el-form-item>
+               <el-button type="primary" icon="el-icon-search" @click="dictype">查询</el-button>
+           </el-form-item>
+       </el-form>
        <section>
            <div>
                <div style="display: inline-block;float: left" :style="stylefa">
@@ -137,6 +150,7 @@
                     operate: true
                 }],
                 param:null,
+                indicttype:'',
             }
         },
         components:{
@@ -160,7 +174,7 @@
                 updateSureOK : 'UPDATE_TABLE_DATA'
             }),
             dictype(val){
-                this.page.name = val;
+                this.page.name = this.indicttype;
                 this.getTableData(this.page);
             },
             showexcel(){

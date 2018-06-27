@@ -14,7 +14,8 @@
                           active-text-color="#ffd04b" >
                 <el-submenu index="1">
                     <template slot="title">{{username}}</template>
-                    <el-menu-item index="1-1" @click="logout">退出</el-menu-item>
+                    <el-menu-item index="1-1" @click="resetRouter">界面重置</el-menu-item>
+                    <el-menu-item index="1-2" @click="logout">退出</el-menu-item>
                 </el-submenu>
                 </el-menu>
             </div>
@@ -61,6 +62,10 @@
             logout:function(){
                 loginpage.logout();
                 this.$router.push('/login')
+            },
+            resetRouter:function(){
+                sessionStorage.removeItem("permission");
+                location.reload();
             },
             ...mapActions({
                 getUserPermission: 'GET_USER_PERMISSION'
