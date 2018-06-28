@@ -481,7 +481,6 @@
 
             showAddModal() {
                 let vm =this
-                this.closeDialog();
                 this.title = "新增";
                 this.setSureUrl('/user/add');
                 this.userStatue = false;

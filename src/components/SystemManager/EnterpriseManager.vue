@@ -432,7 +432,6 @@
             },
 
             showAddModal() {
-                this.closeDialog();
                 this.title = "新增";
                 this.setSureUrl('/enterprise/add');
                 this.dialogVisible = true;

@@ -274,7 +274,6 @@
                 this.getTableData({...this.page,"roleName":this.roleName}).then(this.loading=false);
             },
             showAddModal(){
-                this.closeDialog();
                 this.title="新增";
                 this.setSureUrl('/role/add');
                 this.dialogVisible=true;

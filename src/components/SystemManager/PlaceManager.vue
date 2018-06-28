@@ -93,7 +93,7 @@
                     ],
                     placeArea:[
                         { required: true, message: '请输入面积', trigger: 'blur' },
-                        { pattern:/^[0-9]+.?[0-9]*$/, message: '你的面积格式不正确'}
+                        { pattern:/^[0-9]+([.]{1}[0-9]+){0,1}$/, message: '你的面积格式不正确'}
                     ],
                     placeDescription:[
                         { required: false, message: '请输入园区描述', trigger: 'blur' },
@@ -229,7 +229,6 @@
             },
 
             showAddModal(){
-                this.closeDialog();
                 this.title="新增";
                 this.setSureUrl('/places/add');
                 this.dialogVisible=true;
