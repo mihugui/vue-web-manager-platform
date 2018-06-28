@@ -20,7 +20,7 @@
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/places/del'}).length!=0)" @click="handleClose(deleteList)" >删除</el-button>
     </section>
-    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
     <div>
         <el-dialog
             :title="title"
@@ -93,7 +93,7 @@
                     ],
                     placeArea:[
                         { required: true, message: '请输入面积', trigger: 'blur' },
-                        { pattern:/^[0-9]+.?[0-9]*$/, message: '你的面积格式不正确'}
+                        { pattern:/^[0-9]+([.]{1}[0-9]+){0,1}$/, message: '你的面积格式不正确'}
                     ],
                     placeDescription:[
                         { required: false, message: '请输入园区描述', trigger: 'blur' },
@@ -118,6 +118,7 @@
 
 
                 //表格
+                loading:true,
                 page:{
                     pageNum:1,
                     pageSize:20,
@@ -203,20 +204,31 @@
             },
 
             sizeChange(val){
+                let vm = this
                 this.page.pageSize = val;
-                this.getTableData({...this.page,...this.placename});
+                this.loading=true
+                this.getTableData({...this.page,...this.placename}).then(function() {
+                    vm.loading = false
+                })
             },
             currentChange(val){
+                let vm = this
                 this.page.pageNum = val;
-                this.getTableData(this.page);
+                this.loading=true
+                this.getTableData(this.page).then(function() {
+                    vm.loading = false
+                })
             },
 
             searchTable(){
-                this.getTableData({...this.page,"placeName":this.placename});
+                let vm = this
+                this.loading=true
+                this.getTableData({...this.page,"placeName":this.placename}).then(function() {
+                    vm.loading = false
+                })
             },
 
             showAddModal(){
-                this.closeDialog();
                 this.title="新增";
                 this.setSureUrl('/places/add');
                 this.dialogVisible=true;
@@ -255,8 +267,9 @@
             },
 
             resetForm(formName) {
-                this.dialogVisible = false;
-                this.$refs[formName].resetFields();
+                let vm =this
+                vm.dialogVisible = false;
+                vm.$refs[formName].resetFields();
             },
 
             sureok:function(){
@@ -278,6 +291,7 @@
             },
 
             closeDialog:function(){
+                this.resetForm('dialog');
                 this.dialog.placeArea='';
                 this.dialog.placeAddress='';
                 this.dialog.placeCode='';
@@ -289,7 +303,10 @@
             },
 
             getTableByOther:function(){
-                this.getTableData(this.page);
+                let vm =this
+                this.getTableData(this.page).then(function() {
+                    vm.loading = false
+                })
             }
 
         },

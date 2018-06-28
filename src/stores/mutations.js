@@ -68,7 +68,9 @@ const mutations = {
         status.permissionUrl = data;
     },
 
-
+    [types.SET_CHECK_URL](status,data){
+        status.checkUrl = data;
+    },
 
 
 

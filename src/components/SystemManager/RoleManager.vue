@@ -21,7 +21,7 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/role/del'}).length!=0)" @click="handleClose(deleteList)">删除</el-button>
         </section>
-        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
         <div>
             <el-dialog
                 :title="title"
@@ -147,6 +147,7 @@
                 entIds:[],
 
                 //表格
+                loading:false,
                 page:{
                     page:1,
                     pageSize:20,
@@ -259,19 +260,20 @@
 
             sizeChange(val){
                 this.page.pageSize = val;
-
-                this.getTableData({...this.page,"roleName":this.roleName});
+                this.loading = true
+                this.getTableData({...this.page,"roleName":this.roleName}).then(this.loading=false);
             },
             currentChange(val){
                 this.page.pageNum = val;
-                this.getTableData({...this.page,"roleName":this.roleName});
+                this.loading = true
+                this.getTableData({...this.page,"roleName":this.roleName}).then(this.loading=false);
             },
 
             searchTable(){
-                this.getTableData({...this.page,"roleName":this.roleName});
+                this.loading = true
+                this.getTableData({...this.page,"roleName":this.roleName}).then(this.loading=false);
             },
             showAddModal(){
-                this.closeDialog();
                 this.title="新增";
                 this.setSureUrl('/role/add');
                 this.dialogVisible=true;
@@ -339,8 +341,9 @@
             },
 
             resetForm(formName) {
-                this.dialogVisible = false;
-                this.$refs[formName].resetFields();
+                let vm = this
+                vm.dialogVisible = false;
+                vm.$refs[formName].resetFields();
             },
 
             sureok:function(){
@@ -375,7 +378,9 @@
             },
 
             getTableByOther:function(){
-                this.getTableData(this.page);
+                this.getTableData(this.page).then(function(){
+                    vm.loading = false
+                });
             },
 
             getAllplace:function(){

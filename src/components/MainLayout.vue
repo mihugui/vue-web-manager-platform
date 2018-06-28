@@ -2,7 +2,7 @@
     <el-container>
         <el-header>
             <div>
-                <div class="fl title" style="display: inline-block;"><img style="margin-top: 9px ;width:125px" src="../assets/img/chinaMessage.png"></div>
+                <div class="fl title" style="display: inline-block;"><div :style="main_logo"></div></div>
                 <div class="fl system">
                     <mini-system :SystemTitle="SystemTitle" :changeSystem="changeSystem"></mini-system>
                 </div>
@@ -40,7 +40,13 @@
             return {
                 isCollapse:true,
                 myWidth:"65px",
-                username:sessionStorage.getItem("username")
+                username:sessionStorage.getItem("username"),
+                main_logo:{
+                        height: '60px',
+                        width: '310px',
+                        margin: '0 auto 0 0px',
+                        background: 'white url(' + require('../assets/img.png') + ') left -44px no-repeat',
+                }
             }
         },
 
@@ -49,7 +55,7 @@
             changertitle(){
                 if(window.innerWidth>800) {
                     this.isCollapse = false;
-                    this.myWidth = "200px";
+                    this.myWidth = "210px";
                 }
                 else{
                     this.isCollapse = true;

@@ -3,6 +3,7 @@
     <el-table
         ref="multipleTable"
         :data="tableData"
+        v-loading="loading"
         align="left"
         tooltip-effect="dark"
         style="width: 100%"
@@ -39,7 +40,7 @@
             return{
             }
         },
-        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange',],
+        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange','loading'],
     }
 </script>
 <style>
