@@ -100,6 +100,7 @@
     import Table from '@/components/Table'
     import TreeMenu from '@/components/TreeMenu'
     import { mapGetters,mapActions,mapMutations} from 'vuex'
+    import store from '../../stores'
     import Vue from 'vue'
     export default {
         name: "EnterpriseManager",
@@ -192,10 +193,10 @@
                     value: 'roleForbidden',
                     operate: true,
                     formatter:function(row){
-                        if(row.roleForbidden==0){
-                            return '启用'
-                        }else{
-                            return '禁用'
+                        for(let type  of store.getters.dicts.statue){
+                            if(type.code === row.roleForbidden){
+                                return type.name
+                            }
                         }
                     }
                 }],

@@ -2,7 +2,9 @@
     <el-container>
         <el-header>
             <div>
-                <div class="fl title" style="display: inline-block;"><div :style="main_logo"></div></div>
+                <div class="fl title" style="display: inline-block;"><img style="margin-top: 9px ;width:125px" src="../assets/img/chinaMessage.png">
+                    <!--<div :style="main_logo"></div>-->
+                    </div>
                 <div class="fl system">
                     <mini-system :SystemTitle="SystemTitle" :changeSystem="changeSystem"></mini-system>
                 </div>

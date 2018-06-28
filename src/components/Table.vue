@@ -6,7 +6,7 @@
         v-loading="loading"
         align="left"
         tooltip-effect="dark"
-        style="width: 100%"
+        style="width: 100%;padding-bottom: 70px;"
         @selection-change="selectedChange">
         <el-table-column
             type="selection"
