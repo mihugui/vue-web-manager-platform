@@ -202,6 +202,22 @@
     export default {
         name: "EnterpriseManager",
         data() {
+            var checkEntcode = (rule, value, callback) => {
+                if(this.userStatue === false){
+                this.setCheckUrl('/enterprise/checkEntCode')
+                this.getCheakNO({entCode:value}).then(function(val){
+                    console.log(val);
+                    if(val.data.retcode === 200){
+                        return  callback();
+                    }else{
+                        return  callback(new Error('企业编号已经存在'));
+                    }
+                })}else{
+                    return  callback()
+                }
+
+            };
+
             return {
                 //输入框规则
                 rules: {
@@ -211,7 +227,8 @@
                     ],
                     entCode:[
                         { required: true, message: '请输入企业编号', trigger: 'blur' },
-                        { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                        { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' },
+                        { validator: checkEntcode, trigger: 'blur' }
                     ],
                     entLerep:[
                         { required: true, message: '请输入企业法人', trigger: 'blur' },
@@ -254,6 +271,7 @@
                 soururl: '',
                 allEnt: [],
                 allPlace: [],
+                userStatue:false,
 
                 //权限弹出框
                 title_permission: '资源管理',
@@ -325,7 +343,7 @@
                 enttype: '',
                 entName:'',
                 seltable: '',
-                selall: []
+                selall: [],
             }
         },
         components: {
@@ -434,11 +452,13 @@
             showAddModal() {
                 this.title = "新增";
                 this.setSureUrl('/enterprise/add');
+                this.userStatue = false;
                 this.dialogVisible = true;
             },
             showEditModal() {
                 this.dialog = {...this.seltable};
                 this.title = "编辑";
+                this.userStatue = true;
                 this.setSureUrl('/enterprise/update');
                 this.dialogVisible = true;
             },

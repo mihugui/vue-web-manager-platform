@@ -104,6 +104,21 @@
     export default {
         name: "EnterpriseManager",
         data(){
+
+            var checkRoleCode = (rule, value, callback) => {
+                if(this.userStatue === false){
+                    this.setCheckUrl('/role/checkRoleCode')
+                    this.getCheakNO({roleCode:value}).then(function(val){
+                        if(val.data.retcode === 200){
+                            callback();
+                        }else{
+                            callback(new Error('角色编号已经存在'));
+                        }
+                    })}else{
+                    callback()
+                }
+            };
+
             return {
                 //输入框规则
                 rules: {
@@ -113,7 +128,8 @@
                     ],
                     roleCode:[
                         { required: true, message: '请输入角色编号', trigger: 'blur' },
-                        { min: 2, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                        { min: 2, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' },
+                        { validator: checkRoleCode, trigger: 'blur' }
                     ],
                     roleDescription:[
                         { required: false, message: '请输入角色描述', trigger: 'blur' },

@@ -51,7 +51,7 @@
                     <el-form-item label="园区面积" prop="placeArea">
                         <el-col :span="20">
                         <el-input v-model="dialog.placeArea">
-                            <el-button slot="append">平方</el-button>
+                            <el-button slot="append">平方米</el-button>
                         </el-input>
                         </el-col>
                     </el-form-item>
@@ -76,6 +76,21 @@
     export default {
         name: "PlaceManager",
         data(){
+
+            var checkPlaceCode = (rule, value, callback) => {
+                if(this.userStatue === false){
+                    this.setCheckUrl('/places/checkPlaceCode')
+                    this.getCheakNO({placeCode:value}).then(function(val){
+                        if(val.data.retcode === 200){
+                            callback();
+                        }else{
+                            callback(new Error('园区编号已经存在'));
+                        }
+                    })}else{
+                    callback()
+                }
+            };
+
             return {
                 //输入框规则
                 rules:{
@@ -85,7 +100,8 @@
                     ],
                     placeCode:[
                         { required: true, message: '请输入园区编号', trigger: 'blur' },
-                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' },
+                        { validator: checkPlaceCode, trigger: 'blur' }
                     ],
                     placeAddress:[
                         { required: true, message: '请输入园区地址', trigger: 'blur' },
@@ -115,6 +131,7 @@
                 showEdit:false,
                 showDetele:false,
                 soururl:'',
+                userStatue:false,
 
 
                 //表格
@@ -169,11 +186,13 @@
 
             ...mapMutations({
                 setTableUrl: 'SET_TABLE_URL',
-                setSureUrl:'SET_SURE_URL'
+                setSureUrl:'SET_SURE_URL',
+                setCheckUrl:'SET_CHECK_URL'
             }),
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA',
-                updateSureOK : 'UPDATE_TABLE_DATA'
+                updateSureOK : 'UPDATE_TABLE_DATA',
+                getCheakNO : 'GET_CHECK_NO'
             }),
 
             selectedChange(val){
@@ -231,12 +250,14 @@
             showAddModal(){
                 this.title="新增";
                 this.setSureUrl('/places/add');
+                this.userStatue = false;
                 this.dialogVisible=true;
             },
             showEditModal(){
                 this.dialog={...this.seltable};
                 this.title="编辑";
                 this.setSureUrl('/places/update');
+                this.userStatue = true;
                 this.dialogVisible=true;
             },
             deleteList(){

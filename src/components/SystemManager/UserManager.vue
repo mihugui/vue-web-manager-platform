@@ -220,6 +220,35 @@
     export default {
         name: "UserManager",
         data() {
+            var checkUserNo = (rule, value, callback) => {
+                console.log(this.userStatue)
+                if(this.userStatue === false){
+                    this.setCheckUrl('/user/checkUserNo')
+                    this.getCheakNO({userNo:value}).then(function(val){
+                        if(val.data.retcode === 200){
+                            callback();
+                        }else{
+                            callback(new Error('用户编号已经存在'));
+                        }
+                    })}else{
+                    callback()
+                }
+            };
+
+            var checkUserName = (rule, value, callback) => {
+                if(this.userStatue === false){
+                    this.setCheckUrl('/user/checkUserName')
+                    this.getCheakNO({userName:value}).then(function(val){
+                        if(val.data.retcode === 200){
+                            callback();
+                        }else{
+                            callback(new Error('用户名已经存在'));
+                        }
+                    })}else{
+                    callback()
+                }
+            };
+
             return {
                 //输入框规则
                 saverules:null,
@@ -230,13 +259,15 @@
                     ],
                     userNo: [
                         { required: true, message: '请输入用户编号', trigger: 'blur' },
-                        { pattern: /^[0-9]*$/, message: '你的用户编号不正确'},
-                        { min: 8, max: 8, message: '长度为8个字符', trigger: 'blur' }
+                        { pattern: /^[0-9]*$/, message: '你的用户编号格式不对'},
+                        { min: 8, max: 8, message: '长度为8个字符', trigger: 'blur' },
+                        { validator: checkUserNo, trigger: 'blur' }
                     ],
                     userName: [
                         { required: true, message: '请输入用户名', trigger: 'blur' },
                         { pattern: /^[0-9a-zA-Z]*$/, message: '你的用户名不正确'},
-                        { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
+                        { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
+                        { validator: checkUserName, trigger: 'blur' }
                     ],
                     placeIds: [
                         {  required: true, message: '请至少选择一个园区', trigger: 'change' }
@@ -387,6 +418,7 @@
                 setSureUrl: 'SET_SURE_URL',
                 settreeids: 'SET_TREE_IDS',
                 setPermissionUrl:'SET_PERMISSION_URL',
+                setCheckUrl:'SET_CHECK_URL'
             }),
             ...mapActions({
                 getTableData: 'GET_TABLE_DATA',
@@ -394,7 +426,8 @@
                 getUserPermission: 'GET_SUSER_PERMISSION',
                 getAllPermission : 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
-                axioPostNoData: 'AXIO_POST_NODATA'
+                axioPostNoData: 'AXIO_POST_NODATA',
+                getCheakNO : 'GET_CHECK_NO'
             }),
 
             gettreeid(){
