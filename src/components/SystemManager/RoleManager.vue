@@ -29,40 +29,40 @@
                 width="850px"
                 heigth = "80%"
                 :modal-append-to-body="false"
+                :close-on-click-modal="false"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <div  class="dialog-input">
-                    <el-input placeholder="请输入角色名称"  v-model="dialog.roleName">
-                        <template slot="prepend">角色名称</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入角色编号" v-model="dialog.roleCode">
-                        <template slot="prepend">角色编号</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入角色描述" v-model="dialog.roleDescription">
-                        <template slot="prepend">角色描述</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">角色状态</div>
-                    <el-select v-model="dialog.roleForbidden" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in dicts.statue"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.code">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
+                <el-form :model="dialog" :rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="角色名称" prop="roleName">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.roleName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="角色编号" prop="roleCode">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.roleCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="角色描述" prop="roleDescription">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.roleDescription"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="角色状态" prop="roleForbidden">
+                        <el-select v-model="dialog.roleForbidden" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in dicts.statue"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button @click="resetForm('dialog')">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
@@ -89,7 +89,7 @@
                  </el-tree>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_permission = false">取 消</el-button>
+                <el-button @click="resetForm('dialog')">取 消</el-button>
                 <el-button type="primary" @click="surePermission">确 定</el-button>
             </span>
             </el-dialog>
@@ -105,6 +105,25 @@
         name: "EnterpriseManager",
         data(){
             return {
+                //输入框规则
+                rules: {
+                    roleName:[
+                        { required: true, message: '请输入角色名称', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    roleCode:[
+                        { required: true, message: '请输入角色编号', trigger: 'blur' },
+                        { min: 2, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                    ],
+                    roleDescription:[
+                        { required: false, message: '请输入角色描述', trigger: 'blur' },
+                        { min: 0, max: 50, message: '长度在 0 到 50 个字符', trigger: 'blur' }
+                    ],
+                    roleForbidden:[
+                        { required: true, message: '请选择角色状态', trigger: 'change' }
+                    ],
+                },
+
 
                 //弹出框
                 title:'',
@@ -319,35 +338,24 @@
                 })
             },
 
+            resetForm(formName) {
+                this.dialogVisible = false;
+                this.$refs[formName].resetFields();
+            },
+
             sureok:function(){
                 let vm =this;
-
-                if(vm.dialog.placeName == '')
-                {
-                    vm.$message.error("角色名称不能为空");
-                    return;
-                }
-                if(vm.dialog.placeCode == '')
-                {
-                    vm.$message.error("园区编号不能为空");
-                    return;
-                }
-
-                if(vm.dialog.placeAddress == '')
-                {
-                    vm.$message.error("园区地址不能为空");
-                    return;
-                }
-                if(vm.dialog.placeArea == '')
-                {
-                    vm.$message.error("园区面积不能为空");
-                    return;
-                }
-
-                vm.updateSureOK(vm.dialog).then(function(val){
-                    if(val.data.retcode===200){
-                        vm.dialogVisible=false;
-                        vm.getTableByOther();
+                this.$refs['dialog'].validate((valid) => {
+                    if (valid) {
+                        vm.updateSureOK(vm.dialog).then(function (val) {
+                            if (val.data.retcode === 200) {
+                                vm.dialogVisible = false;
+                                vm.getTableByOther();
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
                     }
                 })
             },

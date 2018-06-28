@@ -48,68 +48,60 @@
                 width="850px"
                 heigth="80%"
                 :modal-append-to-body="false"
+                :close-on-click-modal="false"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <div class="dialog-input">
-                    <el-input placeholder="请输入名称" v-model="dialog.entName">
-                        <template slot="prepend">企业名称</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入编号" v-model="dialog.entCode">
-                        <template slot="prepend">企业编号</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入法人名称" v-model="dialog.entLerep">
-                        <template slot="prepend">企业法人</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">企业类型</div>
-                    <el-select v-model="dialog.entType" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in dicts.enttype"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.code">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-                <!--<div class="dialog-input" style="margin-top: 15px;">-->
-                <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
-                <!--<template slot="prepend">企业开票名称</template>-->
-                <!--</el-input>-->
-                <!--</div>-->
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入企业税号" v-model="dialog.entNo">
-                        <template slot="prepend">企业税号</template>
-                    </el-input>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入负责人电话" v-model="dialog.entTel">
-                        <template slot="prepend">负责人电话</template>
-                    </el-input>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">父企业</div>
-                    <el-select v-model="dialog.entParentId" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allEnt"
-                            :key="item.id"
-                            :label="item.entName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
+                <el-form :model="dialog" :rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="企业名称" prop="entName">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.entName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="企业编号" prop="entCode">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.entCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="企业法人" prop="entLerep">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.entLerep"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="企业类型" prop="entType">
+                        <el-select v-model="dialog.entType" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in dicts.enttype"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="企业税号" prop="entNo">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.entNo"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="负责人电话" prop="entTel">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.entTel"></el-input>
+                        </el-col>
+                    </el-form-item>
+                        <el-form-item label="父企业" prop="entParentId">
+                            <el-select v-model="dialog.entParentId" clearable placeholder="请选择">
+                                <el-option
+                                    v-for="item in allEnt"
+                                    :key="item.id"
+                                    :label="item.entName"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button @click="resetForm('dialog')">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
@@ -152,7 +144,7 @@
             <span>
                 <div class="dialog-input" style="margin-top: 15px;">
                     <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">归属园区</div>
+                    <div class="el-input-group__prepend">入驻园区</div>
                     <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
                         <el-option
                             v-for="item in allPlace"
@@ -211,7 +203,36 @@
         name: "EnterpriseManager",
         data() {
             return {
-
+                //输入框规则
+                rules: {
+                    entName:[
+                        { required: true, message: '请输入企业名称', trigger: 'blur' },
+                        { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                    ],
+                    entCode:[
+                        { required: true, message: '请输入企业编号', trigger: 'blur' },
+                        { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                    ],
+                    entLerep:[
+                        { required: true, message: '请输入企业法人', trigger: 'blur' },
+                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    ],
+                    entType:[
+                        { required: true, message: '请选择企业类型', trigger: 'change' }
+                    ],
+                    entNo:[
+                        { required: true, message: '请输入企业税号', trigger: 'blur' },
+                        { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+                    ],
+                    entTel:[
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        // { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '你的手机号格式不正确'}
+                        { min: 11, max: 11, message: '长度必须为11位', trigger: 'blur' }
+                    ],
+                    entParentId:[
+                        { required: false, message: '请选择父企业', trigger: 'change' }
+                    ],
+                },
                 //弹出框
                 title: '',
                 dialog: {
@@ -416,7 +437,7 @@
                 this.params = {'Id': vm.seltable.Id}
                 this.dialogVisible_permission = true;
                 this.getEntPermission(this.params).then(function (val) {
-                    let ids = [];
+                    let ids = new Array();
                     for (var item of val.data.data) {
                         ids.push(item.id)
                     }
@@ -496,54 +517,32 @@
                 })
             },
 
+
+            resetForm(formName) {
+                this.dialogVisible = false;
+                this.$refs[formName].resetFields();
+            },
+
             sureok: function () {
                 let vm = this;
                 delete vm.dialog.placeIds;
 
-                if(vm.dialog.entName == '')
-                {
-                    vm.$message.error("企业名称不能为空");
-                    return;
-                }
-                if(vm.dialog.entCode == '')
-                {
-                    vm.$message.error("企业编号不能为空");
-                    return;
-                }
-
-                if(vm.dialog.entLerep == '')
-                {
-                    vm.$message.error("企业法人不能为空");
-                    return;
-                }
-                if(vm.dialog.entType == '')
-                {
-                    vm.$message.error("企业类型不能为空");
-                    return;
-                }
-                if(vm.dialog.entNo == '')
-                {
-                    vm.$message.error("企业税号不能为空");
-                    return;
-                }
-                if(vm.dialog.entTel == '')
-                {
-                    vm.$message.error("负责人电话不能为空");
-                    return;
-                }else if(vm.dialog.entTel.length !=11){
-                    vm.$message.error("负责人电话长度为11位");
-                    return;
-                }
-
-                vm.updateSureOK(vm.dialog).then(function (val) {
-                    if (val.data.retcode === 200) {
-                        vm.dialogVisible = false;
-                        vm.$message.success(val.data.retmsg)
-                        vm.getTableByOther();
-                    }else{
-                        vm.$message.error(val.data.retmsg)
-                    }
-                })
+                this.$refs['dialog'].validate((valid) => {
+                        if (valid) {
+                            vm.updateSureOK(vm.dialog).then(function (val) {
+                                if (val.data.retcode === 200) {
+                                    vm.dialogVisible = false;
+                                    vm.$message.success(val.data.retmsg)
+                                    vm.getTableByOther();
+                                }else{
+                                    vm.$message.error(val.data.retmsg)
+                                }
+                            })
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                });
             },
 
             closeDialog: function () {

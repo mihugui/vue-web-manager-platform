@@ -1,9 +1,8 @@
 <template>
-    <div>
+    <div :style="login_background">
         <div class="login-page" @keyup.enter="login">
             <el-form class="login-form">
                 <h1 class="main-title">中心平台系统</h1>
-                <p class="des">登陆页面</p>
                 <el-form-item>
                     <el-input
                         :autofocus="true"
@@ -49,6 +48,15 @@
                 imgurl:'',
                 random:0,
                 isBtnLoading: false,
+                login_background: {
+                    'font-size': '16px',
+                    position: 'fixed',
+                    width: '100%',
+                    'min-width': '592px',
+                    height: '100%',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundImage: 'url(' + require('../assets/login.jpg') + ')'
+                }
             }
         },
         computed:{
@@ -124,5 +132,12 @@
     .main-title{text-align: center;}
     .des{text-align: center;color:#999;margin-bottom: 2em;}
     .login-form{width: 400px;margin:13% auto 0;}
-    .login-page{background:#fff;}
+    .login-page{
+        position:absolute;
+        border-radius:25px;
+        padding: 20px;
+        background:#fff;
+        left:994px;
+        top:153px;
+    }
 </style>

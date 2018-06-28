@@ -57,107 +57,90 @@
                 width="850px"
                 heigth="80%"
                 :modal-append-to-body="false"
+                :close-on-click-modal="false"
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <div class="dialog-input">
-                    <el-input placeholder="请输入姓名" v-model="dialog.userRealname">
-                        <template slot="prepend" style="width: 125.6px">姓名</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入编号" v-model="dialog.userNo">
-                        <template slot="prepend">编号</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入用户名" v-model="dialog.userName" :disabled="userStatue">
-                        <template slot="prepend">用户名</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">用户角色</div>
-                    <el-select v-model="dialog.userRoleIds" multiple clearable placeholder="请选择">
-                        <el-option
+                <el-form :model="dialog" :rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="用户姓名" prop="userRealname">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.userRealname"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="用户编号" prop="userNo">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.userNo"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="用户名" prop="userName">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.userName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="用户角色" prop="userRoleIds">
+                        <el-select v-model="dialog.userRoleIds" multiple placeholder="请选择角色">
+                            <el-option
                             v-for="item in allRole"
                             :key="item.id"
                             :label="item.roleName"
                             :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-                <!--<div class="dialog-input" style="margin-top: 15px;">-->
-                <!--<el-input placeholder="请输入企业开票名称" v-model="dialog.entNo">-->
-                <!--<template slot="prepend">企业开票名称</template>-->
-                <!--</el-input>-->
-                <!--</div>-->
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入手机号" v-model="dialog.userMobile">
-                        <template slot="prepend">手机号</template>
-                    </el-input>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入身份证号" v-model="dialog.userIdno">
-                        <template slot="prepend">身份证号</template>
-                    </el-input>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">入住园区</div>
-                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allPlace"
-                            :key="item.id"
-                            :label="item.placeName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">管理归属企业</div>
-                    <el-select v-model="dialog.manageEntId" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allEnt"
-                            :key="item.id"
-                            :label="item.entName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">消费归属企业</div>
-                    <el-select v-model="dialog.consumeEntId" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allEnt"
-                            :key="item.id"
-                            :label="item.entName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">用户状态</div>
-                    <el-select v-model="dialog.userStatus" clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in dicts.statue"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.code">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="userMobile">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.userMobile"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="身份证号" prop="userIdno">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.userIdno"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="入驻园区" prop="placeIds">
+                        <el-select v-model="dialog.placeIds" multiple placeholder="请选择入住园区">
+                            <el-option
+                                v-for="item in allPlace"
+                                :key="item.id"
+                                :label="item.placeName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="管理归属企业" prop="manageEntId">
+                        <el-select v-model="dialog.manageEntId" placeholder="请选择管理归属企业">
+                            <el-option
+                                v-for="item in allEnt"
+                                :key="item.id"
+                                :label="item.entName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="消费归属企业" prop="consumeEntId">
+                        <el-select v-model="dialog.consumeEntId" placeholder="请选择消费归属企业">
+                            <el-option
+                                v-for="item in allEnt"
+                                :key="item.id"
+                                :label="item.entName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态" prop="userStatus">
+                        <el-select v-model="dialog.userStatus" placeholder="请选择状态">
+                            <el-option
+                                v-for="item in dicts.statue"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button @click="resetForm('dialog')">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
@@ -168,13 +151,13 @@
                 width="300px"
                 heigth = "80%"
                 :modal-append-to-body="false"
+                :close-on-click-modal="false"
                 @close='closeDialog_permission'
-                style="z-index: 99999;">
+                style="z-index: 99998;">
             <span>
                 <el-tree
                     :data="allPermission"
                     show-checkbox
-                    default-expand-all
                     node-key="id"
                     ref="tree"
                     :default-checked-keys="entIds"
@@ -189,65 +172,11 @@
             </span>
             </el-dialog>
 
-            <el-dialog
-                :title="title_places"
-                :visible.sync="dialogVisible_places"
-                width="500px"
-                heigth="80%"
-                :modal-append-to-body="false"
-                @close='closeDialog'
-                style="z-index: 99999;">
-            <span>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">归属园区</div>
-                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allPlace"
-                            :key="item.id"
-                            :label="item.placeName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-            </span>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_places = false">取 消</el-button>
-                <el-button type="primary" @click="surePlaces">确 定</el-button>
-            </span>
-            </el-dialog>
-            <el-dialog
-                :title="title_places"
-                :visible.sync="dialogVisible_places"
-                width="500px"
-                heigth="80%"
-                :modal-append-to-body="false"
-                @close='closeDialog'
-                style="z-index: 99999;">
-            <span>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <div class="el-input el-input-group el-input-group--prepend">
-                    <div class="el-input-group__prepend">归属园区</div>
-                    <el-select v-model="dialog.placeIds" multiple clearable placeholder="请选择">
-                        <el-option
-                            v-for="item in allPlace"
-                            :key="item.id"
-                            :label="item.placeName"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-                    </div>
-                </div>
-            </span>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_places = false">取 消</el-button>
-                <el-button type="primary" @click="surePlaces">确 定</el-button>
-            </span>
-            </el-dialog>
+
             <el-dialog
                 :title="title_file"
                 :visible.sync="dialogVisible_file"
+                default-expand-all
                 width="500px"
                 heigth="80%"
                 :modal-append-to-body="false"
@@ -292,6 +221,44 @@
         name: "UserManager",
         data() {
             return {
+                //输入框规则
+                saverules:null,
+                rules: {
+                    userRealname: [
+                        { required: true, message: '请输入用户名称', trigger: 'blur' },
+                        { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+                    ],
+                    userNo: [
+                        { required: true, message: '请输入用户编号', trigger: 'blur' },
+                        { pattern: /^[0-9]*$/, message: '你的用户编号不正确'},
+                        { min: 8, max: 8, message: '长度为8个字符', trigger: 'blur' }
+                    ],
+                    userName: [
+                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                        { pattern: /^[0-9a-zA-Z]*$/, message: '你的用户名不正确'},
+                        { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
+                    ],
+                    placeIds: [
+                        {  required: true, message: '请至少选择一个园区', trigger: 'change' }
+                    ],
+                    userIdno: [
+                        { required: true, message: '请输入证件号码', trigger: 'blur' },
+                        { pattern:/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/, message: '你的身份证格式不正确'}
+                    ],
+                    userMobile: [
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '你的手机号格式不正确'}
+                    ],
+                    manageEntId: [
+                        { required: true, message: '请选择管理企业', trigger: 'change' }
+                    ],
+                    consumeEntId: [
+                        { required: true, message: '请选择消费企业', trigger: 'change' }
+                    ],
+                    userStatus: [
+                        { required: true, message: '请选择用户状态', trigger: 'change' }
+                    ]
+                },
                 //弹出框
                 title: '',
                 title_places:'',
@@ -322,7 +289,7 @@
                     children: 'children',
                     label: 'name'
                 },
-                entIds: '',
+                entIds: [],
                 allPlace: [],
                 allRole: [],
                 allEnt:[],
@@ -444,22 +411,22 @@
             selectedChange(val) {
                 var vm = this;
                 this.selall = val;
+                console.log(val)
                 if (val.length > 0) {
-                    let result =[];
-                    let result2 =[];
+                    let presult = new Array();
+                    let rresult = new Array();
                     if(val[0].placeIds != null) {
-                        result = base.toNum(val[0].placeIds);
-                        console.log(result);
+                        presult = base.toNum(val[0].placeIds);
                     }
                     if(val[0].userRoleIds != null) {
-                        result2 = base.toNum(val[0].userRoleIds);
+                        rresult = base.toNum(val[0].userRoleIds);
                     }
                     this.seltable = {
                         "userRealname": val[0].userRealname,
                         "userNo": val[0].userNo,
                         "userName": val[0].userName,
-                        "userRoleIds": result2,
-                        "placeIds": result,
+                        "userRoleIds": rresult,
+                        "placeIds": presult,
                         "userMobile": val[0].userMobile,
                         "userIdno": val[0].userIdno,
                         "manageEntId": val[0].manageEntId,
@@ -501,7 +468,12 @@
             },
 
             showAddModal() {
+                let vm =this
                 this.closeDialog();
+                if(vm.saverules != null){
+                    vm.rules = {...vm.saverules};
+                }
+                this.$refs['dialog'].resetFields();
                 this.title = "新增";
                 this.setSureUrl('/user/add');
                 this.userStatue = false;
@@ -509,6 +481,10 @@
 
             },
             showEditModal() {
+                let vm =this
+                vm.saverules = {...vm.rules};
+                delete vm.rules.userIdno
+                delete vm.rules.userMobile
                 this.dialog = {...this.seltable};
                 this.title = "编辑";
                 this.setSureUrl('/user/update');
@@ -523,11 +499,10 @@
                 this.params = {'Id': vm.seltable.Id}
                 this.dialogVisible_permission=true;
                 this.getUserPermission(this.params).then(function(val){
-                    let ids = [];
+                    let ids = new Array();
                     for( var item of val.data.data){
                         ids.push(item.id)
                     }
-                    console.log(ids)
                     vm.$refs.tree.setCheckedKeys(ids);
                 });
             },
@@ -617,47 +592,50 @@
 
             },
 
+            resetForm(formName) {
+                this.dialogVisible = false;
+                this.$refs[formName].resetFields();
+            },
+
             sureok: function () {
                 let vm = this;
+                if(vm.dialog.userIdno.indexOf('********')===-1 ){
+                    vm.rules.userIdno = [
+                        { required: true, message: '请输入证件号码', trigger: 'blur' },
+                        { pattern:/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/, message: '你的身份证格式不正确'}
+                    ]
+                };
+                if(vm.dialog.userMobile.indexOf('****')===-1 ){
+                    vm.rules.userMobile = [
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '你的手机号格式不正确'}
+                    ]
+                };
 
-                if(vm.dialog.userRealname == '')
-                {
-                    vm.$message.error("用户姓名不能为空");
-                    return;
-                }
-                if(vm.dialog.userNo == '')
-                {
-                    vm.$message.error("用户编号不能为空");
-                    return;
-                }
+                console.log(vm.rules);
+                console.log(vm.dialog.placeIds);
+                this.$refs['dialog'].validate((valid) => {
+                    if (valid) {
+                        let a = JSON.stringify(vm.dialog.placeIds);
+                        let apids = a.substring(1, a.length - 1);
+                        vm.dialog.placeIds=apids;
+                        let b = JSON.stringify(vm.dialog.userRoleIds);
+                        let bpids = b.substring(1, b.length - 1);
+                        vm.dialog.userRoleIds=bpids;
 
-                if(vm.dialog.userName == '')
-                {
-                    vm.$message.error("用户名不能为空");
-                    return;
-                }
-                if(vm.dialog.userMobile == '')
-                {
-                    vm.$message.error("联系人电话不能为空");
-                    return;
-                }else if(vm.dialog.userMobile.length !=11){
-                    vm.$message.error("联系人电话必须为11位");
-                    return
-                }
-
-                let a = JSON.stringify(vm.dialog.placeIds);
-                let apids = a.substring(1, a.length - 1);
-                vm.dialog.placeIds=apids;
-                let b = JSON.stringify(vm.dialog.userRoleIds);
-                let bpids = b.substring(1, b.length - 1);
-                vm.dialog.userRoleIds=bpids;
-
-                vm.updateSureOK(vm.dialog).then(function (val) {
-                    if (val.data.returnCode === "0") {
-                        vm.dialogVisible = false;
-                        vm.getTableByOther();
+                        vm.updateSureOK(vm.dialog).then(function (val) {
+                            if (val.data.returnCode === "0") {
+                                vm.dialogVisible = false;
+                                vm.getTableByOther();
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        vm.rules = vm.saverules;
+                        return false;
                     }
-                })
+                });
+                vm.rules = {...vm.saverules};
             },
 
             closeDialog: function () {
@@ -714,8 +692,10 @@
     }
 </script>
 <style scoped>
-    .el-input-group__prepend{
-        width: 90px;
+
+
+    .el-input__inner{
+        width: 200px;
     }
     .content-search {
         text-align: left;

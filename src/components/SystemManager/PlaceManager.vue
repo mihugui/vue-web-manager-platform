@@ -28,38 +28,42 @@
             width="850px"
             heigth = "80%"
             :modal-append-to-body="false"
+            :close-on-click-modal="false"
             @close='closeDialog'
             style="z-index: 99999;">
             <span>
-                <div  class="dialog-input">
-                    <el-input placeholder="请输入名称"  v-model="dialog.placeName">
-                        <template slot="prepend">园区名称</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入编号" v-model="dialog.placeCode">
-                        <template slot="prepend">园区编号</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入地址" v-model="dialog.placeAddress">
-                        <template slot="prepend">园区地址</template>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input type="number" placeholder="请输入面积" v-model="dialog.placeArea">
-                        <template slot="prepend">园区面积</template>
-                        <el-button slot="append">平方</el-button>
-                    </el-input>
-                </div>
-                <div class="dialog-input" style="margin-top: 15px;">
-                    <el-input placeholder="请输入描述" v-model="dialog.placeDescription">
-                        <template slot="prepend">园区描述</template>
-                    </el-input>
-                </div>
+                <el-form :model="dialog" :rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="园区名称" prop="placeName">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.placeName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="园区编号" prop="placeCode">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.placeCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="园区地址" prop="placeAddress">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.placeAddress"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="园区面积" prop="placeArea">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.placeArea">
+                            <el-button slot="append">平方</el-button>
+                        </el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="园区描述" prop="placeDescription">
+                        <el-col :span="20">
+                        <el-input v-model="dialog.placeDescription"></el-input>
+                        </el-col>
+                    </el-form-item>
+                </el-form>
             </span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button @click="resetForm('dialog')">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
         </el-dialog>
@@ -73,6 +77,30 @@
         name: "PlaceManager",
         data(){
             return {
+                //输入框规则
+                rules:{
+                    placeName:[
+                        { required: true, message: '请输入园区名称', trigger: 'blur' },
+                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                    ],
+                    placeCode:[
+                        { required: true, message: '请输入园区编号', trigger: 'blur' },
+                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                    ],
+                    placeAddress:[
+                        { required: true, message: '请输入园区地址', trigger: 'blur' },
+                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                    ],
+                    placeArea:[
+                        { required: true, message: '请输入面积', trigger: 'blur' },
+                        { pattern:/^[0-9]+.?[0-9]*$/, message: '你的面积格式不正确'}
+                    ],
+                    placeDescription:[
+                        { required: false, message: '请输入园区描述', trigger: 'blur' },
+                        { min: 0, max: 50, message: '长度在 0 到 50 个字符', trigger: 'blur' }
+                    ],
+                },
+
                 title:'',
                 url:'/places/list',
                 //弹出框
@@ -225,40 +253,25 @@
                     })
                     .catch(_ => {});
             },
+
+            resetForm(formName) {
+                this.dialogVisible = false;
+                this.$refs[formName].resetFields();
+            },
+
             sureok:function(){
                 let vm =this;
-
-                if(vm.dialog.placeName == '')
-                {
-                    vm.$message.error("园区名称不能为空");
-                    return;
-                }
-                if(vm.dialog.placeCode == '')
-                {
-                    vm.$message.error("园区编号不能为空");
-                    return;
-                }
-
-                if(vm.dialog.placeAddress == '')
-                {
-                    vm.$message.error("园区地址不能为空");
-                    return;
-                }
-                if(vm.dialog.placeArea == '')
-                {
-                    vm.$message.error("园区面积不能为空");
-                    return;
-                }
-                if(vm.dialog.placeDescription == '')
-                {
-                    vm.$message.error("园区描述不能为空");
-                    return;
-                }
-
-                vm.updateSureOK(vm.dialog).then(function(val){
-                    if(val.data.retcode===200){
-                        vm.dialogVisible=false;
-                        vm.getTableByOther();
+                this.$refs['dialog'].validate((valid) => {
+                    if (valid) {
+                        vm.updateSureOK(vm.dialog).then(function (val) {
+                            if (val.data.retcode === 200) {
+                                vm.dialogVisible = false;
+                                vm.getTableByOther();
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
                     }
                 })
 
