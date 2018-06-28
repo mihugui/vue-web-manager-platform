@@ -10,6 +10,7 @@ import global from './globbal/index'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'font-awesome/css/font-awesome.css'
+import 'babel-polyfill'
 import $ from 'jquery'
 
 Vue.config.productionTip = false

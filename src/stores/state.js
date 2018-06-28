@@ -53,6 +53,8 @@ const state = {
     //数据字典
     dicts:[],
 
+    //检测编号是否存在
+    checkUrl:''
 
 }
 

@@ -20,7 +20,7 @@
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/places/del'}).length!=0)" @click="handleClose(deleteList)" >删除</el-button>
     </section>
-    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
     <div>
         <el-dialog
             :title="title"
@@ -118,6 +118,7 @@
 
 
                 //表格
+                loading:true,
                 page:{
                     pageNum:1,
                     pageSize:20,
@@ -204,15 +205,18 @@
 
             sizeChange(val){
                 this.page.pageSize = val;
-                this.getTableData({...this.page,...this.placename});
+                this.loading=true
+                this.getTableData({...this.page,...this.placename}).then(this.loading=false);
             },
             currentChange(val){
                 this.page.pageNum = val;
-                this.getTableData(this.page);
+                this.loading=true
+                this.getTableData(this.page).then(this.loading=false);
             },
 
             searchTable(){
-                this.getTableData({...this.page,"placeName":this.placename});
+                this.loading=true
+                this.getTableData({...this.page,"placeName":this.placename}).then(this.loading=false);
             },
 
             showAddModal(){
@@ -255,8 +259,9 @@
             },
 
             resetForm(formName) {
-                this.dialogVisible = false;
-                this.$refs[formName].resetFields();
+                let vm =this
+                vm.dialogVisible = false;
+                vm.$refs[formName].resetFields();
             },
 
             sureok:function(){
@@ -278,6 +283,7 @@
             },
 
             closeDialog:function(){
+                this.resetForm('dialog');
                 this.dialog.placeArea='';
                 this.dialog.placeAddress='';
                 this.dialog.placeCode='';
@@ -289,7 +295,7 @@
             },
 
             getTableByOther:function(){
-                this.getTableData(this.page);
+                this.getTableData(this.page).then(this.loading=false);
             }
 
         },

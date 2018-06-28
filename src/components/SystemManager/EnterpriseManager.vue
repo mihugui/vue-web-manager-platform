@@ -40,7 +40,7 @@
             </el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
-                    :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+                    :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
         <div>
             <el-dialog
                 :title="title"
@@ -268,6 +268,7 @@
                 entIds: [],
 
                 //表格
+                loading:true,
                 page: {
                     page: 1,
                     pageSize: 20,
@@ -346,6 +347,7 @@
                 setSureUrl: 'SET_SURE_URL',
                 settreeids: 'SET_TREE_IDS',
                 setPermissionUrl: 'SET_PERMISSION_URL',
+                setCheckUrl:'SET_CHECK_URL'
             }),
             ...mapActions({
                 getTableData: 'GET_TABLE_DATA',
@@ -353,7 +355,8 @@
                 getEntPermission: 'GET_ENT_PERMISSION',
                 getAllPermission: 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
-                axioPostNoData: 'AXIO_POST_NODATA'
+                axioPostNoData: 'AXIO_POST_NODATA',
+                getCheakNO : 'GET_CHECK_NO'
             }),
 
             gettreeid() {
@@ -405,16 +408,18 @@
 
             sizeChange(val) {
                 this.page.pageSize = val;
-
-                this.getTableData({...this.page, ...this.enttype,...this.entName});
+                this.loading = true;
+                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( this.loading = false)
             },
             currentChange(val) {
                 this.page.pageNum = val;
-                this.getTableData({...this.page, ...this.enttype,...this.entName});
+                this.loading = true;
+                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( this.loading = false)
             },
 
             searchTable(){
-                this.getTableData({...this.page,"entType":this.enttype,"entName":this.entName});
+                this.loading = true;
+                this.getTableData({...this.page,"entType":this.enttype,"entName":this.entName}).then( this.loading = false)
             },
 
             showAddModal() {
@@ -519,13 +524,23 @@
 
 
             resetForm(formName) {
-                this.dialogVisible = false;
-                this.$refs[formName].resetFields();
+                let vm = this
+                vm.dialogVisible = false;
+                vm.$refs[formName].resetFields();
             },
 
             sureok: function () {
                 let vm = this;
+                this.setCheckUrl('/enterprise/checkEntCode')
                 delete vm.dialog.placeIds;
+
+                if(vm.dialog.entTel.indexOf('****')===-1 ){
+                    let rule = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/;
+                    if(!rule.test(vm.dialog.userMobile)){
+                        vm.$message.error("手机号不符合规范");
+                        return
+                    }
+                };
 
                 this.$refs['dialog'].validate((valid) => {
                         if (valid) {
@@ -534,6 +549,7 @@
                                     vm.dialogVisible = false;
                                     vm.$message.success(val.data.retmsg)
                                     vm.getTableByOther();
+
                                 }else{
                                     vm.$message.error(val.data.retmsg)
                                 }
@@ -546,6 +562,7 @@
             },
 
             closeDialog: function () {
+                this.resetForm('dialog');
                 this.dialog.entName = '';
                 this.dialog.entCode = '';
                 this.dialog.entLerep = '';
@@ -564,7 +581,7 @@
             },
 
             getTableByOther: function () {
-                this.getTableData(this.page);
+                this.getTableData(this.page).then( this.loading = false)
             },
             getAllEnt: function () {
                 let vm = this;

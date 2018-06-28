@@ -49,7 +49,7 @@
             </el-button>
         </section>
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
-                    :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+                    :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
         <div>
             <el-dialog
                 :title="title"
@@ -69,12 +69,12 @@
                     </el-form-item>
                     <el-form-item label="用户编号" prop="userNo">
                         <el-col :span="20">
-                        <el-input v-model="dialog.userNo"></el-input>
+                        <el-input v-model="dialog.userNo" ></el-input>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="用户名" prop="userName">
                         <el-col :span="20">
-                        <el-input v-model="dialog.userName"></el-input>
+                        <el-input v-model="dialog.userName" :disabled="userStatue"></el-input>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="用户角色" prop="userRoleIds">
@@ -243,11 +243,11 @@
                     ],
                     userIdno: [
                         { required: true, message: '请输入证件号码', trigger: 'blur' },
-                        { pattern:/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/, message: '你的身份证格式不正确'}
-                    ],
+                        { min: 16, max: 18, message: '长度在 16 到 18 个字符', trigger: 'blur' }
+                        ],
                     userMobile: [
                         { required: true, message: '请输入手机号', trigger: 'blur' },
-                        { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '你的手机号格式不正确'}
+                        { min: 11, max: 11, message: '长度在 11 个字符', trigger: 'blur' }
                     ],
                     manageEntId: [
                         { required: true, message: '请选择管理企业', trigger: 'change' }
@@ -295,6 +295,7 @@
                 allEnt:[],
 
                 //表格
+                loading:true,
                 page: {
                     page: 1,
                     pageSize: 20,
@@ -451,16 +452,18 @@
 
             sizeChange(val) {
                 this.page.pageSize = val;
-
-                this.getTableData({...this.page, "userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
+                this.loading = true
+                this.getTableData({...this.page, "userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
             },
             currentChange(val) {
+                this.loading = true
                 this.page.pageNum = val;
-                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
             },
 
             searchTable(){
-                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename});
+                this.loading = true
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
             },
 
             showPlaces(){
@@ -470,10 +473,6 @@
             showAddModal() {
                 let vm =this
                 this.closeDialog();
-                if(vm.saverules != null){
-                    vm.rules = {...vm.saverules};
-                }
-                this.$refs['dialog'].resetFields();
                 this.title = "新增";
                 this.setSureUrl('/user/add');
                 this.userStatue = false;
@@ -482,9 +481,6 @@
             },
             showEditModal() {
                 let vm =this
-                vm.saverules = {...vm.rules};
-                delete vm.rules.userIdno
-                delete vm.rules.userMobile
                 this.dialog = {...this.seltable};
                 this.title = "编辑";
                 this.setSureUrl('/user/update');
@@ -593,52 +589,62 @@
             },
 
             resetForm(formName) {
-                this.dialogVisible = false;
-                this.$refs[formName].resetFields();
+                let vm = this
+                vm.dialogVisible = false;
+                vm.$refs[formName].resetFields();
             },
 
             sureok: function () {
                 let vm = this;
                 if(vm.dialog.userIdno.indexOf('********')===-1 ){
-                    vm.rules.userIdno = [
-                        { required: true, message: '请输入证件号码', trigger: 'blur' },
-                        { pattern:/(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/, message: '你的身份证格式不正确'}
-                    ]
+                    let rule = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/;
+                    if(!rule.test(vm.dialog.userIdno)){
+                        vm.$message.error("身份证不符合规范");
+                        return
+                    }
                 };
                 if(vm.dialog.userMobile.indexOf('****')===-1 ){
-                    vm.rules.userMobile = [
-                        { required: true, message: '请输入手机号', trigger: 'blur' },
-                        { pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '你的手机号格式不正确'}
-                    ]
+                    let rule = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/;
+                    if(!rule.test(vm.dialog.userMobile)){
+                        vm.$message.error("手机号不符合规范");
+                        return
+                    }
                 };
 
-                console.log(vm.rules);
-                console.log(vm.dialog.placeIds);
                 this.$refs['dialog'].validate((valid) => {
                     if (valid) {
                         let a = JSON.stringify(vm.dialog.placeIds);
-                        let apids = a.substring(1, a.length - 1);
-                        vm.dialog.placeIds=apids;
+                        let pids = a.substring(1, a.length - 1);
+                        vm.dialog.placeIds=pids;
                         let b = JSON.stringify(vm.dialog.userRoleIds);
-                        let bpids = b.substring(1, b.length - 1);
-                        vm.dialog.userRoleIds=bpids;
+                        let rids = b.substring(1, b.length - 1);
+                        vm.dialog.userRoleIds=rids;
+                        console.log(rids)
 
                         vm.updateSureOK(vm.dialog).then(function (val) {
                             if (val.data.returnCode === "0") {
                                 vm.dialogVisible = false;
                                 vm.getTableByOther();
+                                vm.$message.success("成功")
+                            }else{
+                                if(vm.dialog.placeIds != null) {
+                                    vm.dialog.placeIds = base.toNum(vm.dialog.placeIds);
+                                }
+                                if(vm.dialog.userRoleIds != "") {
+                                    vm.dialog.userRoleIds = base.toNum(vm.dialog.userRoleIds);
+                                }
+                                vm.$message.error(val.data.returnMsg)
                             }
                         })
                     } else {
                         console.log('error submit!!');
-                        vm.rules = vm.saverules;
                         return false;
                     }
                 });
-                vm.rules = {...vm.saverules};
             },
 
             closeDialog: function () {
+                this.resetForm('dialog');
                 this.dialog.userRealname=''
                 this.dialog.userNo=''
                 this.dialog.userName=''
@@ -659,7 +665,7 @@
             },
 
             getTableByOther: function () {
-                this.getTableData(this.page);
+                this.getTableData(this.page).then( this.loading = false);
             },
             getAllPlace: function () {
                 let vm = this;

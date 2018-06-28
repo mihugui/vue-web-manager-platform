@@ -36,3 +36,5 @@ export const SET_SYSTEM_TITLE = 'SET_SYSTEM_TITLE'
 
 export const SET_PERMISSION_URL = 'SET_PERMISSION_URL'
 
+export const SET_CHECK_URL = 'SET_CHECK_URL'
+
