@@ -44,12 +44,12 @@
                <div style="display: inline-block;float: left;width: 50%" v-if="showson">
                    <section>
                        <el-row>
-                           <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>
-                           <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>
-                           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>
+                           <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showsonAddModal">增加</el-button>
+                           <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showsonEditModal" v-if="showsonEdit">修改</el-button>
+                           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteListson" v-if="showsonDetele">删除</el-button>
                        </el-row>
                    </section>
-                   <mini-table :tableData="tableDatason" :tableKey="tableKeyson" :total="totalson" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+                   <mini-table :tableData="tableDatason" :tableKey="tableKeyson" :total="totalson" :selectedChange="selectedChangeson" :sizeChange="sizeChange" :currentChange="currentChangeson"></mini-table>
                </div>
            </div>
            <div>
@@ -73,7 +73,7 @@
                         <template slot="prepend">字段类型代码</template>
                     </el-input>
                 </div>
-                <div class="dialog-input" style="margin-top: 15px;">
+                <div class="dialog-input" style="margin-top: 15px;" v-if="reason">
                     <el-input placeholder="请输入字典类型描述" v-model="dialog.description">
                         <template slot="prepend">字典类型描述</template>
                     </el-input>
@@ -101,9 +101,14 @@
                 title: '',
                 dialog:{
                 },
+                reason: true,
                 dialogVisible:false,
+                totalson: '0',
+                tableDatason:'tableDatason',
                 showEdit:false,
                 showDetele:false,
+                showsonEdit:false,
+                showsonDetele:false,
                 showson: false,
                 showlook: false,
                 stylefa: 'width:100%',
@@ -114,7 +119,6 @@
                     pageSize:20,
                     name: ''
                 },
-
                 tableKey: [{
                     name: '序号',
                     type: 'index',
@@ -144,10 +148,6 @@
                     name: '字典类型编码',
                     value: 'code',
                     operate: false
-                },{
-                    name: '字典类型描述',
-                    value: 'description',
-                    operate: true
                 }],
                 param:null,
                 indicttype:'',
@@ -159,9 +159,7 @@
         computed:{
             ...mapGetters({
                 tableData:'tableData',
-//                tableDatason:'tableDatason',
-                total:'total',
-                totalson:'total',
+                total:'total'
             }),
         },
         methods:{
@@ -184,23 +182,21 @@
                     params: {
                         page:1,
                         pageSize:20,
-                        code: this.codeone
+                        code: JSON.parse(this.codeone)
                     }
                 }).then((res)=>{
                   let  vm = this
                     if (res.data.retcode === 200) {
-                        console.log(res);
-//                        vm.$message.success("删除成功");
-//                        vm.getTableByOther();
-                    } else {
-//                        vm.$message.warning("删除失败");
+                        console.log(res.data.data);
+                        this.tableDatason = res.data.data.list;
+                        this.totalson = res.data.data.total
                     }
                 })
-//                this.setTableUrl(this.urlson);
-//                this.getTableData({page:1,pageSize:20, code: this.codeone});
                 if(this.showson){
                     this.showson = false;
                     this.stylefa= 'width:100%';
+                    this.showsonEdit=false;
+                    this.showsonDetele=false;
                 } else {
                     this.showson = true;
                     this.stylefa= 'width:50%';
@@ -216,12 +212,13 @@
                     });
                     console.log(JSON.stringify(c))
                     this.selectid = JSON.stringify(c);
+                    this.groupid = val[0].id;
                     this.codeone =  JSON.stringify(val[0].code);
                     this.seltable ={
                         "code":val[0].code,
                         "description":val[0].description,
                         "name":val[0].name,
-                       'id': val[0].id
+                        'id': val[0].id
                     };}
                 switch(val.length){
                     case 0:
@@ -244,6 +241,42 @@
                         this.stylefa= 'width:100%';
                 }
             },
+            selectedChangeson(val){
+                var vm = this;
+                if(val.length>0){
+                    console.log(val[0].id)
+                    let c = [];
+                    val.forEach((item, index) =>{
+                            c.push(item.id)
+                    });
+                    console.log(c)
+                    console.log(val[0].groupId)
+                    this.groupsonid = val[0].groupId
+                    this.selectid = c;
+                    this.codeone =  JSON.stringify(val[0].code);
+                    this.seltableson ={
+                        "code":val[0].code,
+                        "name":val[0].name,
+                        'id': val[0].id,
+                        'groupId': this.groupsonid
+                    };}
+                switch(val.length){
+                    case 0:
+                        vm.showsonEdit = false;
+                        vm.showsonDetele = false;
+                        vm.showsonlook = false
+                        break;
+                    case 1:
+                        vm.showsonEdit = true
+                        vm.showsonDetele = true;
+                        vm.showsonlook = true
+                        break;
+                    default:
+                        vm.showsonEdit = false;
+                        vm.showsonDetele = true;
+                        vm.showsonlook = false;
+                }
+            },
 
             sizeChange(val){
                 this.page.pageSize = val;
@@ -254,16 +287,52 @@
                 this.page.page = val;
                 this.getTableData(this.page);
             },
+            currentChangeson(val){
+                axios({
+                    method: 'post',
+                    url:url.allurl+'/dict/list',
+                    params: {
+                        page:val,
+                        pageSize:20,
+                        code: JSON.parse(this.codeone)
+                    }
+                }).then((res)=>{
+                    let  vm = this
+                    if (res.data.retcode === 200) {
+                        console.log(res.data.data);
+                        this.tableDatason = res.data.data.list;
+                        this.totalson = res.data.data.total
+                    }
+                })
+//                this.getTableData(this.page);
+            },
             showAddModal(){
                 this.closeDialog();
                 this.title="新增";
+                this.reason = true;
                 this.setSureUrl('/dictGroup/add');
+                this.dialogVisible=true;
+            },
+            showsonAddModal(){
+                this.closeDialog();
+                this.reason = false;
+//                this.dialog={name:dialog.name,code:dialog.code};
+                this.title="新增子表数据";
+                this.setSureUrl('/dict/add');
                 this.dialogVisible=true;
             },
             showEditModal(){
                 this.dialog={...this.seltable};
                 this.title="编辑";
+                this.reason = true;
                 this.setSureUrl('/dictGroup/update');
+                this.dialogVisible=true;
+            },
+            showsonEditModal(){
+                this.dialog={...this.seltableson};
+                this.title="编辑";
+                this.reason = false;
+                this.setSureUrl('/dict/update');
                 this.dialogVisible=true;
             },
             deleteList(){
@@ -284,7 +353,27 @@
                                 vm.$message.warning("删除失败");
                             }
                         })
-
+                    })
+                    .catch(_ => {});
+            },
+            deleteListson(){
+                let vm = this;
+                this.$confirm('确认删除？')
+                    .then(_ => {
+                        axios({
+                            method: 'post',
+                            url:url.allurl+'/dict/delete',
+                            params: {
+                                ids: this.selectid
+                            }
+                        }).then((res)=>{
+                            if (res.data.retcode === 200) {
+                                vm.$message.success("删除成功");
+                                vm.getTableByOther();
+                            } else {
+                                vm.$message.warning("删除失败");
+                            }
+                        })
                     })
                     .catch(_ => {});
             },
@@ -294,13 +383,18 @@
             },
             sureok:function(){
                 let vm =this;
+                if(this.reason === false) {
+                    console.log(vm.dialog)
+                     vm.dialog.groupId= this.groupid;
+                     delete vm.dialog.description;
+                    console.log(vm.dialog)
+                }
                 vm.updateSureOK(vm.dialog).then(function(val){
                     if(val.data.retcode===200){
                         vm.dialogVisible=false;
                         vm.getTableByOther();
                     }
                 })
-
             },
 
             closeDialog:function(){
