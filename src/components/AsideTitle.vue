@@ -1,6 +1,7 @@
 <template>
     <el-menu
         default-active="1"
+        align="left"
         :collapse="isCollapse"
         background-color="#545c64"
         text-color="#fff"
