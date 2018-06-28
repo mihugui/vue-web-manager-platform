@@ -1,5 +1,10 @@
 <template>
-    <div :style="login_background">
+    <div>
+        <div :style = 'login_header'>
+            <div :style="login_logo"></div>
+        </div>
+        <div :style = "login_middle">
+            <div :style="login_adv_img"></div>
         <div class="login-page" @keyup.enter="login">
             <el-form class="login-form">
                 <h1 class="main-title">中心平台系统</h1>
@@ -32,6 +37,7 @@
                 </el-form-item>
             </el-form>
         </div>
+        </div>
     </div>
 </template>
 <script>
@@ -48,14 +54,41 @@
                 imgurl:'',
                 random:0,
                 isBtnLoading: false,
-                login_background: {
-                    'font-size': '16px',
-                    position: 'fixed',
+                // login_background: {
+                //     'font-size': '16px',
+                //     position: 'fixed',
+                //     width: '100%',
+                //     'min-width': '592px',
+                //     height: '100%',
+                //     backgroundRepeat: 'no-repeat',
+                //     backgroundImage: 'url(' + require('../assets/login.jpg') + ')'
+                // },
+                login_header:{
+                    width: '1020px',
+                    //margin: '0 auto',
+                    height: '70px',
+                    'padding-top': '50px',
+
+                },
+                login_logo:{
+                    height: '45px',
+                    width: '310px',
+                    margin: '0 auto 0 150px',
+                    background: 'url(' + require('../assets/img.png') + ') left -54px no-repeat',
+                },
+                login_middle:{
+                    height: '450px',
                     width: '100%',
                     'min-width': '592px',
-                    height: '100%',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundImage: 'url(' + require('../assets/login.jpg') + ')'
+                    overflow: 'hidden',
+                    background:'#0085d0',
+                    backgroundImage: 'url(' + require('../assets/back-01.png') + ')',
+                },
+                login_adv_img:{
+                    width: '366px',
+                    height: '199px',
+                    margin: '85px auto 0 150px',
+                    background: 'url(' + require('../assets/img.png') + ') left -183px no-repeat',
                 }
             }
         },
@@ -135,9 +168,9 @@
     .login-page{
         position:absolute;
         border-radius:25px;
-        padding: 20px;
+        padding: 10px;
         background:#fff;
-        left:994px;
-        top:153px;
+        right:50px;
+        top:150px;
     }
 </style>

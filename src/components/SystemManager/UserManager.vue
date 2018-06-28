@@ -451,19 +451,28 @@
             },
 
             sizeChange(val) {
+                let vm = this
                 this.page.pageSize = val;
                 this.loading = true
-                this.getTableData({...this.page, "userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
+                this.getTableData({...this.page, "userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then(function(){
+                    vm.loading = false
+                });
             },
             currentChange(val) {
+                let vm = this
                 this.loading = true
                 this.page.pageNum = val;
-                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then(function(){
+                    vm.loading = false
+                });
             },
 
             searchTable(){
+                let vm = this
                 this.loading = true
-                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then( this.loading = false);;
+                this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then(function(){
+                    vm.loading = false
+                });
             },
 
             showPlaces(){
@@ -665,7 +674,10 @@
             },
 
             getTableByOther: function () {
-                this.getTableData(this.page).then( this.loading = false);
+                let vm = this
+                this.getTableData(this.page).then(function(){
+                    vm.loading = false
+                });
             },
             getAllPlace: function () {
                 let vm = this;

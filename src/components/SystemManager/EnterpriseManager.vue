@@ -407,19 +407,28 @@
             },
 
             sizeChange(val) {
+                let vm = this
                 this.page.pageSize = val;
                 this.loading = true;
-                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( this.loading = false)
+                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( function () {
+                    vm.loading = false
+                })
             },
             currentChange(val) {
+                let vm = this
                 this.page.pageNum = val;
                 this.loading = true;
-                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( this.loading = false)
+                this.getTableData({...this.page, ...this.enttype,...this.entName}).then( function () {
+                    vm.loading = false
+                })
             },
 
             searchTable(){
+                let vm = this
                 this.loading = true;
-                this.getTableData({...this.page,"entType":this.enttype,"entName":this.entName}).then( this.loading = false)
+                this.getTableData({...this.page,"entType":this.enttype,"entName":this.entName}).then( function () {
+                    vm.loading = false
+                })
             },
 
             showAddModal() {
@@ -581,7 +590,10 @@
             },
 
             getTableByOther: function () {
-                this.getTableData(this.page).then( this.loading = false)
+                let vm = this
+                this.getTableData(this.page).then( function () {
+                    vm.loading = false
+                })
             },
             getAllEnt: function () {
                 let vm = this;

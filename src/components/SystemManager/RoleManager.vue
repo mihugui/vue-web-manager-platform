@@ -379,7 +379,9 @@
             },
 
             getTableByOther:function(){
-                this.getTableData(this.page).then(this.loading=false);
+                this.getTableData(this.page).then(function(){
+                    vm.loading = false
+                });
             },
 
             getAllplace:function(){
