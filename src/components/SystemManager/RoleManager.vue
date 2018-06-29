@@ -89,7 +89,7 @@
                  </el-tree>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="resetForm('dialog')">取 消</el-button>
+                <el-button @click="dialogVisible_permission=false">取 消</el-button>
                 <el-button type="primary" @click="surePermission">确 定</el-button>
             </span>
             </el-dialog>
@@ -162,6 +162,7 @@
                     label: 'name'
                 },
                 entIds:[],
+                userStatue:false,
 
                 //表格
                 loading:false,
@@ -227,6 +228,7 @@
                 setSureUrl:'SET_SURE_URL',
                 settreeids: 'SET_TREE_IDS',
                 setPermissionUrl:'SET_PERMISSION_URL',
+                setCheckUrl:'SET_CHECK_URL'
             }),
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA',
@@ -235,6 +237,7 @@
                 getAllPermission : 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
                 axioPostNoData :'AXIO_POST_NODATA',
+                getCheakNO : 'GET_CHECK_NO'
             }),
 
             gettreeid(){
@@ -293,12 +296,14 @@
             showAddModal(){
                 this.title="新增";
                 this.setSureUrl('/role/add');
+                this.userStatue = false;
                 this.dialogVisible=true;
             },
             showEditModal(){
                 this.dialog={...this.seltable};
                 this.title="编辑";
                 this.setSureUrl('/role/update');
+                this.userStatue = true;
                 this.dialogVisible=true;
             },
 
@@ -395,6 +400,7 @@
             },
 
             getTableByOther:function(){
+                let vm =this
                 this.getTableData(this.page).then(function(){
                     vm.loading = false
                 });

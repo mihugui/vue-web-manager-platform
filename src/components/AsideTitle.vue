@@ -7,34 +7,20 @@
         text-color="#fff"
         active-text-color="#409EFF"
         router>
-        <el-submenu
-                    v-for="(item,key) in AsideTitle"
-                    v-if="item.children !=''"
-                    :key="key">
-            <template slot="title">
-            <i :class="item.icon"></i>
-            <span slot="title">{{item.name}}</span>
-            </template>
-            <el-menu-item-group>
-                <aside-title  :AsideTitle="item.children"></aside-title>
-            </el-menu-item-group>
-        </el-submenu>
-        <el-menu-item
-            v-else
-            :key="key"
-            :index="item.path">
-            <i :class="item.icon"></i>
-            <span slot="title" >{{item.name}}</span>
-        </el-menu-item>
+        <mini-aside-title :AsideTitle="AsideTitle"></mini-aside-title>
     </el-menu>
 </template>
 <script>
+    import miniAside from '@/components/miniAsideTitle'
     export default{
         name:'aside-title',
         data(){
             return{
 
             }
+        },
+        components:{
+            'mini-aside-title': miniAside,
         },
         props:['isCollapse','AsideTitle'],
     }
