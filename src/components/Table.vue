@@ -2,11 +2,12 @@
     <div class="content-wrap">
     <el-table
         ref="multipleTable"
+        height="400"
         :data="tableData"
         v-loading="loading"
         align="left"
         tooltip-effect="dark"
-        style="width: 100%;padding-bottom: 70px;"
+        style="width: 100%"
         @selection-change="selectedChange">
         <el-table-column
             type="selection"

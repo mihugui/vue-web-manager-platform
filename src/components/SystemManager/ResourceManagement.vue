@@ -27,29 +27,100 @@
            width="60%"
            @close="handleClose">
             <span>
-                <el-form ref="form"  label-width="80px">
-                      <el-input placeholder="请点击要操作的资源" v-model="form.name" style="margin-bottom: 10px" disabled>
-                         <template slot="prepend">上级资源</template>
-                      </el-input>
-                       <el-input placeholder="请输入资源名称" v-model="form.resourceName" style="margin-bottom: 10px">
-                         <template slot="prepend">资源名称</template>
-                      </el-input>
-                      <el-input placeholder="请输入组件名称" v-model="form.component" style="margin-bottom: 10px">
-                         <template slot="prepend">组件名称</template>
-                      </el-input>
-                     <el-input placeholder="请输入资源标识符" v-model="form.resourceCode" style="margin-bottom: 10px">
-                         <template slot="prepend">资源标识符</template>
-                      </el-input>
-                     <el-input placeholder="请输入排序号" v-model="form.resourceIndex" style="margin-bottom: 10px">
-                         <template slot="prepend">排序号</template>
-                      </el-input>
-                     <el-input placeholder="请输入图标" v-model="form.resourceIcon" style="margin-bottom: 10px">
-                         <template slot="prepend">图标</template>
-                      </el-input>
-                    <el-input placeholder="请输入访问地址" v-model="form.resourceUrl" style="margin-bottom: 10px">
-                         <template slot="prepend">访问地址</template>
-                      </el-input>
+                <el-form :model="form" :rules="rules" ref="form" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="上级资源" prop="entName">
+                        <el-col :span="20">
+                        <el-input v-model="form.name" disabled></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="上级资源" prop="resourceName">
+                        <el-col :span="20">
+                        <el-input v-model="form.resourceName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="组件名称" prop="component">
+                        <el-select v-model="form.component" clearable placeholder="具体页面需要选择对应组件">
+                            <el-option
+                                v-for="item in dicts.component"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="资源标识符" prop="resourceCode">
+                        <el-col :span="20">
+                        <el-input placeholder="应用级资源需要填写" v-model="form.resourceCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="排序号" prop="resourceIndex">
+                        <el-col :span="20">
+                        <el-input v-model="form.resourceIndex"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="图标" prop="resourceIcon">
+                        <el-select v-model="form.resourceIcon" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in dicts.icon"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                                <span style="float: left">{{ item.name }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 13px"><i :class="item.name"></i></span>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="访问地址" prop="resourceUrl">
+                        <el-col :span="20">
+                        <el-input placeholder="页面资源需要填写(唯一)" v-model="form.resourceUrl"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="应用级资源" prop="isOne">
+                        <el-switch v-model="form.isOne"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="按钮" prop="isButton">
+                        <el-switch v-model="form.isButton"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="显示" prop="isShow">
+                        <el-switch v-model="form.isShow"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="园区" prop="placeId">
+                        <el-select v-model="form1.placeId" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in allPlace"
+                                :key="item.id"
+                                :label="item.placeName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                 </el-form>
+
+
+
+                <!--<el-form ref="form"  label-width="80px">-->
+                      <!--<el-input placeholder="请点击要操作的资源" v-model="form.name" style="margin-bottom: 10px" disabled>-->
+                         <!--<template slot="prepend">上级资源</template>-->
+                      <!--</el-input>-->
+                       <!--<el-input placeholder="请输入资源名称" v-model="form.resourceName" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">资源名称</template>-->
+                      <!--</el-input>-->
+                      <!--<el-input placeholder="请输入组件名称" v-model="form.component" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">组件名称</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入资源标识符" v-model="form.resourceCode" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">资源标识符</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入排序号" v-model="form.resourceIndex" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">排序号</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入图标" v-model="form.resourceIcon" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">图标</template>-->
+                      <!--</el-input>-->
+                    <!--<el-input placeholder="请输入访问地址" v-model="form.resourceUrl" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">访问地址</template>-->
+                      <!--</el-input>-->
+                <!--</el-form>-->
                 <!--<el-checkbox-group v-model="checkList">-->
                     <!--<el-row style="margin-top: 10px">-->
                              <!--<el-switch-->
@@ -65,9 +136,10 @@
                         <!--</el-switch>-->
                     <!--</el-row>-->
                 <!--</el-checkbox-group>-->
-                <el-checkbox label="应用级资源" v-model="form.isOne"></el-checkbox>
-                <el-checkbox label="按钮" v-model="form.isButton"></el-checkbox>
-                <el-checkbox label="显示" v-model="form.isShow"></el-checkbox>
+                <!--<el-checkbox label="应用级资源" v-model="form.isOne"></el-checkbox>-->
+                <!--<el-checkbox label="按钮" v-model="form.isButton"></el-checkbox>-->
+                <!--<el-checkbox label="显示" v-model="form.isShow"></el-checkbox>-->
+
             </span>
            <span slot="footer" class="dialog-footer">
     <el-button @click="close">取 消</el-button>
@@ -81,26 +153,94 @@
            width="60%"
            @close="handleClose_1">
             <span>
-                <el-form ref="form"  label-width="80px">
-                       <el-input placeholder="请输入资源名称" v-model="form1.resourceName" style="margin-bottom: 10px">
-                         <template slot="prepend">资源名称</template>
-                      </el-input>
-                      <el-input placeholder="请输入组件名称" v-model="form1.component" style="margin-bottom: 10px">
-                         <template slot="prepend">组件名称</template>
-                      </el-input>
-                     <el-input placeholder="请输入资源标识符" v-model="form1.resourceCode" style="margin-bottom: 10px">
-                         <template slot="prepend">资源标识符</template>
-                      </el-input>
-                     <el-input placeholder="请输入排序号" v-model="form1.resourceIndex" style="margin-bottom: 10px">
-                         <template slot="prepend">排序号</template>
-                      </el-input>
-                     <el-input placeholder="请输入图标" v-model="form1.resourceIcon" style="margin-bottom: 10px">
-                         <template slot="prepend">图标</template>
-                      </el-input>
-                    <el-input placeholder="请输入访问地址" v-model="form1.resourceUrl" style="margin-bottom: 10px">
-                         <template slot="prepend">访问地址</template>
-                      </el-input>
+                <el-form :model="form1" :rules="rules" ref="form" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="上级资源" prop="name">
+                        <el-col :span="20">
+                        <el-input v-model="form1.name" disabled></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="上级资源" prop="resourceName">
+                        <el-col :span="20">
+                        <el-input v-model="form1.resourceName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="组件名称" prop="component">
+                        <el-select v-model="form1.component" clearable placeholder="具体页面需要选择对应组件">
+                            <el-option
+                                v-for="item in dicts.component"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="资源标识符" prop="resourceCode">
+                        <el-col :span="20">
+                        <el-input placeholder="应用级资源需要填写" v-model="form.resourceCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="排序号" prop="resourceIndex">
+                        <el-col :span="20">
+                        <el-input v-model="form1.resourceIndex"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="图标" prop="resourceIcon">
+                        <el-select v-model="form1.resourceIcon" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in dicts.icon"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.code">
+                                <span style="float: left">{{ item.name }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 13px"><i :class="item.name"></i></span>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="访问地址" prop="resourceUrl">
+                        <el-col :span="20">
+                        <el-input v-model="form1.resourceUrl"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="应用级资源" prop="isOne">
+                        <el-switch v-model="form1.isOne"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="按钮" prop="isButton">
+                        <el-switch v-model="form1.isButton"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="显示" prop="isShow">
+                        <el-switch v-model="form1.isShow"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="园区" prop="placeId">
+                        <el-select v-model="form1.placeId" clearable placeholder="请选择">
+                            <el-option
+                                v-for="item in allPlace"
+                                :key="item.id"
+                                :label="item.placeName"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                 </el-form>
+                <!--<el-form ref="form"  label-width="80px">-->
+                       <!--<el-input placeholder="请输入资源名称" v-model="form1.resourceName" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">资源名称</template>-->
+                      <!--</el-input>-->
+                      <!--<el-input placeholder="请输入组件名称" v-model="form1.component" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">组件名称</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入资源标识符" v-model="form1.resourceCode" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">资源标识符</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入排序号" v-model="form1.resourceIndex" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">排序号</template>-->
+                      <!--</el-input>-->
+                     <!--<el-input placeholder="请输入图标" v-model="form1.resourceIcon" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">图标</template>-->
+                      <!--</el-input>-->
+                    <!--<el-input placeholder="请输入访问地址" v-model="form1.resourceUrl" style="margin-bottom: 10px">-->
+                         <!--<template slot="prepend">访问地址</template>-->
+                      <!--</el-input>-->
+                <!--</el-form>-->
                 <!--<el-checkbox-group v-model="checkList">-->
                     <!--<el-row style="margin-top: 10px">-->
                              <!--<el-switch-->
@@ -116,9 +256,9 @@
                         <!--</el-switch>-->
                     <!--</el-row>-->
                 <!--</el-checkbox-group>-->
-                <el-checkbox label="应用级资源" v-model="form1.isOne"></el-checkbox>
-                <el-checkbox label="按钮" v-model="form1.isButton"></el-checkbox>
-                <el-checkbox label="显示" v-model="form1.isShow"></el-checkbox>
+                <!--<el-checkbox label="应用级资源" v-model="form1.isOne"></el-checkbox>-->
+                <!--<el-checkbox label="按钮" v-model="form1.isButton"></el-checkbox>-->
+                <!--<el-checkbox label="显示" v-model="form1.isShow"></el-checkbox>-->
             </span>
            <span slot="footer" class="dialog-footer">
     <el-button @click="close">取 消</el-button>
@@ -139,6 +279,17 @@
        name: 'ResourceManagement',
        data() {
            return {
+               rules:{
+                   resourceName:[
+                       { required: true, message: '请输入资源名称', trigger: 'blur' },
+                       { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                   ],
+                   resourceCode:[
+                       { required: false, message: '请输入资源名称', trigger: 'blur' },
+                       { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                   ]
+               },
+
                form: {
                    parentResourceId: '',
                    resourceName: '',
@@ -150,7 +301,8 @@
                    value3: true,
                    isButton: '',
                    resourceIcon: '',
-                   component: ''
+                   component: '',
+                   placeId:''
                },
                form1: {
                    parentResourceId: '',
@@ -163,11 +315,13 @@
                    value3: '',
                    isButton: '',
                    resourceIcon: '',
-                   component: ''
+                   component: '',
+                   placeId:''
                },
                i:0,
                dialogVisible: false,
                dialogVisible_1: false,
+               allPlace:[],
                defaultProps: {
                    children: 'children',
                    label: 'name'
@@ -177,12 +331,14 @@
        },
        computed: {
            ...mapGetters({
-               permission: 'permission'
+               permission: 'permission',
+               dicts: 'dicts',
            })
        },
        methods: {
            ...mapActions({
-              setAllPermission:"GET_ALL_PERMISSION"
+                setAllPermission:"GET_ALL_PERMISSION",
+                axioPostNoData: 'AXIO_POST_NODATA',
            }),
            handleClick(data,checked, node) {
                 this.i++;
@@ -325,7 +481,8 @@
                        isShow:this.form.isShow,
                        resourceName:this.form.resourceName,
                        component:this.form.component,
-                       resourceIndex:this.form.resourceIndex
+                       resourceIndex:this.form.resourceIndex,
+                       placeId:this.form.placeId
                    }
                }).then((res)=>{
                    this.form=[]
@@ -387,7 +544,8 @@
                        isShow:this.form1.isShow,
                        resourceName:this.form1.resourceName,
                        component:this.form1.component,
-                       resourceIndex:this.form1.resourceIndex
+                       resourceIndex:this.form1.resourceIndex,
+                       placeId:this.form1.placeId
                    }
                }).then((res)=>{
                    this.form=[]
@@ -423,10 +581,18 @@
                        this.setAllPermission()
                    }
                })
-           }
+           },
+
+           getAllPlace: function () {
+               let vm = this;
+               this.axioPostNoData("/places/getAllPlaces").then(function (val) {
+                   vm.allPlace = val.data.data
+               })
+           },
        },
        created() {
            this.setAllPermission()
+           this.getAllPlace();
        }
    }
 </script>

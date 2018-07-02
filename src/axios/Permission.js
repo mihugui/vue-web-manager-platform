@@ -6,17 +6,19 @@ export const Permission = {
 
     data:'',
     //获取用户资源
-    getUserPermission: async function(action,reset){
+    getUserPermission: async function(action){
         var vm = this;
+        let placeId = sessionStorage.getItem("placeId")
+        var qs = require('qs');
         const promise = new Promise(function(resolve, reject) {
-        if(!sessionStorage.getItem('permission') || reset ==1){
-            axios.post(url.allurl+url.permissionurl).then(function(res){
-                if(res.data.code=200) {
+        if(!sessionStorage.getItem('permission')){
+            axios.post(url.allurl+url.permissionurl,qs.stringify({'placeId':placeId})).then(function(res){
+                if(res.data.retcode === 200) {
                     sessionStorage.setItem('permission', JSON.stringify(res.data.data));
                     vm.data = res.data.data.filter(Permission => {
                         return Permission.button != 1;
                     });
-                    if(action==1){
+                    if(action === 1){ //获取路由
                         resolve(res.data.data.filter(Permission => {
                             return Permission.button != 1 || Permission.pId != null;
                         }));
@@ -93,14 +95,30 @@ export const Permission = {
     //获取全部资源
     getAllPermission:function(){
         var vm = this;
+        let placeId = sessionStorage.getItem("placeId")
+        var qs = require('qs');
         const promise = new Promise(function(resolve, reject) {
-            axios.post(url.allurl + url.allpermissionurl)
+            axios.post(url.allurl + url.allpermissionurl,qs.stringify({"placeId":placeId}))
               .then(res =>{
                   vm.data = res.data.data;
                   resolve(vm.analysis());
               }).catch(error => {
                   console.log(error);
               })
+        });
+        return promise;
+    },
+
+    //获取用户园区
+    getUserPlaces:function(){
+        var vm = this;
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl + '/places/findUserAllPlace')
+                .then(res =>{
+                    resolve(res.data.data);
+                }).catch(error => {
+                reject(error);
+            })
         });
         return promise;
     },

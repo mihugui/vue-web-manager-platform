@@ -2,7 +2,7 @@
     <el-container>
         <el-header>
             <div>
-                <div class="fl title" style="display: inline-block;"><img style="margin-top: 9px ;width:125px" src="../assets/img/chinaMessage.png">
+                <div class="fl title" style="display: inline-block;"><img style="margin-top: 12px ;width:160px" src="../assets/logo.png">
                     <!--<div :style="main_logo"></div>-->
                     </div>
                 <div class="fl system">

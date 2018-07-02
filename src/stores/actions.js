@@ -182,3 +182,15 @@ export const GET_CHECK_NO = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
+export const SET_DEFAULT_PLACE = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/places/setDefaultPlace',qs.stringify(data)).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+

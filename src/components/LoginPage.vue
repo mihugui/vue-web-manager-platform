@@ -42,7 +42,6 @@
 </template>
 <script>
     import {loginpage} from '../axios/Login'
-    import {Permission} from '../axios/Permission'
     import { mapGetters,mapMutations,mapActions} from 'vuex'
     export default {
         name: 'LoginPage',
@@ -99,6 +98,7 @@
             },
             ...mapGetters({
                 myComponents: 'mycomponents',
+
             }),
 
             ...mapMutations({
@@ -128,17 +128,12 @@
                 vm.isBtnLoading = true;
                 loginpage.loginget(loginParams).then(res => {
                     vm.isBtnLoading = false;
-                    if(res.data.retcode==200){
+                    if(res.data.retcode === 200){
                         let result = res.data.data.split(",");
                         sessionStorage.setItem("token",result[0]);
                         sessionStorage.setItem("username",result[1]);
                         vm.getDictsData();
-                        Permission.getUserPermission(1).then(function(val){
-                            let userRoutes = Permission.getrouter(val,vm.myComponents);
-                            console.log(userRoutes)
-                            vm.$router.addRoutes(userRoutes);
-                            vm.$router.push('/');
-                        });
+                        vm.$router.push('/selectPlace');
                     }else{
                         vm.$message.error(res.data.retmsg);
                         return Promise.reject({

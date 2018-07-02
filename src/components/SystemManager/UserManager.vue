@@ -180,7 +180,6 @@
                 width="500px"
                 heigth="80%"
                 :modal-append-to-body="false"
-                @close='closeDialog'
                 style="z-index: 99999;">
             <span>
                  <div class="dialog-input" style="margin-top: 15px;">
@@ -188,19 +187,31 @@
                         <!--<template   slot="prepend">导入文件</template>-->
                         <!--<template slot="append"><a style="color: rgb(144, 147, 153); "target="_blank" :href="downurl">下载模板</a></template>-->
                     <!--</el-input>-->
+                        <el-upload
+                            class="upload-demo"
+                            drag
+                            action="/"
+                            :before-upload="getFile"
+                            >
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                            <div class="el-upload__tip" slot="tip" v-if="upFileName !=null">上传文件名称:{{ upFileName }}</div>
+                            <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件，且不超过500kb</div>
+                            <div class="el-upload__tip" slot="tip"><a target="_blank" :href="downurl" style="color: rgb(144, 147, 153);">下载模板</a></div>
+                        </el-upload>
 
 
-                    <div data-v-f48b85f8="" class="el-input el-input-group el-input-group--append el-input-group--prepend">
-                        <div class="el-input-group__prepend">导入文件</div>
-                        <input type="file" name="file" autocomplete="off" placeholder="请导入文件" class="el-input__inner" @change="getFile">
-                        <div class="el-input-group__append">
-                        <a data-v-f48b85f8="" target="_blank" :href="downurl" style="color: rgb(144, 147, 153);">下载模板</a>
-                        </div>
-                    </div>
+                    <!--<div data-v-f48b85f8="" class="el-input el-input-group el-input-group&#45;&#45;append el-input-group&#45;&#45;prepend">-->
+                        <!--<div class="el-input-group__prepend">导入文件</div>-->
+                        <!--<input type="file" name="file" autocomplete="off" placeholder="请导入文件" class="el-input__inner" @change="getFile">-->
+                        <!--<div class="el-input-group__append">-->
+                        <!---->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_file = false">取 消</el-button>
+                <el-button @click="dialogVisible_file = false;upFileName =null">取 消</el-button>
                 <el-button type="primary" @click="upfile">确 定</el-button>
             </span>
             </el-dialog>
@@ -259,7 +270,7 @@
                     ],
                     userNo: [
                         { required: true, message: '请输入用户编号', trigger: 'blur' },
-                        { pattern: /^[0-9]*$/, message: '你的用户编号格式不对'},
+                        { pattern: /^[0-9]*$/, message: '你的用户编号格式不对,请输入8位数字'},
                         { min: 8, max: 8, message: '长度为8个字符', trigger: 'blur' },
                         { validator: checkUserNo, trigger: 'blur' }
                     ],
@@ -309,7 +320,9 @@
                 dialogVisible: false,
                 soururl: '',
                 downurl:'',
+                uploadurl:'',
                 userStatue:false,
+                upFileName:null,
 
                 //权限弹出框
                 title_permission: '',
@@ -575,6 +588,7 @@
             importfile:function(){
                 this.setSureUrl('');
                 this.downurl = geturl.allurl + '/templateFile/userTemplate.xlsx';
+                this.uploadurl = geturl.allurl + '/user/import?token='+sessionStorage.getItem("token");
                 this.dialogVisible_file = true;
             },
 
@@ -592,15 +606,21 @@
                 })
             },
 
-            getFile:function(e){
-                 this.files = e.target.files;
-                 console.log(this.files)
+            getFile:function(file){
+                 this.files = file;
+                 this.upFileName = file.name
+                 console.log(this.files);
+                 return false
             },
 
             upfile:function(){
+                if(this.upFileName == null){
+                    this.$message.warning("请选择文件后，确认上传")
+                    return;
+                }
                 let vm = this;
                 let formData = new FormData();
-                formData.append('file', vm.files[0]);
+                formData.append('file', vm.files);
 
                 let config = {
                     headers: {
@@ -742,8 +762,6 @@
     }
 </script>
 <style scoped>
-
-
     .el-input__inner{
         width: 200px;
     }

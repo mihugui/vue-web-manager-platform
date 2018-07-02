@@ -165,7 +165,7 @@
                 userStatue:false,
 
                 //表格
-                loading:false,
+                loading:true,
                 page:{
                     page:1,
                     pageSize:20,
