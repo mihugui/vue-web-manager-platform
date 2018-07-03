@@ -2,7 +2,6 @@
 * 全局变量，状态管理
 * */
 const state = {
-
     treeids:[], //组织数id
     token:'', //token
 
@@ -44,7 +43,10 @@ const state = {
         },
         dictonary: (resolve) => {
             require(['@/components/SystemManager/dictonary'],resolve)
-        }
+        },
+        optionpage:(resolve) => {
+            require(['@/components/SystemManager/OptionPage'],resolve)
+        },
     },
 
     //路由

@@ -5,6 +5,7 @@ const permissionurl = '/resource/getUserResource'
 const allpermissionurl = '/resource/getAllResource'
 const dicts = '/dict/getAllDicts'
 
+
 export default {
     allurl,
     permissionurl,

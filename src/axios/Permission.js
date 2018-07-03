@@ -93,14 +93,20 @@ export const Permission = {
         return userRouter;
     },
     //获取全部资源
-    getAllPermission:function(){
+    getAllPermission:function(action){
         var vm = this;
         let placeId = sessionStorage.getItem("placeId")
         var qs = require('qs');
         const promise = new Promise(function(resolve, reject) {
             axios.post(url.allurl + url.allpermissionurl,qs.stringify({"placeId":placeId}))
               .then(res =>{
-                  vm.data = res.data.data;
+                  if(action === 1){
+                      vm.data = res.data.data.filter(Permission => {
+                          return Permission.button != 1;
+                      });
+                  }else {
+                      vm.data = res.data.data;
+                  }
                   resolve(vm.analysis());
               }).catch(error => {
                   console.log(error);

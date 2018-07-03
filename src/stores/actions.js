@@ -77,7 +77,7 @@ export const SET_SYSTEM_PERMISSION = async({ dispatch, commit, state },data)=>{
 
 export const GET_USER_PERMISSION = async({ dispatch, commit, state },data)=> {
     Permission.getUserPermission().then(function(val){
-        commit('SET_ASIDETITLE_PERMISSION',val );
+        commit(types.SET_ASIDETITLE_PERMISSION,val );
         dispatch('SET_ALL_PERMISSION');
     });
 }
@@ -85,16 +85,20 @@ export const GET_USER_PERMISSION = async({ dispatch, commit, state },data)=> {
 export const GET_ALL_PERMISSION = async({ dispatch, commit, state },data)=> {
     Permission.getAllPermission().then(function (val) {
         console.log(val);
-        commit('SET_ALL_PERMISSION',val);
+        commit(types.SET_ALL_PERMISSION,val);
     });
 }
 
 export const SET_ALL_PERMISSION = async({ dispatch, commit, state })=> {
 
-    commit('SET_BUTTON_PERMISSION', JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
+    commit(types.SET_SYSTEM_TITLE,JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
+        return Permission.pId === null;
+    })[0].system);
+
+    commit(types.SET_BUTTON_PERMISSION, JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
         return Permission.button === 1;
     }));
-    commit('SET_SYSTEM_PERMISSION', JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
+    commit(types.SET_SYSTEM_PERMISSION, JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
         return Permission.pId === null;
     }));
 }

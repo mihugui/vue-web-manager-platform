@@ -342,7 +342,7 @@
                 loading:true,
                 page: {
                     page: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                 },
                 showEdit: false,
                 showDetele: false,

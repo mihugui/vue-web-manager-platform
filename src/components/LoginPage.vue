@@ -103,7 +103,7 @@
 
             ...mapMutations({
                 setUserRoutes : 'SET_USER_ROUTES',
-                setUserName : 'SET_USER_NAME'
+                setUserName : 'SET_USER_NAME',
             })
 
         },
@@ -147,7 +147,7 @@
                 this.imgurl=loginpage.getimgurl(this.random);
             },
             ...mapActions({
-                 getDictsData:'GET_DICTS_DATA'
+                 getDictsData:'GET_DICTS_DATA',
             })
         },
         mounted () {

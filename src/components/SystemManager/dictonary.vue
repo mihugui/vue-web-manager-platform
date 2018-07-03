@@ -181,7 +181,7 @@
                     url:url.allurl+'/dict/list',
                     params: {
                         page:1,
-                        pageSize:20,
+                        pageSize:10,
                         code: JSON.parse(this.codeone)
                     }
                 }).then((res)=>{

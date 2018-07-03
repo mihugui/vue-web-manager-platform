@@ -29,7 +29,7 @@
 </template>
 <script>
     import {Permission} from "../axios/Permission";
-    import { mapGetters,mapActions } from 'vuex'
+    import { mapGetters,mapActions,mapMutations } from 'vuex'
     import * as types from "../stores/mutation-types"
 
     export default{
@@ -49,6 +49,9 @@
 
         },
         methods: {
+            ...mapMutations({
+                setSystemTitle : 'SET_SYSTEM_TITLE'
+            }),
 
             ...mapActions({
                 setDefaultPlace:"SET_DEFAULT_PLACE"
@@ -68,8 +71,10 @@
                 this.dialogVisible =false;
             },
 
-            getUserPlacePermission:function(){
+            getUserPlacePermission:function(id){
                 let vm = this
+                sessionStorage.setItem("placeId",id)
+                sessionStorage.removeItem("permission")
                 Permission.getUserPermission(1).then(function(val){
                     let userRoutes = Permission.getrouter(val,vm.myComponents);
                     vm.$router.addRoutes(userRoutes);
@@ -82,11 +87,9 @@
                 Permission.getUserPlaces().then(function(val){
                     console.log(val.length);
                     if(val.length === 1){
-                        sessionStorage.setItem("placeId",val[0].id)
-                        vm.getUserPlacePermission(vm.placeId)
-                    }else if(val.filter(p=>{return p.isDefault === "1"}).length >= 1) {
-                        sessionStorage.setItem("placeId", val[0].id)
                         vm.getUserPlacePermission(val[0].id)
+                    }else if(val.filter(p=>{return p.isDefault === "1"}).length >= 1) {
+                        vm.getUserPlacePermission(val.filter(p=>{return p.isDefault === "1"})[0].id)
                     }else{
                         vm.dialogVisible = true
                         vm.loading = false;

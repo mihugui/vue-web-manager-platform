@@ -5,75 +5,72 @@
 import * as types from './mutation-types'
 
 const mutations = {
-    [types.SHOW_DEL_BUTTON](status,data){
-        status.show = data;
+    [types.SHOW_DEL_BUTTON](state,data){
+        state.show = data;
     },
 
-    [types.SET_TREE_IDS](status,data){
-        status.treeids = data;
+    [types.SET_TREE_IDS](state,data){
+        state.treeids = data;
     },
 
-    [types.SHOW_EDIT_BUTTON](status,data){
-        status.show = data;
+    [types.SHOW_EDIT_BUTTON](state,data){
+        state.show = data;
     },
 
-    [types.SET_TABLE_URL](status,data){
-        status.tableurl = data;
+    [types.SET_TABLE_URL](state,data){
+        state.tableurl = data;
     },
 
-    [types.SET_TABLE_DATA](status,data){
-        status.tableData = data;
+    [types.SET_TABLE_DATA](state,data){
+        state.tableData = data;
     },
 
-    [types.SET_TOKEN_DATA](status,data){
-        status.token = data;
+    [types.SET_TOKEN_DATA](state,data){
+        state.token = data;
     },
 
-    [types.SET_BUTTON_PERMISSION](status,data){
-        status.buttonpermission = data;
+    [types.SET_BUTTON_PERMISSION](state,data){
+        state.buttonpermission = data;
     },
 
-    [types.SET_SYSTEM_PERMISSION](status,data){
-        status.systeminfo = data;
+    [types.SET_SYSTEM_PERMISSION](state,data){
+        state.systeminfo = data;
     },
 
-    [types.SET_ASIDETITLE_PERMISSION](status,data){
-        status.asideinfo = data;
+    [types.SET_ASIDETITLE_PERMISSION](state,data){
+        state.asideinfo = data;
     },
 
-    [types.SET_ALL_PERMISSION](status,data){
-        status.permission = data;
+    [types.SET_ALL_PERMISSION](state,data){
+        state.permission = data;
     },
 
-    [types.SET_SURE_URL](status,data){
-        status.sureurl = data;
+    [types.SET_SURE_URL](state,data){
+        state.sureurl = data;
     },
 
-    [types.SET_TABLE_TOTAL](status,data){
-        status.total = data;
+    [types.SET_TABLE_TOTAL](state,data){
+        state.total = data;
     },
 
-    [types.SET_USER_ROUTES](status,data){
-        status.userroutes = data;
+    [types.SET_USER_ROUTES](state,data){
+        state.userroutes = data;
     },
-    [types.SET_DICTS_DATA](status,data){
-        status.dicts = data;
-    },
-
-    [types.SET_SYSTEM_TITLE](status,data){
-        status.system = data;
+    [types.SET_DICTS_DATA](state,data){
+        state.dicts = data;
     },
 
-    [types.SET_PERMISSION_URL](status,data){
-        status.permissionUrl = data;
+    [types.SET_SYSTEM_TITLE](state,data){
+        state.system = data;
     },
 
-    [types.SET_CHECK_URL](status,data){
-        status.checkUrl = data;
+    [types.SET_PERMISSION_URL](state,data){
+        state.permissionUrl = data;
     },
 
-
-
+    [types.SET_CHECK_URL](state,data){
+        state.checkUrl = data;
+    },
 
 }
 

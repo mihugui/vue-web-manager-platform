@@ -36,7 +36,7 @@
                 //表格
                 page:{
                     page:1,
-                    pageSize:20,
+                    pageSize:10,
                     operatorName: ''
                 },
                 tableKey: [{

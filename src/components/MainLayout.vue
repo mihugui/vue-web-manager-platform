@@ -16,8 +16,9 @@
                           active-text-color="#ffd04b" >
                 <el-submenu index="1">
                     <template slot="title">{{username}}</template>
-                    <el-menu-item index="1-1" @click="resetRouter">界面重置</el-menu-item>
-                    <el-menu-item index="1-2" @click="logout">退出</el-menu-item>
+                    <el-menu-item index="1-1" @click="changePlace">切换园区</el-menu-item>
+                    <el-menu-item index="1-2" @click="resetRouter">界面重置</el-menu-item>
+                    <el-menu-item index="1-3" @click="logout">退出</el-menu-item>
                 </el-submenu>
                 </el-menu>
             </div>
@@ -29,20 +30,48 @@
                 <router-view></router-view>
             </el-main>
         </el-container>
+        <el-dialog
+            title="请选择园区"
+            :visible.sync="dialogVisible"
+            width="500px"
+            heigth="80%"
+            :modal-append-to-body="true"
+            :close-on-click-modal="false"
+            style="z-index: 99999;">
+            <span>
+                <el-radio-group v-model="selplace">
+                    <el-radio-button
+                        v-for="item in places"
+                        :key="item.id"
+                        :label="item.id" >
+                        {{item.placeName}}
+                    </el-radio-button>
+                </el-radio-group>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible=false">取 消</el-button>
+                <el-button type="primary" @click="selectPlace">确 定</el-button>
+            </span>
+        </el-dialog>
     </el-container>
 </template>
 <script>
     import SystemTitle from '@/components/SystemTitle'
     import AsideTitle from '@/components/AsideTitle'
+    import SelectPlace from '@/components/SelectPlace'
     import {loginpage} from '../axios/Login'
+    import {Permission} from "../axios/Permission";
     import { mapGetters,mapActions,mapMutations} from 'vuex'
     export default {
         name: "MainLayout",
         data(){
             return {
+                dialogVisible:false,
                 isCollapse:true,
                 myWidth:"65px",
                 username:sessionStorage.getItem("username"),
+                selplace:'',
+                places:'',
                 main_logo:{
                         height: '60px',
                         width: '310px',
@@ -52,8 +81,12 @@
             }
         },
 
-
         methods:{
+
+            changePlace(){
+              this.dialogVisible=true
+            },
+
             changertitle(){
                 if(window.innerWidth>800) {
                     this.isCollapse = false;
@@ -69,21 +102,53 @@
             },
             logout:function(){
                 loginpage.logout();
-                this.$router.push('/login')
+                location.reload();
             },
             resetRouter:function(){
                 sessionStorage.removeItem("permission");
                 location.reload();
             },
+
+            selectPlace:function(){
+
+                this.setDefaultPlace({"placeId":sessionStorage.getItem("placeId"),isDefault:0})
+                sessionStorage.setItem("placeId",this.selplace)
+                this.setDefaultPlace({"placeId":this.selplace,isDefault:1})
+                this.$message.info('正在跳转到选择园区')
+                sessionStorage.removeItem("permission")
+                this.dialogVisible =false;
+                location.reload();
+            },
+
+            getUserPlacePermission:function(){
+                let vm = this
+                Permission.getUserPermission(1).then(function(val){
+                    let userRoutes = Permission.getrouter(val,vm.myComponents);
+                    vm.$router.addRoutes(userRoutes);
+                    vm.$router.push('/');
+                });
+            },
+
+            gerUserPlace:function(){
+                let vm =this
+                Permission.getUserPlaces().then(function(val){
+                        vm.places = val;
+                        vm.selplace = val.filter(p=>{return p.isDefault === "1"})[0].id
+                })
+
+            },
+
             ...mapActions({
-                getUserPermission: 'GET_USER_PERMISSION'
+                getUserPermission: 'GET_USER_PERMISSION',
+                setDefaultPlace:"SET_DEFAULT_PLACE"
+
             }),
             ...mapMutations({
-                setSystemTitle : 'SET_SYSTEM_TITLE'
+                setSystemTitle : 'SET_SYSTEM_TITLE',
             })
         },
         mounted () {
-
+            this.gerUserPlace();
             this.changertitle();
             var _this =this;
             // 注：window.onresize只能在项目内触发1次
@@ -99,11 +164,13 @@
             ...mapGetters({
                 AsideTitle: 'asideinfo',
                 SystemTitle:'systeminfo',
+                myComponents: 'mycomponents',
             })
         },
         components: {
             'mini-system': SystemTitle,
             'mini-asidetitle':AsideTitle,
+            'select-place':SelectPlace,
         },
     }
 </script>
@@ -133,7 +200,7 @@
         background-color: #fff;
         color: #333;
         /*text-align: center;*/
-        margin:0px 0px 0px 0px;
+        margin:0px 0px 80px 0px;
         height: auto;
     }
 

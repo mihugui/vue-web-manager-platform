@@ -2,7 +2,6 @@
     <div class="content-wrap">
     <el-table
         ref="multipleTable"
-        height="400"
         :data="tableData"
         v-loading="loading"
         align="left"
@@ -25,8 +24,8 @@
     </el-table>
     <el-pagination
         style="position: fixed;bottom: 0px"
-        :page-sizes="[20 , 40, 60, 100]"
-        :page-size="20"
+        :page-sizes="[10 , 20, 30, 40]"
+        :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="sizeChange"

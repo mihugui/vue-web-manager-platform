@@ -138,7 +138,7 @@
                 loading:true,
                 page:{
                     pageNum:1,
-                    pageSize:20,
+                    pageSize:10,
                 },
                 tableKey: [{
                     name: '序号',

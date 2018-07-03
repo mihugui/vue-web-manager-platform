@@ -4,7 +4,7 @@ import store from '../stores';
 import {Permission} from '../axios/Permission'
 
 const global = {
-    install: null
+    install: null,
 }
 
 global.install = (Vue, router) => {
