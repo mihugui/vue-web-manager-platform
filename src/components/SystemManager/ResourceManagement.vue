@@ -33,7 +33,7 @@
                         <el-input v-model="form.name" disabled></el-input>
                         </el-col>
                     </el-form-item>
-                    <el-form-item label="上级资源" prop="resourceName">
+                    <el-form-item label="资源名称" prop="resourceName">
                         <el-col :span="20">
                         <el-input v-model="form.resourceName"></el-input>
                         </el-col>
@@ -154,12 +154,12 @@
            @close="handleClose_1">
             <span>
                 <el-form :model="form1" :rules="rules" ref="form" label-width="120px"  class="demo-ruleForm">
-                    <el-form-item label="上级资源" prop="name">
+                    <el-form-item label="上级资源" prop="name" v-show="false">
                         <el-col :span="20">
                         <el-input v-model="form1.name" disabled></el-input>
                         </el-col>
                     </el-form-item>
-                    <el-form-item label="上级资源" prop="resourceName">
+                    <el-form-item label="资源名称" prop="resourceName">
                         <el-col :span="20">
                         <el-input v-model="form1.resourceName"></el-input>
                         </el-col>
@@ -417,6 +417,7 @@
               this.form.isButton = false;
               this.form.resourceIcon = '';
               this.form.component = '';
+              this.form.placeId = '';
 //              this.form=[]
                this.setAllPermission()
                console.log(this.form)
@@ -433,7 +434,7 @@
                this.form1.isButton = '';
                this.form1.resourceIcon = '';
                this.form1.component = '';
-
+               this.form1.placeId = '';
                this.setAllPermission()
            },
            makesure() {

@@ -45,7 +45,10 @@ const state = {
             require(['@/components/SystemManager/dictonary'],resolve)
         },
         optionpage:(resolve) => {
-            require(['@/components/SystemManager/OptionPage'],resolve)
+            require(['@/components/ImportSystem/OptionPage'],resolve)
+        },
+        importurl:(resolve) => {
+            require(['@/components/ImportSystem/importUrl'],resolve)
         },
     },
 
