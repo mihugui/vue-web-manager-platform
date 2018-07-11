@@ -38,4 +38,6 @@ export const SET_PERMISSION_URL = 'SET_PERMISSION_URL'
 
 export const SET_CHECK_URL = 'SET_CHECK_URL'
 
+export const SET_DATA_BYURL = 'SET_DATA_BYURL'
+
 

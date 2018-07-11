@@ -1,26 +1,30 @@
 <template>
 <div>
     <section class="content-search">
-    <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
-        <el-form-item
-            label="园区名称" label-width="80px">
-            <el-input
-                placeholder="请输入园区名称"
-                v-model="placename"
-                clearable>
-            </el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
-        </el-form-item>
-    </el-form>
+        <div style="padding-left: 20px">
+            <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
+                <el-form-item
+                    label="园区名称" label-width="80px">
+                    <el-input
+                        placeholder="请输入园区名称"
+                        v-model="placename"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
     </section>
     <section class="content-operate">
     <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/places/add'}).length!=0">新增</el-button>
     <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/places/del'}).length!=0)" @click="handleClose(deleteList)" >删除</el-button>
     </section>
-    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+    <section class="content-table">
+        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+    </section>
     <div>
         <el-dialog
             :title="title"
@@ -280,7 +284,7 @@
             },
 
             handleClose(done) {
-                this.$confirm('确认关闭？')
+                this.$confirm('确认删除？')
                     .then(_ => {
                         done();
                     })
@@ -339,28 +343,21 @@
 </script>
 <style scoped>
     .content-search {
-        text-align: left;
         background-color: #fff;
-        border-bottom: 1px solid hsla(0,0%,92%,.9);
-        padding: 15px 20px 0;
-        display: block;
-        margin: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+        border-bottom: 2px solid hsla(0,0%,92%,.9);
+        margin:20px 0 0 0;
+        width: 100% ;
     }
     .content-operate {
-        margin-bottom: 10px;
-        text-align: left;
-        background-color: #fff;
-        border-bottom: 1px solid hsla(0,0%,92%,.9);
-        display: block;
-        padding-left: 30px;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+        margin:10px 0 10px 30px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .content-table{
+        background-color: #f0f4f7;
+        padding: 10px 20px 60px;
+        height: auto;
     }
 
     .el-dialog{

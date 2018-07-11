@@ -72,6 +72,9 @@ const mutations = {
         state.checkUrl = data;
     },
 
+    [types.SET_DATA_BYURL](state,data){
+        state.DataUrl = data;
+    }
 }
 
 export default mutations

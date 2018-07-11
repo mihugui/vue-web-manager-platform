@@ -30,7 +30,7 @@
         props:['AsideTitle'],
     }
 </script>
-<style>
+<style scoped>
     a{
         text-decoration:none;
         color:white;
@@ -38,5 +38,9 @@
 
     .el-menu {
         border-right: solid 0px #e6e6e6;
+    }
+
+    i{
+        color:#fff;
     }
 </style>

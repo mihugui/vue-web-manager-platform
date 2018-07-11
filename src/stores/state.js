@@ -2,6 +2,41 @@
 * 全局变量，状态管理
 * */
 const state = {
+
+    //表格配置数据(测试)
+    test:[{
+        id:1,
+        value:'name',
+        name:'姓名',
+        is_show:'1',
+        is_search:'1',
+        is_edit:'1',
+        rule:[
+            { required: true, message: '请输入员工姓名', trigger: 'blur' }
+        ],
+    },{
+        id:2,
+        value:'age',
+        name:'年龄',
+        is_show:'1',
+        is_search:'1',
+        is_edit:'1',
+        rule:[
+            { required: true, message: '请输入员工年龄', trigger: 'blur' }
+        ],
+    },{
+        id:3,
+        value:'address',
+        name:'住址',
+        is_show:'1',
+        is_search:'0',
+        is_edit:'1',
+        rule:[
+            { required: true, message: '请输入员工住址', trigger: 'blur' }
+        ],
+    }],
+
+
     treeids:[], //组织数id
     token:'', //token
 
@@ -13,7 +48,7 @@ const state = {
     system:'system', // 当前系统
     showedit:true, // 表格 更改显示
     showdel:true, // 表格 删除显示
-
+    DataUrl:'', // 获取数据URL
     //权限相关
     buttonpermission:'', // 权限按钮
     asideinfo:[], // 权限边框
@@ -48,7 +83,10 @@ const state = {
             require(['@/components/ImportSystem/OptionPage'],resolve)
         },
         importurl:(resolve) => {
-            require(['@/components/ImportSystem/importUrl'],resolve)
+            require(['@/components/ImportSystem/ImportUrl'],resolve)
+        },
+        importtable:(resolve) => {
+            require(['@/components/ImportSystem/ImportTable'],resolve)
         },
     },
 

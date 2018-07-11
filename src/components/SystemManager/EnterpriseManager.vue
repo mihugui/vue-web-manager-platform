@@ -1,6 +1,7 @@
 <template>
     <div>
         <section class="content-search">
+            <div style="padding-left: 20px">
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
                     label="企业名称" label-width="80px">
@@ -25,6 +26,7 @@
                     <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
                 </el-form-item>
             </el-form>
+            </div>
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="button.filter(btn =>{return btn.path === '/enterprise/add'}).length!=0" @click="showAddModal">新增</el-button>
@@ -39,8 +41,10 @@
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/enterprise/del'}).length!=0)" @click="handleClose(deleteList)">删除
             </el-button>
         </section>
+        <section class="content-table">
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
                     :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+        </section>
         <div>
             <el-dialog
                 :title="title"
@@ -331,7 +335,7 @@
                     operate: true
                 }, {
                     name: '父级企业',
-                    value: 'entParentId',
+                    value: 'entParentName',
                     operate: true,
                 }, {
                     name: '入驻园区',
@@ -639,29 +643,20 @@
 </script>
 <style scoped>
     .content-search {
-        text-align: left;
         background-color: #fff;
-        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
-        padding: 15px 20px 0;
-        display: block;
-        margin: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+        border-bottom: 2px solid hsla(0,0%,92%,.9);
+        margin:20px 0 0 0;
+        width: 100% ;
+    }
+    .content-operate {
+        margin:10px 0 10px 30px;
+        flex: 1;
+        overflow-y: auto;
     }
 
-    .content-operate {
-        margin-bottom: 10px;
-        text-align: left;
-        background-color: #fff;
-        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
-        display: block;
-        padding-left: 30px;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+    .content-table{
+        background-color: #f0f4f7;
+        padding: 10px 20px 60px;
     }
 
     .el-dialog {

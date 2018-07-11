@@ -1,5 +1,5 @@
 <template>
-   <div class="dictonary">
+   <div class="content-search">
        <!--<section>-->
            <!--<el-form :inline="true"  class="demo-form-inline">-->
                <!--<el-form-item label="字典数据类型">-->
@@ -31,7 +31,7 @@
        <section>
            <div>
                <div style="display: inline-block;float: left" :style="stylefa">
-                   <section>
+                   <section class="content-operate">
                        <el-row>
                            <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showAddModal">增加</el-button>
                            <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showEditModal" v-if="showEdit">修改</el-button>
@@ -39,17 +39,21 @@
                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteList" v-if="showDetele">删除</el-button>
                        </el-row>
                    </section>
+                   <section class="content-table">
                    <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
+                   </section>
                </div>
                <div style="display: inline-block;float: left;width: 50%" v-if="showson">
-                   <section>
+                   <section class="content-operate">
                        <el-row>
                            <el-button type="primary" icon="el-icon-plus" size="mini"  @click="showsonAddModal">增加</el-button>
                            <el-button type="primary" size="mini"  icon="el-icon-edit" @click="showsonEditModal" v-if="showsonEdit">修改</el-button>
                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteListson" v-if="showsonDetele">删除</el-button>
                        </el-row>
                    </section>
+                   <section class="content-table">
                    <mini-table :tableData="tableDatason" :tableKey="tableKeyson" :total="totalson" :selectedChange="selectedChangeson" :sizeChange="sizeChange" :currentChange="currentChangeson"></mini-table>
+                   </section>
                </div>
            </div>
            <div>
@@ -169,7 +173,8 @@
             }),
             ...mapActions({
                 getTableData : 'GET_TABLE_DATA',
-                updateSureOK : 'UPDATE_TABLE_DATA'
+                updateSureOK : 'UPDATE_TABLE_DATA',
+                getDictsData:'GET_DICTS_DATA'
             }),
             dictype(val){
                 this.page.name = this.indicttype;
@@ -301,7 +306,8 @@
                     if (res.data.retcode === 200) {
                         console.log(res.data.data);
                         this.tableDatason = res.data.data.list;
-                        this.totalson = res.data.data.total
+                        this.totalson = res.data.data.total;
+                        vm.getDictsData()
                     }
                 })
 //                this.getTableData(this.page);
@@ -349,6 +355,7 @@
                             if (res.data.retcode === 200) {
                                 vm.$message.success("删除成功");
                                 vm.getTableByOther();
+                                vm.getDictsData()
                             } else {
                                 vm.$message.warning("删除失败");
                             }
@@ -370,6 +377,7 @@
                             if (res.data.retcode === 200) {
                                 vm.$message.success("删除成功");
                                 vm.getTableByOther();
+                                vm.getDictsData()
                             } else {
                                 vm.$message.warning("删除失败");
                             }
@@ -421,6 +429,21 @@
     }
 </script>
 
-<style  rel="stylesheet/stylus">
+<style>
+    .content-search {
+        background-color: #fff;
+        border-bottom: 2px solid hsla(0,0%,92%,.9);
+        margin:20px 0 0 0;
+        width: 100% ;
+    }
+    .content-operate {
+        margin:10px 0 10px 30px;
+        flex: 1;
+        overflow-y: auto;
+    }
 
+    .content-table{
+        background-color: #f0f4f7;
+        padding: 10px 20px 60px;
+    }
 </style>

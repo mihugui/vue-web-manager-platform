@@ -1,11 +1,12 @@
 <template>
   <div id="LogManagement">
-      <section>
+      <section class="content-search">
           <!--<el-form :inline="true" :model="formInline" class="demo-form-inline">-->
               <!--<el-form-item label="用户">-->
                   <!--<el-input v-model="formInline.user" placeholder="输入用户名查询" @change="inputtext"></el-input>-->
               <!--</el-form-item>-->
           <!--</el-form>-->
+          <div style="padding-left: 20px">
           <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
               <el-form-item
                   label="用户" label-width="80px">
@@ -19,8 +20,9 @@
                   <el-button type="primary" icon="el-icon-search" @click="inputtext">查询</el-button>
               </el-form-item>
           </el-form>
+          </div>
       </section>
-      <section>
+      <section class="content-table">
           <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange" :sizeChange="sizeChange" :currentChange="currentChange"></mini-table>
       </section>
   </div>
@@ -190,5 +192,16 @@
         }
     }
 </script>
-<style  rel="stylesheet/stylus">
+<style scoped>
+    .content-search {
+        background-color: #fff;
+        border-bottom: 2px solid hsla(0,0%,92%,.9);
+        margin:20px 0 0 0;
+        width: 100% ;
+    }
+
+    .content-table{
+        background-color: #f0f4f7;
+        padding: 10px 20px 60px;
+    }
 </style>

@@ -31,3 +31,4 @@ export const dicts = state =>state.dicts
 
 export const permissionUrl= state =>state.permissionUrl
 
+export const test = state => state.test

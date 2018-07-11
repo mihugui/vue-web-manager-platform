@@ -48,8 +48,10 @@
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/del'}).length!=0)" @click="handleClose(deleteList)">删除
             </el-button>
         </section>
+        <section class="content-table">
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
                     :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+        </section>
         <div>
             <el-dialog
                 :title="title"
@@ -770,29 +772,20 @@
         width: 200px;
     }
     .content-search {
-        text-align: left;
         background-color: #fff;
-        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
-        padding: 15px 20px 0;
-        display: block;
-        margin: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+        border-bottom: 2px solid hsla(0,0%,92%,.9);
+        margin:20px 0 0 0;
+        width: 100% ;
+    }
+    .content-operate {
+        margin:10px 0 10px 30px;
+        flex: 1;
+        overflow-y: auto;
     }
 
-    .content-operate {
-        margin-bottom: 10px;
-        text-align: left;
-        background-color: #fff;
-        border-bottom: 1px solid hsla(0, 0%, 92%, .9);
-        display: block;
-        padding-left: 30px;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
+    .content-table{
+        background-color: #f0f4f7;
+        padding: 10px 20px 60px;
     }
 
     .el-dialog {

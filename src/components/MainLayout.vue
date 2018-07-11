@@ -2,7 +2,7 @@
     <el-container>
         <el-header>
             <div>
-                <div class="fl title" style="display: inline-block;"><img style="margin-top: 12px ;width:160px" src="../assets/logo.png">
+                <div class="fl title" style="display: inline-block;background-color: #36a8fc"><img style="margin-top: 12px ;width:160px" src="../assets/logo.png">
                     <!--<div :style="main_logo"></div>-->
                     </div>
                 <div class="fl system">
@@ -11,15 +11,15 @@
                 <div class="fr">
                 <el-menu  class="el-menu-demo"
                           mode="horizontal"
-                          background-color="#36a8fc"
-                          text-color="#fff"
-                          active-text-color="#ffd04b" >
-                <el-submenu index="1">
-                    <template slot="title">{{username}}</template>
-                    <el-menu-item index="1-1" @click="changePlace">切换园区</el-menu-item>
-                    <el-menu-item index="1-2" @click="resetRouter">界面重置</el-menu-item>
-                    <el-menu-item index="1-3" @click="logout">退出</el-menu-item>
-                </el-submenu>
+                          background-color="#fff"
+                          text-color="#333"
+                          active-text-color="#36a8fc" >
+                    <el-menu-item index="1" @click="changePlace">{{  placename }}</el-menu-item>
+                    <el-submenu index="2">
+                        <template slot="title">{{username}}</template>
+                        <el-menu-item index="1-1" @click="resetRouter">界面重置</el-menu-item>
+                        <el-menu-item index="1-2" @click="logout">退出</el-menu-item>
+                    </el-submenu>
                 </el-menu>
             </div>
             </div>
@@ -69,6 +69,7 @@
                 dialogVisible:false,
                 isCollapse:true,
                 myWidth:"65px",
+                placename:'',
                 username:sessionStorage.getItem("username"),
                 selplace:'',
                 places:'',
@@ -90,7 +91,7 @@
             changertitle(){
                 if(window.innerWidth>800) {
                     this.isCollapse = false;
-                    this.myWidth = "210px";
+                    this.myWidth = "200px";
                 }
                 else{
                     this.isCollapse = true;
@@ -101,8 +102,12 @@
                 this.setSystemTitle(val);
             },
             logout:function(){
-                loginpage.logout();
-                location.reload();
+                let vm = this
+                loginpage.logout().then(function(val){
+                    console.log(val);
+                    location.reload();
+                });
+
             },
             resetRouter:function(){
                 sessionStorage.removeItem("permission");
@@ -117,6 +122,7 @@
                 this.$message.info('正在跳转到选择园区')
                 sessionStorage.removeItem("permission")
                 this.dialogVisible =false;
+                this.$router.push('/');
                 location.reload();
             },
 
@@ -133,7 +139,8 @@
                 let vm =this
                 Permission.getUserPlaces().then(function(val){
                         vm.places = val;
-                        vm.selplace = val.filter(p=>{return p.isDefault === "1"})[0].id
+                        vm.selplace = val.filter(p=>{return p.isDefault === "1"})[0].id;
+                        vm.placename = val.filter(p=>{return p.isDefault === "1"})[0].placeName;
                 })
 
             },
@@ -182,14 +189,14 @@
         margin-top: 60px
     }
     .el-header {
-        background-color: #36a8fc;
+        background-color: #fff;
         color: #333;
         text-align: center;
         line-height: 60px;
         padding: 0;
     }
     .el-aside {
-        background-color: rgb(84, 92, 100);
+        background-color: #36a8fc;
         color: #333;
         text-align: center;
         line-height: 200px;
@@ -200,8 +207,11 @@
         background-color: #fff;
         color: #333;
         /*text-align: center;*/
-        margin:0px 0px 80px 0px;
+        margin:0px 0px 20px 0px;
+        padding:0;
         height: auto;
+        width: auto;
+        border-top:solid 2px hsla(0,0%,92%,.9)
     }
 
     .title {

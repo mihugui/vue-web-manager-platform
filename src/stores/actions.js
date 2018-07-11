@@ -198,3 +198,68 @@ export const SET_DEFAULT_PLACE = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
+//获取配置表格数据 及相关处理
+export const GET_TABLE_INFO = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/resourceData/getDataSource',qs.stringify(data)).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+//获取配置按钮 及相关处理
+export const GET_TABLE_BUTTON = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/resource/getResourcseById',qs.stringify(data)).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+//
+export const SET_TABLE_INFO = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/resourceData/addDataSource',qs.stringify(data,{arrayFormat: 'brackets'})).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+export const UP_TABLE_INFO = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/resourceData/updateDataSource',qs.stringify(data,{arrayFormat: 'brackets'})).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+export const GET_DATA_BYURL = async({ dispatch, commit, state }, data)=>{
+
+    let tableurl = state.DataUrl;
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+

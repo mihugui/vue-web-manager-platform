@@ -27,7 +27,16 @@ export const loginpage = {
     },
 
     logout:function logout(){
-        axios.post(url.allurl+'/logout');
-        sessionStorage.clear();
+
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl + '/logout') .then(res =>{
+                resolve(res.data.retcode);
+                sessionStorage.clear();
+            }).catch(error => {
+                reject(error);
+            })
+        });
+        return promise;
+
     }
 }

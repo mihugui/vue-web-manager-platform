@@ -1,9 +1,10 @@
 <template>
-   <div id="ResourceManagement">
+   <div class="content-operate">
        <el-row>
            <el-button type="primary" size="small" @click="resourceadd">增加</el-button>
            <el-button type="primary" size="small" @click="update">修改</el-button>
-           <el-button type="danger" size="small" @click="removeone">删除</el-button>
+           <el-button type="primary" size="small" @click="changeDR">数据资源</el-button>
+           <el-button type="danger" size="small" @click="deletesure(removeone)">删除</el-button>
        </el-row>
        <el-row style="margin-top: 20px">
            <el-tree
@@ -28,7 +29,7 @@
            @close="handleClose">
             <span>
                 <el-form :model="form" :rules="rules" ref="form" label-width="120px"  class="demo-ruleForm">
-                    <el-form-item label="上级资源" prop="entName">
+                    <el-form-item label="上级资源" prop="name">
                         <el-col :span="20">
                         <el-input v-model="form.name" disabled></el-input>
                         </el-col>
@@ -85,7 +86,7 @@
                         <el-switch v-model="form.isShow"></el-switch>
                     </el-form-item>
                     <el-form-item label="园区" prop="placeId">
-                        <el-select v-model="form1.placeId" clearable placeholder="请选择">
+                        <el-select v-model="form.placeId" clearable placeholder="请选择">
                             <el-option
                                 v-for="item in allPlace"
                                 :key="item.id"
@@ -153,7 +154,7 @@
            width="60%"
            @close="handleClose_1">
             <span>
-                <el-form :model="form1" :rules="rules" ref="form" label-width="120px"  class="demo-ruleForm">
+                <el-form :model="form1" :rules="rules" ref="form1" label-width="120px"  class="demo-ruleForm">
                     <el-form-item label="上级资源" prop="name" v-show="false">
                         <el-col :span="20">
                         <el-input v-model="form1.name" disabled></el-input>
@@ -176,7 +177,7 @@
                     </el-form-item>
                     <el-form-item label="资源标识符" prop="resourceCode">
                         <el-col :span="20">
-                        <el-input placeholder="应用级资源需要填写" v-model="form.resourceCode"></el-input>
+                        <el-input placeholder="应用级资源需要填写" v-model="form1.resourceCode"></el-input>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="排序号" prop="resourceIndex">
@@ -265,6 +266,21 @@
     <el-button type="primary" @click="makesure_1">确 定</el-button>
             </span>
        </el-dialog>
+       <el-dialog
+           title="增加"
+           :modal-append-to-body="false"
+           :visible.sync="dialogVisible_data"
+           :close-on-click-modal="false"
+           width="60%"
+           @close="handleClose_data">
+           <span>
+               <table-info-option  ref="tableInfo" :resource="selectInfo" :dataInfo="dataInfo" ></table-info-option>
+           </span>
+           <span slot="footer" class="dialog-footer">
+                <el-button @click="close">取 消</el-button>
+                <el-button type="primary" @click="makesure_data">确 定</el-button>
+            </span>
+       </el-dialog>
    </div>
 
 </template>
@@ -273,6 +289,7 @@
    import {mapGetters,mapMutations, mapActions} from 'vuex'
    import axios from 'axios'
    import url from "../../globbal/url";
+   import OptionPage from '@/components/ImportSystem/OptionPage'
    import * as types from '../../stores/mutation-types';
    export default {
        components: {ElRow},
@@ -321,6 +338,9 @@
                i:0,
                dialogVisible: false,
                dialogVisible_1: false,
+               dialogVisible_data:false,
+               dataInfo:[],
+               selectInfo:'',
                allPlace:[],
                defaultProps: {
                    children: 'children',
@@ -339,6 +359,7 @@
            ...mapActions({
                 setAllPermission:"GET_ALL_PERMISSION",
                 axioPostNoData: 'AXIO_POST_NODATA',
+                getTableInfo:'GET_TABLE_INFO'
            }),
            handleClick(data,checked, node) {
                 this.i++;
@@ -355,6 +376,8 @@
            },
            getCheckedKeys(data) {
                console.log(data)
+               this.selectInfo = data
+               this.getResourceDataInfo()
                this.form1.id = data.id
                this.form.parentResourceId = data.id
                this.form.name = data.name
@@ -362,6 +385,8 @@
            close(){
                this.dialogVisible = false
                this.dialogVisible_1 = false
+               this.dialogVisible_data = false
+               this.selectInfo = ''
                this.form=[]
                this.form1=[]
                this.setAllPermission()
@@ -370,7 +395,23 @@
 
                this.dialogVisible = true
            },
+
+           changeDR(){
+               let vm = this
+               if(this.selectInfo === ''){
+                   this.$message.warning("请先选择")
+                   return
+               }
+               vm.dialogVisible_data = true;
+           },
+
            update() {
+
+               if(this.selectInfo === ''){
+                   this.$message.warning("请先选择")
+                   return
+               }
+
                this.dialogVisible_1 = true
                axios({
                    method: 'post',
@@ -437,6 +478,20 @@
                this.form1.placeId = '';
                this.setAllPermission()
            },
+
+           handleClose_data(){
+
+               this.selectInfo = '';
+               this.setAllPermission()
+           },
+           deletesure(done) {
+               this.$confirm('系统关键资源，确认删除？')
+                   .then(_ => {
+                       done();
+                   })
+                   .catch(_ => {});
+           },
+
            makesure() {
                // if(this.form.value3 === true) {
                //     this.form.isOne = 0
@@ -562,6 +617,29 @@
                    }
                })
            },
+
+           makesure_data(){
+                let vm = this
+                this.$refs.tableInfo.sureok().then(function(val){
+                 if(val.data.retcode === 200){
+                     vm.$message.success(val.data.data)
+                     vm.dialogVisible_data = false
+                 }else{
+                     vm.$message.warning(val.data.data)
+                 }
+                 console.log(val);
+             })
+           },
+
+           getResourceDataInfo(){
+               let vm = this
+               let id = {'rId':vm.selectInfo.id}
+               this.getTableInfo(id).then(function(val){
+                   vm.dataInfo = val.data.data
+                   console.log(vm.dataInfo)
+               })
+           },
+
            removeone() {
                console.log(this.form1.id)
                let a= new Array();
@@ -590,13 +668,28 @@
                    vm.allPlace = val.data.data
                })
            },
+
+
+
        },
+
+       components:{
+           'table-info-option':OptionPage
+       },
+
        created() {
-           this.setAllPermission()
+           this.setAllPermission();
            this.getAllPlace();
        }
    }
 </script>
 
-<style  rel="stylesheet/stylus" scoped>
+<style scoped>
+
+    .content-operate {
+        margin:10px 0 10px 30px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
 </style>

@@ -3,11 +3,13 @@
     <el-table
         ref="multipleTable"
         :data="tableData"
+        height="500"
         v-loading="loading"
         align="left"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="selectedChange">
+        @selection-change="selectedChange"
+        :row-class-name="tableRowClassName">
         <el-table-column
             type="selection"
             width="55">
@@ -36,6 +38,14 @@
 </template>
 <script>
     export default{
+        methods: {
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex%2 != 1) {
+                    return 'warning-row';
+                }
+                return '';
+            }
+        },
         data(){
             return{
             }
@@ -45,7 +55,7 @@
 </script>
 <style>
     .content-wrap {
-        height:100%;
+        height:500px;
         background-color:#f0f4f7;
         display: flex;
         flex-direction:column;
@@ -56,10 +66,8 @@
         margin-top: 0px;
     }
 
-    .el-table{
-        padding-left: 20px;
-        border-top-width: 20px;
-        padding-top: 20px;
-        padding-right: 10px;
+    .el-table .warning-row {
+        background: hsla(0,0%,92%,.9);
+        margin-bottom: 30px;
     }
 </style>

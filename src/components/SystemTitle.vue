@@ -1,13 +1,13 @@
 <template>
     <el-menu
         class="el-menu-demo"
+        :default-active="activeIndex"
         mode="horizontal"
-        background-color="#36a8fc"
-        text-color="#fff"
-        active-text-color="#ffd04b">
+        text-color="#333"
+        active-text-color="#36a8fc">
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="item.name"
+                       :index="key"
                        @click="changeSystem(item.system)">
             <i :class="item.icon"></i> {{item.name}}
         </el-menu-item>
@@ -17,6 +17,7 @@
     export default{
         data(){
             return{
+                activeIndex:0,
             }
         },
         props:['SystemTitle','changeSystem'],
@@ -31,7 +32,7 @@
         padding: 0 15px;
         font-size: 14px;
         color: #fff;
-        border-right: 1px solid rgba(161,206,240,.4);
+        border-right: 3px solid #fff;
         cursor: pointer;
         transition: .2s;
         text-decoration: none;
@@ -41,6 +42,6 @@
         text-decoration:none
     }
     i{
-        color:#FFF;
+        color:#333;
     }
 </style>

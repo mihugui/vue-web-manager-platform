@@ -3,9 +3,9 @@
         default-active="1"
         align="left"
         :collapse="isCollapse"
-        background-color="#545c64"
+        background-color="#36a8fc"
         text-color="#fff"
-        active-text-color="#409EFF"
+        active-text-color="#165aa6"
         router>
         <mini-aside-title :AsideTitle="AsideTitle"></mini-aside-title>
     </el-menu>
@@ -25,7 +25,7 @@
         props:['isCollapse','AsideTitle'],
     }
 </script>
-<style>
+<style scoped>
     a{
         text-decoration:none;
         color:white;
