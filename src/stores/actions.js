@@ -178,7 +178,7 @@ export const GET_CHECK_NO = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+state.checkUrl,qs.stringify(data)).then(function(res) {
-                resolve(res);
+            resolve(res);
         }).catch(function(error){
             reject(error);
         });
@@ -255,6 +255,32 @@ export const GET_DATA_BYURL = async({ dispatch, commit, state }, data)=>{
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+tableurl,qs.stringify(data)).then(function(res){
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+export const GET_CHILDREN_LIST = async({ dispatch, commit, state }, data)=>{
+
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/enterprise/getChildrenList',qs.stringify(data)).then(function(res){
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
+export const GET_ENT_LIST = async({ dispatch, commit, state }, data)=>{
+
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/enterprise/findListByPlaceId',qs.stringify(data)).then(function(res){
             resolve(res);
         }).catch(function(error){
             reject(error);

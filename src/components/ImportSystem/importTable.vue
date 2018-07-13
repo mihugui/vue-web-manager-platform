@@ -26,7 +26,8 @@
                 :key="key"
                 type="primary"
                 size="mini"
-                :icon="item.resourceIcon">
+                :icon="item.resourceIcon"
+                @click="clickbutton(item.dataType)">
                 {{ item.resourceName }}
             </el-button>
         </section>
@@ -44,19 +45,20 @@
                 @close='closeDialog'
                 style="z-index: 99999;">
             <span>
-                <el-form :model="dialog" rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                <el-form :model="dialog" ref="dialog"  label-width="120px"  class="demo-ruleForm">
                     <el-form-item
-                        v-for="(item,key) in tableKey"
+                        v-for="(item,key) in formList"
                         :key="key"
-                        :label="item.paramDesc" prop="item.paramKey">
+                        :label="item.paramDesc"
+                        :rule="item.paramRule">
                         <el-col :span="20">
-                        <el-input v-model="dialog.placeName"></el-input>
+                        <el-input v-model="dialog[item.paramKey]"></el-input>
                         </el-col>
                     </el-form-item>
                 </el-form>
             </span>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="resetForm('dialog')">取 消</el-button>
+                <el-button @click="dialogVisible=false">取 消</el-button>
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
@@ -82,6 +84,7 @@
                 page:[],
                 button:[],
                 tableKey:[],
+                formList:[],
                 searchParams:{
 
                 },
@@ -127,7 +130,7 @@
                     vm.page.push(info.filter(p=>{return p.paramDesc === "pagesize"})[0])
                     vm.page[0].paramValue = 1
                     vm.page[1].paramValue = 10
-
+                    vm.formList = [...info.filter(p=>{return p.isShow === "1"})]
                     vm.tableKey.push({
                         name: '序号',
                         type: 'index',
@@ -142,17 +145,28 @@
                 })
 
                 this.getTableButton(rid).then(function(val){
-                    vm.button = val.data.data.filter(p=>{return p.isButton === 1})
-                    for( let b of vm.button){
+                    let result = val.data.data.filter(p=>{return p.isButton === 1})
+                    for( let b of result){
                         let bid = { 'rId':b.id}
                         vm.getTableInfo(bid).then(function(val){
-                            console.log(val)
+                            b.dataType = val.data.data.srd.dataType
                         })
                     }
+                    console.log(result)
+                    vm.button = result
                 })
 
             },
 
+            clickbutton(val){
+                let vm = this
+                switch(val){
+                    case 'add':
+                        vm.title = "新增"
+                        vm.dialogVisible = true
+
+                }
+            },
 
             getTableDataByUrl(){
                 let vm = this
@@ -189,9 +203,11 @@
                 this.getTableDataByUrl()
             },
             sureok:function(){
+                console.log(this.dialog)
 
             },
             closeDialog:function(){
+                this.dialog = {}
 
             }
         },

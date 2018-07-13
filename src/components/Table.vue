@@ -9,19 +9,34 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="selectedChange"
-        :row-class-name="tableRowClassName">
+        :row-class-name="tableRowClassName"
+        @row-click="rowClick">
         <el-table-column
             type="selection"
             width="55">
         </el-table-column>
         <el-table-column
             v-for="(item,key) in tableKey"
+            v-if="item.type !='tag'"
             :key="key"
             :prop="item.value"
             :label="item.name"
             :type="item.type"
             :width="item.width"
             :formatter="item.formatter">
+        </el-table-column>
+        <el-table-column
+            v-else>
+            <template slot-scope="scope">
+                <el-popover
+                    placement="top-start"
+                    :title="showTitle"
+                    width="100"
+                    trigger="click"
+                    :content="showInfo">
+                    <el-button slot="reference">{{ item.name}}</el-button>
+                </el-popover>
+            </template>
         </el-table-column>
     </el-table>
     <el-pagination
@@ -50,7 +65,7 @@
             return{
             }
         },
-        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange','loading'],
+        props:['tableData','tableKey','total','selectedChange','sizeChange','currentChange','rowClick','showTitle','showInfo','loading'],
     }
 </script>
 <style>

@@ -30,10 +30,9 @@
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="button.filter(btn =>{return btn.path === '/enterprise/add'}).length!=0" @click="showAddModal">新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/edit'}).length!=0)" @click="showEditModal">编辑
-            </el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/per'}).length!=0)" @click="showPerMission">权限分配
-            </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showEntER">企业关系图</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理-->
             <!--</el-button>-->
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/place'}).length!=0)" @click="showPlaces">园区管理
@@ -43,7 +42,7 @@
         </section>
         <section class="content-table">
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
-                    :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+                    :sizeChange="sizeChange" :currentChange="currentChange" :rowClick="rowClick" :showInfo="showInfo" :showTitle="showTitle" :loading="loading"></mini-table>
         </section>
         <div>
             <el-dialog
@@ -193,6 +192,21 @@
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
+            <el-dialog
+                :title="title_chart"
+                :visible.sync="dialogVisible_chart"
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                style="z-index: 99999;">
+            <span>
+                <div id="myChart" :style="{width: '500px', height: '300px'}"></div>
+            </span>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible_chart = false">取 消</el-button>
+            <el-button type="primary" @click="sureok">确 定</el-button>
+            </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -276,18 +290,22 @@
                 allEnt: [],
                 allPlace: [],
                 userStatue:false,
+                showTitle:'',
 
                 //权限弹出框
                 title_permission: '资源管理',
                 title_places:'园区管理',
+                title_chart:'企业关系',
                 dialogVisible_permission: false,
                 dialogVisible_Organization: false,
                 dialogVisible_places:false,
+                dialogVisible_chart:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
                 },
                 entIds: [],
+                chartTree:'',
 
                 //表格
                 loading:true,
@@ -343,7 +361,7 @@
                     operate: true
                 }],
                 param: null,
-
+                showInfo:'',
                 enttype: '',
                 entName:'',
                 seltable: '',
@@ -378,7 +396,9 @@
                 getAllPermission: 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
                 axioPostNoData: 'AXIO_POST_NODATA',
-                getCheakNO : 'GET_CHECK_NO'
+                getCheakNO : 'GET_CHECK_NO',
+                getChildrenList:'GET_CHILDREN_LIST',
+                getEntListByPlace:'GET_ENT_LIST'
             }),
 
             gettreeid() {
@@ -391,6 +411,66 @@
                 let a = JSON.stringify(ids);
                 let pids = a.substring(1, a.length - 1);
                 this.params = {'entId': vm.seltable.Id, 'resourceId': pids}
+            },
+
+            showEntER(){
+                let vm =this
+                this.dialogVisible_chart=true
+                let rid = {'placeId':sessionStorage.getItem("placeId")}
+                this.getEntListByPlace(rid).then(function(val){
+                    console.log(val.data.data)
+                    vm.chartTree =val.data.data
+                    let placeEnt = {
+                        children:vm.analysis(),
+                        name:'当前园区'
+                    }
+                    vm.showChart(placeEnt)
+                })
+            },
+
+            showChart(data){
+                let myChart = this.$echarts.init(document.getElementById('myChart'))
+
+                // echarts.util.each(data.children, function (datum, index) {
+                //     index % 2 === 0 && (datum.collapsed = true);
+                // });
+                myChart.setOption({
+                    tooltip: {
+                        trigger: 'item',
+                        triggerOn: 'mousemove'
+                    },
+                    series: [
+                        {
+                            type: 'tree',
+                            data: [data],
+                            top: '1%',
+                            left: '7%',
+                            bottom: '1%',
+                            right: '20%',
+                            symbolSize: 7,
+                            label: {
+                                normal: {
+                                    position: 'left',
+                                    verticalAlign: 'middle',
+                                    align: 'right',
+                                    fontSize: 9
+                                }
+                            },
+                            leaves: {
+                                label: {
+                                    normal: {
+                                        position: 'right',
+                                        verticalAlign: 'middle',
+                                        align: 'left'
+                                    }
+                                }
+                            },
+                            expandAndCollapse: true,
+                            animationDuration: 200,
+                            animationDurationUpdate: 250
+                        }
+                    ]
+                });
             },
 
             selectedChange(val) {
@@ -428,6 +508,42 @@
                 }
             },
 
+            analysis:function(){
+                var vm = this;
+                let tree =[];
+                for(let i=0;i<vm.chartTree.length;i++){
+                    if(this.chartTree[i].entParentId === null){
+                        let obj = vm.chartTree[i]
+                        obj.children = []
+                        obj.name = obj.entName
+                        tree.push(obj)
+                        vm.chartTree.splice(i,1)
+                        i--
+                    }
+                }
+                return this.menuList(tree);
+            },
+
+            menuList:function(arr){
+                var vm = this;
+                if(vm.chartTree.length !=0){
+                    for(let i=0; i<arr.length;i++){
+                        for(let j=0;j<vm.chartTree.length;j++){
+                            if(this.chartTree[j].entParentId == arr[i].id){
+                                let obj = vm.chartTree[j]
+                                obj.children = []
+                                obj.name = obj.entName
+                                arr[i].children.push(obj)
+                                vm.chartTree.splice(j,1)
+                                j--
+                            }
+                        }
+                        vm.menuList(arr[i].children)
+                    }
+                }
+                return arr;
+            },
+
             sizeChange(val) {
                 let vm = this
                 this.page.pageSize = val;
@@ -443,6 +559,24 @@
                 this.getTableData({...this.page, ...this.enttype,...this.entName}).then( function () {
                     vm.loading = false
                 })
+            },
+
+            rowClick(val){
+                let vm = this
+                vm.showInfo='';
+                let rid = {'entParentId':val.id}
+                this.getChildrenList(rid).then(function(val){
+                    vm.showTitle='子系统'
+                    if(val.data.data.length ===0)
+                    {
+                        vm.showInfo = "无"
+                    }else {
+                        for (let ent of val.data.data) {
+                            vm.showInfo += ent.entParentName + ';'
+                        }
+                    }
+                })
+
             },
 
             searchTable(){
@@ -638,6 +772,7 @@
             this.getAllPermission();
             this.setTableUrl(this.url);
             this.getTableByOther();
+            this.showEntER();
         },
     }
 </script>

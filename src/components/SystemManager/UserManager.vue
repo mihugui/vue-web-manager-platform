@@ -39,14 +39,12 @@
             <el-button type="primary" size="mini" icon="el-icon-plus" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="button.filter(btn =>{return btn.path === '/user/examin'}).length!=0" @click="F">审核</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配
-            </el-button>
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="pwdreset">密码重置-->
             <!--</el-button>-->
             <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配-->
             <!--</el-button>-->
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/del'}).length!=0)" @click="handleClose(deleteList)">删除
-            </el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/del'}).length!=0)" @click="handleClose(deleteList)">删除</el-button>
         </section>
         <section class="content-table">
         <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"

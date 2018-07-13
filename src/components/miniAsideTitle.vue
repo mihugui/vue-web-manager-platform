@@ -3,7 +3,8 @@
         <el-submenu
             v-for="(item,key) in AsideTitle"
             v-if="item.children !=''"
-            :key="key">
+            :key="key"
+            :index="item.path">
             <template slot="title">
                 <i :class="item.icon"></i>
                 <span slot="title">{{item.name}}</span>
@@ -41,6 +42,6 @@
     }
 
     i{
-        color:#fff;
+        color:#fff ;
     }
 </style>

@@ -1,11 +1,10 @@
 <template>
     <el-menu
-        default-active="1"
         align="left"
         :collapse="isCollapse"
         background-color="#36a8fc"
         text-color="#fff"
-        active-text-color="#165aa6"
+        active-text-color="#fff"
         router>
         <mini-aside-title :AsideTitle="AsideTitle"></mini-aside-title>
     </el-menu>
