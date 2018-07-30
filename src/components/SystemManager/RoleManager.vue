@@ -19,8 +19,8 @@
         </section>
         <section class="content-operate">
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="button.filter(btn =>{return btn.path === '/role/add'}).length!=0" @click="showAddModal">新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-edit" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-setting" v-if="showEdit && (button.filter(btn =>{return btn.path === '/role/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/role/del'}).length!=0)" @click="handleClose(deleteList)">删除</el-button>
         </section>
         <section class="content-table">
@@ -379,7 +379,10 @@
                         vm.updateSureOK(vm.dialog).then(function (val) {
                             if (val.data.retcode === 200) {
                                 vm.dialogVisible = false;
+                                vm.$message.success(val.data.retmsg)
                                 vm.getTableByOther();
+                            }else{
+                                vm.$message.success(val.data.retmsg)
                             }
                         })
                     } else {

@@ -36,6 +36,8 @@ const state = {
         ],
     }],
 
+    placeIds:'',
+    userPlace:'',
 
     treeids:[], //组织数id
     token:'', //token
@@ -45,7 +47,7 @@ const state = {
     tableurl:'', //表格url
     total:0, // 总数
     tableData:[], // 表格数据
-    system:'system', // 当前系统
+    system:'', // 当前系统
     showedit:true, // 表格 更改显示
     showdel:true, // 表格 删除显示
     DataUrl:'', // 获取数据URL
@@ -88,6 +90,48 @@ const state = {
         importtable:(resolve) => {
             require(['@/components/ImportSystem/ImportTable'],resolve)
         },
+        entranceGuardCompany: resolve => {
+            require(['@/components/EntranceGuardSystem/EnterpriseManager'], resolve)
+        },
+        entranceGuardUser: resolve => {
+            require(['@/components/EntranceGuardSystem/userManger'], resolve)
+        },
+        roomList: (resolve) => {
+            require(['@/components/assets/room/RoomManager'],resolve)
+        },
+        roomSite: (resolve) => {
+            require(['@/components/assets/room/RoomSiteManager'],resolve)
+        },
+        deviceList: (resolve) => {
+            require(['@/components/assets/device/DeviceManager'],resolve)
+        },
+        deviceType: (resolve) => {
+            require(['@/components/assets/device/DeviceTypeManager'],resolve)
+        },
+        operationGroup: (resolve) => {
+            require(['@/components/assets/device/OperationGroupManager'],resolve)
+        },
+        seatList: (resolve) => {
+            require(['@/components/assets/room/SeatListManager'],resolve)
+        },
+        seatCount: (resolve) => {
+            require(['@/components/assets/room/SeatCountManager'],resolve)
+        },
+        seatProperty: (resolve) => {
+            require(['@/components/assets/room/SeatPropertyManager'],resolve)
+        },
+        processCenter: (resolve) => {
+            require(['@/components/assets/device/ProcessCenterManager'],resolve)
+        },
+        malfunction: (resolve) => {
+            require(['@/components/assets/device/MalfunctionManager'],resolve)
+        },
+        deviceTask: (resolve) => {
+            require(['@/components/assets/device/DeviceTaskManager'],resolve)
+        },
+        maintenance: (resolve) => {
+            require(['@/components/assets/device/MaintenanceManager'],resolve)
+        }
     },
 
     //路由

@@ -14,8 +14,6 @@ import 'babel-polyfill'
 import $ from 'jquery'
 import echarts from 'echarts'
 
-
-
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
 

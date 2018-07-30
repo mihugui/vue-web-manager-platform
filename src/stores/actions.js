@@ -32,6 +32,8 @@ export const GET_TABLE_DATA = async({ dispatch, commit, state }, data)=>{
 
 export const GET_DICTS_DATA = async({ dispatch, commit, state }, data)=>{
 
+    console.log("开始载入数据字典")
+
     axios.post(url.allurl+url.dicts).then(function(res){
         if(res.data.retcode===200){
             commit(types.SET_DICTS_DATA,res.data.data);
@@ -91,9 +93,17 @@ export const GET_ALL_PERMISSION = async({ dispatch, commit, state },data)=> {
 
 export const SET_ALL_PERMISSION = async({ dispatch, commit, state })=> {
 
-    commit(types.SET_SYSTEM_TITLE,JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
-        return Permission.pId === null;
-    })[0].system);
+    // commit(types.SET_SYSTEM_TITLE,JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
+    //     return Permission.pId === null;
+    // })[0].system);
+
+    if(sessionStorage.getItem('system') != null){
+        commit(types.SET_SYSTEM_TITLE,sessionStorage.getItem('system'))
+    }else{
+        commit(types.SET_SYSTEM_TITLE,JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
+            return Permission.pId === null;
+        })[0].system);
+    }
 
     commit(types.SET_BUTTON_PERMISSION, JSON.parse(sessionStorage.getItem('permission')).filter(Permission => {
         return Permission.button === 1;
@@ -107,9 +117,7 @@ export const GET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+"/enterprise/findEnterpriseResource",qs.stringify(data)).then(function(res) {
-            if (res.data.retcode === 200) {
             resolve(res);
-            }
         }).catch(function(error){
             reject(error);
         });
@@ -121,9 +129,7 @@ export const GET_ROLE_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+"/role/findRoleResource",qs.stringify(data)).then(function(res) {
-            if (res.data.retcode === 200) {
-                resolve(res);
-            }
+            resolve(res);
         }).catch(function(error){
             reject(error);
         });
@@ -135,9 +141,7 @@ export const GET_SUSER_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+"/user/findUserResource",qs.stringify(data)).then(function(res) {
-            if (res.data.retcode === 200) {
-                resolve(res);
-            }
+            resolve(res);
         }).catch(function(error){
             reject(error);
         });
@@ -150,9 +154,7 @@ export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
     console.log(state.permissionUrl);
     const promise = new Promise(function(resolve, reject) {
         axios.post(url.allurl+state.permissionUrl,qs.stringify(data)).then(function(res) {
-            if (res.data.retcode === 200) {
-                resolve(res);
-            }
+            resolve(res);
         }).catch(function(error){
             reject(error);
         });
@@ -164,9 +166,7 @@ export const SET_PERMISSION = async({ dispatch, commit, state },data)=> {
 
      const promise = new Promise(function(resolve, reject) {
          axios.post(url.allurl+data).then(function(res) {
-             if (res.data.retcode === 200) {
-                 resolve(res);
-             }
+             resolve(res);
          }).catch(function(error){
              reject(error);
          });
@@ -280,7 +280,7 @@ export const GET_ENT_LIST = async({ dispatch, commit, state }, data)=>{
 
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {
-        axios.post(url.allurl+'/enterprise/findListByPlaceId',qs.stringify(data)).then(function(res){
+        axios.post(url.allurl+'/enterprise/getAllEnterprise',qs.stringify(data,{arrayFormat: 'brackets'})).then(function(res){
             resolve(res);
         }).catch(function(error){
             reject(error);

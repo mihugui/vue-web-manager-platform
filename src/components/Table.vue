@@ -3,14 +3,13 @@
     <el-table
         ref="multipleTable"
         :data="tableData"
-        height="500"
+        height="100"
         v-loading="loading"
         align="left"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="selectedChange"
-        :row-class-name="tableRowClassName"
-        @row-click="rowClick">
+        :row-class-name="tableRowClassName">
         <el-table-column
             type="selection"
             width="55">
@@ -23,7 +22,8 @@
             :label="item.name"
             :type="item.type"
             :width="item.width"
-            :formatter="item.formatter">
+            :formatter="item.formatter"
+            show-overflow-tooltip>
         </el-table-column>
         <el-table-column
             v-else>
@@ -70,7 +70,7 @@
 </script>
 <style>
     .content-wrap {
-        height:500px;
+        height:calc(100vh - 220px);
         background-color:#f0f4f7;
         display: flex;
         flex-direction:column;

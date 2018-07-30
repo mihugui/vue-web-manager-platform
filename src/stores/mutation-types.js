@@ -40,4 +40,8 @@ export const SET_CHECK_URL = 'SET_CHECK_URL'
 
 export const SET_DATA_BYURL = 'SET_DATA_BYURL'
 
+export const SET_PLACE_IDS = 'SET_PLACE_IDS'
+
+export const SET_USER_PLACE = 'SET_USER_PLACE'
+
 

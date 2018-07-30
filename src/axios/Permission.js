@@ -8,19 +8,18 @@ export const Permission = {
     //获取用户资源
     getUserPermission: async function(action){
         var vm = this;
-        let placeId = sessionStorage.getItem("placeId")
         var qs = require('qs');
         const promise = new Promise(function(resolve, reject) {
         if(!sessionStorage.getItem('permission')){
-            axios.post(url.allurl+url.permissionurl,qs.stringify({'placeId':placeId})).then(function(res){
+            axios.post(url.allurl+url.permissionurl).then(function(res){
                 if(res.data.retcode === 200) {
                     sessionStorage.setItem('permission', JSON.stringify(res.data.data));
                     vm.data = res.data.data.filter(Permission => {
-                        return Permission.button != 1;
+                        return (Permission.button != 1);
                     });
                     if(action === 1){ //获取路由
                         resolve(res.data.data.filter(Permission => {
-                            return Permission.button != 1 || Permission.pId != null;
+                            return (Permission.button != 1 || Permission.pId != null) && Permission.path != '' ;
                         }));
                     }else {
                         resolve(vm.analysis());
@@ -34,11 +33,11 @@ export const Permission = {
 
         }else{
             vm.data = JSON.parse(sessionStorage.getItem('permission')).filter(Permission=>{
-                return Permission.button !=1;
+                return (Permission.button !=1);
             });
             if(action==1){
                 resolve(vm.data.filter(Permission => {
-                    return (Permission.button != 1 && Permission.pId != null);
+                    return (Permission.button != 1 && Permission.pId != null) && Permission.path != '' ;
                 }));
             }else {
                 resolve(vm.analysis());
@@ -128,4 +127,64 @@ export const Permission = {
         });
         return promise;
     },
+
+    //获取全部空间位置
+    getAllRoomSite:function(parms){
+        var vm = this;
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl+'/room/site/getAllRoomSite',parms)
+                .then(res =>{
+                    vm.data = res.data.data;
+                    resolve(vm.analysis());
+                }).catch(error => {
+                console.log(error);
+            })
+        });
+        return promise;
+    },
+
+    //获取全部设备类型
+    getAllDeviceType:function(){
+        var vm = this;
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl+'/assetType/getAllDeviceType')
+                .then(res =>{
+                    vm.data = res.data.data;
+                    resolve(vm.analysis());
+                }).catch(error => {
+                console.log(error);
+            })
+        });
+        return promise;
+    },
+
+    //获取全部运维团队
+    getAllOperation:function(parms){
+        var vm = this;
+        const promise = new Promise(function(resolve, reject) {
+            axios.post(url.allurl+'/operation/list',parms)
+                .then(res =>{
+                    vm.data = res.data.data;
+                    resolve(vm.analysis());
+                }).catch(error => {
+                console.log(error);
+            })
+        });
+        return promise;
+    },
+
+    //获取全部运维人员
+    getAllGroupUser:function(parms){
+    var vm = this;
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+'/operation/getAllOperationGroup',parms)
+            .then(res =>{
+                vm.data = res.data.data;
+                resolve(vm.analysis());
+            }).catch(error => {
+            console.log(error);
+        })
+    });
+    return promise;
+},
 }

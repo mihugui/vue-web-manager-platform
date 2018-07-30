@@ -7,7 +7,7 @@
         active-text-color="#36a8fc">
         <el-menu-item  v-for="(item,key) in SystemTitle"
                        :key="key"
-                       :index="key"
+                       :index="item.system"
                        @click="changeSystem(item.system)">
             <i :class="item.icon"></i> {{item.name}}
         </el-menu-item>
@@ -17,7 +17,7 @@
     export default{
         data(){
             return{
-                activeIndex:0,
+                activeIndex:sessionStorage.getItem("system")
             }
         },
         props:['SystemTitle','changeSystem'],

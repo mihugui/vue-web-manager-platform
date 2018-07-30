@@ -26,6 +26,22 @@ export const loginpage = {
         return axios.post(url.allurl+'/login',qs.stringify(params));
     },
 
+    //密码修改
+    updatePwd:function updatePwd(params)
+    {
+        params.oldpwd = this.password(params.oldpwd);
+        params.newpwd = this.password(params.newpwd);
+        var qs = require('qs');
+        return axios.post(url.allurl+'/user/updatePwd',qs.stringify(params));
+    },
+
+    //密码重置
+    resetPwd:function updatePwd(params)
+    {
+        var qs = require('qs');
+        return axios.post(url.allurl+'/user/resetPwd',qs.stringify(params));
+    },
+
     logout:function logout(){
 
         const promise = new Promise(function(resolve, reject) {

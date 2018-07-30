@@ -4,7 +4,7 @@
             v-for="(item,key) in AsideTitle"
             v-if="item.children !=''"
             :key="key"
-            :index="item.path">
+            :index="item.name">
             <template slot="title">
                 <i :class="item.icon"></i>
                 <span slot="title">{{item.name}}</span>

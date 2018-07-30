@@ -1,0 +1,103 @@
+{
+    "beans":[
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "IT系统部",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "大地公司",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": true,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "天堂公司",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },{
+            "AcsConSysName": "",
+            "accessGroupName": "任天堂",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "steam",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "中石化",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "中石油",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "中海油",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "中国移动",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        },
+        {
+            "AcsConSysName": "",
+            "accessGroupName": "中移在线",
+            "area": "0",
+            "deviceName": "",
+            "id": "1",
+            "placeName": "",
+            "state": false,
+            "sysIdAndGrouId": "1*F5D13C5E-D67E-48DA-AC49-2FB5577B67D3#2*50"
+        }
+    ]
+}

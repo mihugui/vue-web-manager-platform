@@ -61,6 +61,7 @@ const mutations = {
     },
 
     [types.SET_SYSTEM_TITLE](state,data){
+        sessionStorage.setItem("system",data)
         state.system = data;
     },
 
@@ -74,7 +75,16 @@ const mutations = {
 
     [types.SET_DATA_BYURL](state,data){
         state.DataUrl = data;
-    }
+    },
+
+    [types.SET_PLACE_IDS](state,data){
+        sessionStorage.setItem('placeIds',JSON.stringify(data))
+        state.placeIds = data;
+    },
+
+    [types.SET_USER_PLACE](state,data){
+        state.userPlace = data;
+    },
 }
 
 export default mutations

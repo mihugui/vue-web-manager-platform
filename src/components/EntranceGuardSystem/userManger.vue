@@ -22,7 +22,7 @@
                     label="状态" label-width="80px">
                     <el-select v-model="statue" clearable placeholder="请选择">
                         <el-option
-                            v-for="item in dicts.userStatus"
+                            v-for="item in dicts.userstatus"
                             :key="item.id"
                             :label="item.name"
                             :value="item.code">
@@ -35,185 +35,37 @@
             </el-form>
         </section>
         <section class="content-operate">
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/user/add'}).length!=0" >新增</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importfile" v-if="button.filter(btn =>{return btn.path === '/user/import'}).length!=0">导入</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-edit" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="(statue==='2') &&(button.filter(btn =>{return btn.path === '/user/examin'}).length!=0)" @click="F">审核</el-button>
             <el-button type="primary" size="mini" icon="el-icon-setting" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-refresh" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/resetpwd'}).length!=0)" @click="pwdreset">密码重置</el-button>
-            <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showPlaces">园区分配-->
-            <!--</el-button>-->
-            <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showEdit &&(button.filter(btn =>{return btn.path === '/user/del'}).length!=0)" @click="handleClose(deleteList)">删除</el-button>
+            <!--<el-button type="primary" size="mini" icon="el-icon-setting" @click="showPerMission">权限分配</el-button>-->
         </section>
         <section class="content-table">
-        <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
-                    :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
+            <mini-table :tableData="tableData" :tableKey="tableKey" :total="total" :selectedChange="selectedChange"
+                        :sizeChange="sizeChange" :currentChange="currentChange" :loading="loading"></mini-table>
         </section>
         <div>
-            <el-dialog
-                :title="title"
-                :visible.sync="dialogVisible"
-                width="850px"
-                heigth="80%"
-                :modal-append-to-body="false"
-                :close-on-click-modal="false"
-                @close='closeDialog'
-                style="z-index: 99999;">
-            <span>
-                <el-form :model="dialog" :rules="rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
-                    <el-form-item label="用户姓名" prop="userRealname">
-                        <el-col :span="20">
-                        <el-input v-model="dialog.userRealname"></el-input>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="用户编号" prop="userNo">
-                        <el-col :span="20">
-                        <el-input v-model="dialog.userNo" ></el-input>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="用户名" prop="userName">
-                        <el-col :span="20">
-                        <el-input v-model="dialog.userName" :disabled="userStatue"></el-input>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="用户角色" prop="userRoleIds">
-                        <el-select v-model="dialog.userRoleIds" filterable multiple placeholder="请选择角色">
-                            <el-option
-                            v-for="item in allRole"
-                            :key="item.id"
-                            :label="item.roleName"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="手机号" prop="userMobile">
-                        <el-col :span="20">
-                        <el-input v-model="dialog.userMobile"></el-input>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="身份证号" prop="userIdno">
-                        <el-col :span="20">
-                        <el-input v-model="dialog.userIdno"></el-input>
-                        </el-col>
-                    </el-form-item>
-                    <el-form-item label="入驻园区" prop="placeIds">
-                        <el-select v-model="dialog.placeIds" multiple placeholder="请选择入住园区">
-                            <el-option
-                                v-for="item in allPlace"
-                                :key="item.id"
-                                :label="item.placeName"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="管理归属企业" prop="manageEntId">
-                        <el-select v-model="dialog.manageEntId" placeholder="请选择管理归属企业">
-                            <el-option
-                                v-for="item in allEnt"
-                                :key="item.id"
-                                :label="item.entName"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="消费归属企业" prop="consumeEntId">
-                        <el-select v-model="dialog.consumeEntId" placeholder="请选择消费归属企业">
-                            <el-option
-                                v-for="item in allEnt"
-                                :key="item.id"
-                                :label="item.entName"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="状态" prop="userStatus">
-                        <el-select v-model="dialog.userStatus" placeholder="请选择状态">
-                            <el-option
-                                v-for="item in dicts.userStatus"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.code">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-            </span>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="resetForm('dialog')">取 消</el-button>
-                <el-button type="primary" @click="sureok">确 定</el-button>
-            </span>
-            </el-dialog>
 
             <el-dialog
                 :title="title_permission"
                 :visible.sync="dialogVisible_permission"
-                width="300px"
-                heigth = "80%"
+                width="800px"
+                heigth="80%"
                 :modal-append-to-body="false"
                 :close-on-click-modal="false"
                 @close='closeDialog_permission'
                 style="z-index: 99998;">
-            <span>
-                <el-tree
-                    :data="allPermission"
-                    show-checkbox
-                    node-key="id"
-                    ref="tree"
-                    :default-checked-keys="entIds"
-                    :props="defaultProps"
-                    check-strictly
-                    @check-change="gettreeid">
-                 </el-tree>
-            </span>
+                 <span v-for="item,index in dataInfo.beans"
+                       :class="['selectItem', item.state ? 'selected' : '']"
+                       :key="index"
+                       v-on:click="toggleSelect(item, index)"
+                 >
+                        宇宙无敌领导元首
+                    </span>
                 <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible_permission = false">取 消</el-button>
                 <el-button type="primary" @click="surePermission">确 定</el-button>
             </span>
             </el-dialog>
 
-
-            <el-dialog
-                :title="title_file"
-                :visible.sync="dialogVisible_file"
-                default-expand-all
-                width="500px"
-                heigth="80%"
-                :modal-append-to-body="false"
-                style="z-index: 99999;">
-            <span>
-                 <div class="dialog-input" style="margin-top: 15px;">
-                    <!--<el-input type="file" @change="getFile" placeholder="请导入文件" v-model="dialog.userNo">-->
-                        <!--<template   slot="prepend">导入文件</template>-->
-                        <!--<template slot="append"><a style="color: rgb(144, 147, 153); "target="_blank" :href="downurl">下载模板</a></template>-->
-                    <!--</el-input>-->
-                        <el-upload
-                            class="upload-demo"
-                            drag
-                            action="/"
-                            :before-upload="getFile"
-                            >
-                            <i class="el-icon-upload"></i>
-                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                            <div class="el-upload__tip" slot="tip" v-if="upFileName !=null"><h1 style="color: #303133">上传文件名称:{{ upFileName }}</h1></div>
-                            <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件，且不超过500kb</div>
-                            <div class="el-upload__tip" slot="tip"><a target="_blank" :href="downurl" style="color: #303133;">下载模板</a></div>
-                        </el-upload>
-
-
-                    <!--<div data-v-f48b85f8="" class="el-input el-input-group el-input-group&#45;&#45;append el-input-group&#45;&#45;prepend">-->
-                        <!--<div class="el-input-group__prepend">导入文件</div>-->
-                        <!--<input type="file" name="file" autocomplete="off" placeholder="请导入文件" class="el-input__inner" @change="getFile">-->
-                        <!--<div class="el-input-group__append">-->
-                        <!---->
-                        <!--</div>-->
-                    <!--</div>-->
-                </div>
-            </span>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_file = false;upFileName =null">取 消</el-button>
-                <el-button type="primary" @click="upfile">确 定</el-button>
-            </span>
-            </el-dialog>
         </div>
     </div>
 </template>
@@ -227,6 +79,7 @@
     import geturl from '../../globbal/url'
     import axios from 'axios'
     import Vue from 'vue'
+    import dataInfo from './data'
 
     export default {
         name: "UserManager",
@@ -263,44 +116,6 @@
             return {
                 //输入框规则
                 saverules:null,
-                rules: {
-                    userRealname: [
-                        { required: true, message: '请输入用户名称', trigger: 'blur' },
-                        { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
-                    ],
-                    userNo: [
-                        { required: true, message: '请输入用户编号', trigger: 'blur' },
-                        { pattern: /^[0-9]*$/, message: '你的用户编号格式不对,请输入8位数字'},
-                        { min: 8, max: 8, message: '长度为8个字符', trigger: 'blur' },
-                        { validator: checkUserNo, trigger: 'blur' }
-                    ],
-                    userName: [
-                        { required: true, message: '请输入用户名', trigger: 'blur' },
-                        { pattern: /^[0-9a-zA-Z]*$/, message: '你的用户名不正确'},
-                        { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
-                        { validator: checkUserName, trigger: 'blur' }
-                    ],
-                    placeIds: [
-                        {  required: true, message: '请至少选择一个园区', trigger: 'change' }
-                    ],
-                    userIdno: [
-                        { required: true, message: '请输入证件号码', trigger: 'blur' },
-                        { min: 16, max: 18, message: '长度在 16 到 18 个字符', trigger: 'blur' }
-                        ],
-                    userMobile: [
-                        { required: true, message: '请输入手机号', trigger: 'blur' },
-                        { min: 11, max: 11, message: '长度在 11 个字符', trigger: 'blur' }
-                    ],
-                    manageEntId: [
-                        { required: true, message: '请选择管理企业', trigger: 'change' }
-                    ],
-                    consumeEntId: [
-                        { required: true, message: '请选择消费企业', trigger: 'change' }
-                    ],
-                    userStatus: [
-                        { required: true, message: '请选择用户状态', trigger: 'change' }
-                    ]
-                },
                 //弹出框
                 title: '',
                 title_places:'',
@@ -409,6 +224,9 @@
                 seltable: '',
                 selall:[],
                 files:'',
+                dataInfo: {
+                    beans: [{}]
+                }
             }
         },
         components: {
@@ -440,8 +258,7 @@
                 getAllPermission : 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
                 axioPostNoData: 'AXIO_POST_NODATA',
-                getCheakNO : 'GET_CHECK_NO',
-                getEntListByPlace:'GET_ENT_LIST',
+                getCheakNO : 'GET_CHECK_NO'
             }),
 
             gettreeid(){
@@ -463,10 +280,10 @@
                 if (val.length > 0) {
                     let presult = new Array();
                     let rresult = new Array();
-                    if(val[0].placeIds != null) {
+                    if (val[0].placeIds != null) {
                         presult = base.toNum(val[0].placeIds);
                     }
-                    if(val[0].userRoleIds != null) {
+                    if (val[0].userRoleIds != null) {
                         rresult = base.toNum(val[0].userRoleIds);
                     }
                     this.seltable = {
@@ -481,19 +298,18 @@
                         "consumeEntId": val[0].consumeEntId,
                         "userStatus": val[0].userStatus,
                         "Id": val[0].id,
-                    };}
+                    };
+                    // vm.showEdit = true
+                }
                 switch (val.length) {
                     case 0:
                         vm.showEdit = false;
-                        vm.showDetele = false;
                         break;
                     case 1:
                         vm.showEdit = true
-                        vm.showDetele = true;
                         break;
                     default:
                         vm.showEdit = false;
-                        vm.showDetele = true;
                 }
             },
 
@@ -522,31 +338,6 @@
                 });
             },
 
-            showPlaces(){
-
-            },
-
-            showExamin(){
-
-            },
-
-            showAddModal() {
-                let vm =this
-                this.title = "新增";
-                this.setSureUrl('/user/add');
-                this.userStatue = false;
-                this.dialogVisible = true;
-
-            },
-            showEditModal() {
-                let vm =this
-                this.dialog = {...this.seltable};
-                this.title = "编辑";
-                this.setSureUrl('/user/update');
-                this.userStatue = true;
-                this.dialogVisible = true;
-            },
-
             showPerMission() {
                 this.setPermissionUrl('/user/updateResource');
                 let vm = this ;
@@ -558,35 +349,8 @@
                     for( var item of val.data.data){
                         ids.push(item.id)
                     }
-                    vm.$refs.tree.setCheckedKeys(ids);
+                    // vm.$refs.tree.setCheckedKeys(ids);
                 });
-            },
-            deleteList() {
-                let vm = this;
-                this.setSureUrl('/user/delete');
-                let result = {'id': vm.selall[0].id}
-                vm.updateSureOK(result).then(function (val) {
-                    if (val.data.returnCode === "0") {
-                        vm.$message.success("删除成功");
-                        vm.getTableByOther();
-                    } else {
-                        vm.$message.error("删除失败");
-                    }
-                })
-            },
-
-
-            handleClose(done) {
-                this.$confirm('确认删除？')
-                    .then(_ => {
-                        done();
-                    })
-                    .catch(_ => {
-                    });
-            },
-
-            surePlaces:function(){
-
             },
 
 
@@ -597,98 +361,23 @@
                 this.dialogVisible_file = true;
             },
 
-            surePermission:function(){
-                let vm = this ;
-                this.setPermission(this.params).then(function(val){
-                    if(val.data.retcode = 200){
-                        vm.$message.success(val.data.data);
-                        vm.dialogVisible_permission = false;
-                        sessionStorage.removeItem("permission");
-                    }else{
-                        vm.$message.error(val.data.data);
-                        vm.dialogVisible_permission = false;
+            surePermission (){
+                this.$message.success('okay')
+                let arr = []
+                this.dataInfo.beans.forEach(v => {
+                    if(v.state) {
+                        arr.push(v)
                     }
                 })
+                console.info(arr)
+                // this.fetch('', {})
+                //     .then(res => {
+                //
+                //     })
+                this.dialogVisible_permission = false
+                console.info(this.dialogVisible_permission)
             },
 
-            getFile:function(file){
-                console.log(file.size/1024)
-                if((file.name.indexOf(".xls") == -1) || (file.name.indexOf(".xlsx") == -1) ) {
-                    this.$message.warning("只能上传xls/xlsx文件")
-                    return false
-                } else if(file.size > 1024*1024*0.5){
-                    this.$message.warning("文件大小不能超过500kb")
-                    return false
-                } else {
-                    this.upFileName = file.name
-                    console.log(this.files);
-                    this.files = file;
-                }
-                 return false
-            },
-
-            upfile:function(){
-                if(this.upFileName == null){
-                    this.$message.warning("请选择文件后，确认上传")
-                    return;
-                }
-                let vm = this;
-                let formData = new FormData();
-                formData.append('file', vm.files);
-
-                let config = {
-                    headers: {
-                        // 'Accept':'*/*',
-                        // 'Accept-Encoding': 'gzip, deflate',
-                        // 'Connection': 'keep-alive',
-                        // 'Content-Length': '36352',
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
-
-                axios.post(geturl.allurl+"/user/importUser?token="+sessionStorage.getItem('token'), formData, config).then(function(val){
-                    if (val.data.returnCode === "0") {
-                        vm.dialogVisible_file = false;
-                        vm.upFileName = null
-                        vm.$message.success("上传成功")
-                    }else{
-                        vm.dialogVisible_file = false;
-                        vm.upFileName = null
-                        vm.$message.success("上传失败")
-                    }
-                }).catch(function(error){
-                    console.log(error)
-                });
-            },
-
-            downtemp:function(){
-
-            },
-
-            pwdreset:function(){
-                let vm =this
-                let params = {"userId":vm.selall[0].id}
-                this.$confirm('确认重置密码？')
-                    .then(_ => {
-                        loginpage.resetPwd(params).then(res => {
-                            if(res.data.retcode === 200){
-                                vm.$message.success('重置密码成功')
-                                vm.dialogVisible_pwd = false
-                            }else{
-                                vm.$message.success(res.data.retmsg)
-                            }
-                        })
-                    })
-                    .catch(_ => {
-                    });
-
-            },
-
-            resetForm(formName) {
-                let vm = this
-                vm.dialogVisible = false;
-                vm.$refs[formName].resetFields();
-            },
 
             sureok: function () {
                 let vm = this;
@@ -780,33 +469,28 @@
             },
             getAllEnt: function () {
                 let vm = this;
-                console.log(vm.dialog.placeIds)
-                let result = {'placeIds':vm.dialog.placeIds}
-                this.getEntListByPlace(result).then(function (val) {
+                this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
                     vm.allEnt = val.data.data
                 })
             },
-
-            changePlaceIds(){
-                this.getAllEnt(this.dialog.placeIds)
-            },
-
-        },
-
-        watch:{
-            "dialog.placeIds":"changePlaceIds"
+            toggleSelect (item, index) {
+                item.state = !item.state
+                this.dataInfo.beans.splice(index, 1, item)
+            }
 
         },
         mounted() {
             this.getAllPermission();
+            this.getAllEnt();
             this.getAllRole();
             this.getAllPlace();
             this.setTableUrl(this.url);
             this.getTableByOther();
+            this.dataInfo = {...{}, ...dataInfo}
         },
     }
 </script>
-<style scoped>
+<style scoped lang="scss">
     .el-input__inner{
         width: 200px;
     }
@@ -848,6 +532,22 @@
     .dialog-input {
         width: 80%;
         padding-left: 50px;
+    }
+    .selectItem {
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        font-size: 14px;
+        color: #888;
+        border: 1px solid #409EFF;
+        border-radius: 5px;
+        margin: 0 15px 15px 0;
+        cursor: pointer;
+    }
+    .selected {
+        background: #409EFF;
+        color: #fff;
     }
 
 </style>

@@ -120,7 +120,7 @@
                 urlson:'/dict/list',
                 page:{
                     page:1,
-                    pageSize:20,
+                    pageSize:10,
                     name: ''
                 },
                 tableKey: [{
@@ -399,8 +399,11 @@
                 }
                 vm.updateSureOK(vm.dialog).then(function(val){
                     if(val.data.retcode===200){
+                        vm.$message.success(val.data.retmsg);
                         vm.dialogVisible=false;
                         vm.getTableByOther();
+                    }else{
+                        vm.$message.error(val.data.retmsg);
                     }
                 })
             },

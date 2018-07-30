@@ -14,13 +14,17 @@ global.install = (Vue, router) => {
     axios.interceptors.request.use(config => {
         //对数据在请求值服务器前做一次处理
         /*..........*/
-        if(config.url.indexOf("/user/importUser")==-1)
+        console.log(config.data)
+        if(config.url.indexOf("import")==-1)
         if (sessionStorage.getItem("token")) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             if(config.data === undefined){
-                config.data ='token=' + sessionStorage.getItem("token");
+                config.data ='token=' + sessionStorage.getItem("token")
             }else {
-                config.data = config.data + '&token=' + sessionStorage.getItem("token");
+                config.data = config.data + '&token=' + sessionStorage.getItem("token")
             }
+        }
+        if (sessionStorage.getItem("placeIds")){
+            config.data = config.data+"&pIds="+JSON.stringify(sessionStorage.getItem("placeIds"));
         }
         return config
     })
@@ -61,6 +65,7 @@ global.install = (Vue, router) => {
                     store.dispatch("GET_DICTS_DATA");
                     next();
                 } else {
+                    sessionStorage.setItem("activeIndex",to.path)
                     next();
                 }
         }else{

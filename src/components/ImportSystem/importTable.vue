@@ -5,6 +5,7 @@
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
                     v-for="(item,key) in search"
+                    v-if="item.paramRule===''"
                     :key="key"
                     :label="item.paramDesc"
                     label-width="80px">
@@ -14,8 +15,35 @@
                         clearable>
                     </el-input>
                 </el-form-item>
+                <el-form-item
+                    v-else-if="item.paramRule.type==='date'"
+                    :key="key"
+                    :label="item.paramDesc"
+                    label-width="80px">
+                    <el-date-picker
+                        v-model="search[key].paramValue"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        align="right"
+                        :picker-options="pickerOptions">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item
+                    v-else-if="item.paramRule.type==='ent'"
+                    :key="key"
+                    :label="item.paramDesc"
+                    label-width="80px">
+                    <el-select v-model="search[key].paramValue"  clearable  placeholder="请选择企业" :key="'dataType'+key">
+                        <el-option
+                            v-for="(itemDict,key) in allEnt"
+                            :key="itemDict.id"
+                            :label="itemDict.entName"
+                            :value="itemDict.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" @click="searchTable">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="searchTable" v-if="search!=[]">查询</el-button>
                 </el-form-item>
             </el-form>
             </div>
@@ -23,11 +51,22 @@
         <section class="content-operate">
             <el-button
                 v-for="(item,key) in button"
+                v-if="item.dataType != 'del'"
                 :key="key"
                 type="primary"
                 size="mini"
                 :icon="item.resourceIcon"
-                @click="clickbutton(item.dataType)">
+                @click="clickbutton(item.dataType,item.id)">
+                {{ item.resourceName }}
+            </el-button>
+            <el-button
+                v-else
+                :key="key"
+                type="danger"
+                size="mini"
+                :icon="item.resourceIcon"
+                @click="clickbutton(item.dataType,item.id)"
+                >
                 {{ item.resourceName }}
             </el-button>
         </section>
@@ -50,7 +89,8 @@
                         v-for="(item,key) in formList"
                         :key="key"
                         :label="item.paramDesc"
-                        :rule="item.paramRule">
+                        :prop="item.paramKey"
+                        :rules="item.paramRule">
                         <el-col :span="20">
                         <el-input v-model="dialog[item.paramKey]"></el-input>
                         </el-col>
@@ -62,40 +102,107 @@
                 <el-button type="primary" @click="sureok">确 定</el-button>
             </span>
             </el-dialog>
+
+            <el-dialog
+                :title="title_file"
+                :visible.sync="dialogVisible_file"
+                default-expand-all
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                style="z-index: 99999;">
+                <span>
+                 <div class="dialog-input" style="margin-top: 15px;">
+                        <el-upload
+                            class="upload-demo"
+                            drag
+                            action="/"
+                            :before-upload="getFile">
+                            <i class="el-icon-upload"></i>
+                            <
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                            <div class="el-upload__tip" slot="tip" v-if="upFileName !=null"><h1 style="color: #303133">上传文件名称:{{ upFileName }}</h1></div>
+                            <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件，且不超过500kb</div>
+                            <div class="el-upload__tip" slot="tip"><a target="_blank" :href="downurl" style="color: #303133;">下载模板</a></div>
+                        </el-upload>
+                </div>
+                </span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible_file = false;upFileName =null">取 消</el-button>
+                    <el-button type="primary" @click="sureok" :loading="isBtnLoading">确 定</el-button>
+                </span>
+            </el-dialog>
         </div>
     </div>
 </template>
 <script>
     import Table from '@/components/Table'
     import { mapActions,mapGetters,mapMutations } from 'vuex'
+    import XLSX from 'xlsx'
     export default {
         name: 'importTable',
         data() {
             return {
+                pickerOptions: {
+                    shortcuts: [{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '一周前',
+                        onClick(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', date);
+                        }
+                    }]
+                },
                 title:'',
                 id:'',
+                bid:'',
+                is_one:false,
+                //所有企业
+                allEnt:[],
                 dialog:{
 
                 },
                 rules:{
 
                 },
+                deviceList:[],
                 search:[],
                 page:[],
                 button:[],
                 tableKey:[],
                 formList:[],
+                selall:[],
                 searchParams:{
 
                 },
                 tableData: [],
                 total:10,
-                loading:false,
+                loading:true,
                 url:'/resourceData/getData',
                 //dialog
                 dialogVisible:false,
 
-
+                //上传文件
+                title_file:'导入',
+                dialogVisible_file:false,
+                upFileName:null,
+                files:'',
+                downurl:'',
+                list:'',
+                isBtnLoading:false,
+                importdata:''
             }
         },
 
@@ -113,8 +220,13 @@
             ...mapActions({
                 getTableInfo:'GET_TABLE_INFO',
                 getDataByUrl:'GET_DATA_BYURL',
-                getTableButton:'GET_TABLE_BUTTON'
+                getTableButton:'GET_TABLE_BUTTON',
+                axioPostNoData: 'AXIO_POST_NODATA',
             }),
+
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
 
             getTableOption:function(){
                 let vm = this
@@ -125,12 +237,15 @@
                     vm.search = info.filter(p=>{return p.isCondition === "1"})
                     for(let s of vm.search){
                         vm.searchParams[s.paramKey]='';
+                        if(s.paramRule != '')
+                            s.paramRule = JSON.parse(s.paramRule)
+                            console.log(s.paramRule)
                     }
                     vm.page.push(info.filter(p=>{return p.paramDesc === "page"})[0])
                     vm.page.push(info.filter(p=>{return p.paramDesc === "pagesize"})[0])
                     vm.page[0].paramValue = 1
                     vm.page[1].paramValue = 10
-                    vm.formList = [...info.filter(p=>{return p.isShow === "1"})]
+
                     vm.tableKey.push({
                         name: '序号',
                         type: 'index',
@@ -158,26 +273,203 @@
 
             },
 
-            clickbutton(val){
+            clickbutton(val,bid){
                 let vm = this
+                this.bid = bid
+                let rid = {'rId':bid}
                 switch(val){
                     case 'add':
                         vm.title = "新增"
                         vm.dialogVisible = true
+                        vm.getTableInfo(rid).then(function(val){
+                            vm.formList = val.data.data.srdpList
+                            for(let f of vm.formList){
+                                let rule = JSON.parse(f.paramRule)
+                                f.paramRule=[]
+                                if(rule.isRequired === true){
+                                    f.paramRule.push(
+                                        {
+                                            required: true,
+                                            message: '请输入'+f.paramDesc,
+                                            trigger: 'blur' })
+                                }
 
+                                if(rule.isRegular === true){
+                                    console.log(rule.regular)
+                                    f.paramRule.push(
+                                        {
+                                            pattern: rule.regular,
+                                            message: '输入不符合规则'
+                                        })
+                                }
+                            }
+                        })
+                        break
+
+                    case 'del':
+                        if(vm.selall.length != 1){
+                            vm.$message.warning('每次只能删除一个')
+                            break
+                        }
+                        vm.handleClose(vm.bid)
+                        break
+
+                    case 'edit':
+                        if(vm.selall.length != 1){
+                            vm.$message.warning('每次只能编辑一个')
+                            break
+                        }
+                        vm.title = "编辑"
+                        vm.dialogVisible = true
+                        vm.getTableInfo(rid).then(function(val){
+                            console.log(val)
+                            vm.formList = val.data.data.srdpList.filter(p=>{return p.isShow === '1'})
+                            vm.dialog = vm.selall[0]
+
+                            for(let f of vm.formList){
+                                let rule = JSON.parse(f.paramRule)
+                                f.paramRule=[]
+                                if(rule.isRequired === true){
+                                    f.paramRule.push(
+                                        {
+                                            required: true,
+                                            message: '请输入'+f.paramDesc,
+                                            trigger: 'blur' })
+                                }
+
+                                if(rule.isRegular === true){
+                                    console.log(rule.regular)
+                                    f.paramRule.push(
+                                        {
+                                            pattern: rule.regular,
+                                            message: '输入不符合规则'
+                                        })
+                                }
+                            }
+                        })
+                        break
+
+                    case 'import':
+                        vm.getTableInfo(rid).then(function(val){
+                            vm.importdata = val.data.data.srdpList.filter(p=>{return p.isShow === '1'})
+                            vm.dialogVisible_file=true
+                        })
+
+                        break
                 }
+            },
+
+            handleClose(id) {
+
+                this.$confirm('确认删除？')
+                    .then(_ => {
+                        this.deleteList(id)
+                    })
+                    .catch(_ => {});
+            },
+
+
+
+            //导入相关 JSON
+
+            getFile:function(file){
+                this.isBtnLoading = true
+                console.log(file.size/1024)
+                if((file.name.indexOf(".xls") == -1) && (file.name.indexOf(".xlsx") == -1) ) {
+                    this.$message.warning("只能上传xls/xlsx文件")
+                    return false
+                } else if(file.size > 1024*1024*0.5){
+                    this.$message.warning("文件大小不能超过500kb")
+                    return false
+                } else {
+                    this.excelToList(file);
+                    this.upFileName = file.name
+                    this.files = file;
+                }
+                return false
+            },
+
+            listToJson:function(list){
+                let result = []
+                for(let m of list){
+                    let s ={}
+                    for(let n of this.importdata){
+                        if(m[n.paramDesc] != undefined) {
+                            s[n.paramKey] = m[n.paramDesc]
+                        }
+                    }
+                    result.push(s)
+                }
+                console.log(result)
+                this.isBtnLoading = false
+            },
+            excelToList:function(file){
+                let vm = this
+                var rABS = true;
+                var reader = new FileReader();
+                var name = file.name;
+                let info
+                reader.onload = function (e) {
+                    var data = e.target.result;
+                    var wb;
+                    if (rABS) {
+                        wb = XLSX.read(data, { type: 'binary' });
+                    } else {
+                        var arr = vm.fixdata(data);
+                        wb = XLSX.read(btoa(arr), { type: 'base64' });
+                    }
+                    vm.list= XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                };
+                if (rABS)  reader.readAsBinaryString(file);
+                else   reader.readAsArrayBuffer(file);
+            },
+
+            fixdata:function(data) {
+                var o = "", l = 0, w = 10240;
+                for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+                o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+                return o;
+            },
+
+            deleteList(id){
+                let vm = this;
+
+                let rid = {'rId':id}
+                this.getTableInfo(rid).then(function(val){
+                    console.log(val.data.data.srdpList[0])
+                    val.data.data.srdpList[0].paramValue = vm.selall[0].id
+                    let Condition = [...val.data.data.srdpList]
+                    let Params = {'rId':val.data.data.srd.resourceId,'params':JSON.stringify(Condition)}
+                    vm.getDataByUrl(Params).then(function(val2){
+                        console.log(val2)
+                        let data = JSON.parse(val2.data.data)
+                        console.log(data)
+                        vm.$message.success(data.retmsg)
+                        vm.getTableDataByUrl()
+                    })
+                })
             },
 
             getTableDataByUrl(){
                 let vm = this
                 //this.search[0].paramValue = '洛阳园区'
                 let Condition = [...this.page,...this.search]
+                console.log(Condition)
                 let Params = {'rId':this.id,'params':JSON.stringify(Condition)}
                 this.getDataByUrl(Params).then(function(val){
                     let data = JSON.parse(val.data.data)
+                    console.log(data)
+                    if(data.data.data != null)
+                    {
+                        vm.tableData= data.data.data
+                    }else if(data.data.list != null){
+                        vm.tableData = data.data.list
+                    }else{
+                        vm.tableData = []
+                    }
 
-                    vm.tableData = data.data.list
                     vm.total = data.data.total
+                    vm.loading = false
 
                 })
 
@@ -188,36 +480,76 @@
             },
 
             selectedChange:function(val){
-
+                this.selall = val
                 console.log(val)
             },
             sizeChange:function(val){
 
-                this.page[0].paramValue = val
+                this.page[1].paramValue = val
                 this.getTableDataByUrl()
 
             },
             currentChange:function(val){
 
-                this.page[1].paramValue = val
+                this.page[0].paramValue = val
                 this.getTableDataByUrl()
             },
             sureok:function(){
+                let vm = this
                 console.log(this.dialog)
+                let result = []
+                let keys = Object.keys(this.dialog)
+                for(let key of keys){
+                    result.push({
+                        paramKey:key,
+                        paramValue:this.dialog[key]
+                    })
+                }
+                let Params = {'rId':this.bid,'params':JSON.stringify(result)}
+                this.getDataByUrl(Params).then(function(val){
+                    let data = JSON.parse(val.data.data)
+                    console.log(data)
+                    vm.$message.success(data.retmsg)
+                    vm.dialogVisible = false
+                    vm.getTableDataByUrl()
+                })
+
 
             },
             closeDialog:function(){
                 this.dialog = {}
+                this.resetForm('dialog')
+            },
 
+            changeRouter(){
+                Object.assign(this.$data, this.$options.data())
+                this.getAllEnt();
+                this.setDataByUrl(this.url)
+                this.getTableOption();
+            },
+
+            getAllEnt: function () {
+                let vm = this;
+                this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                    vm.allEnt = val.data.data
+                })
             }
         },
         components:{
             'mini-table':Table
         },
 
+        activated(){
+            console.log('切换')
+        },
 
-
+        watch: {
+            // 如果路由有变化，会再次执行该方法
+            "$route": "changeRouter",
+            "list":"listToJson"
+        },
         created(){
+            this.getAllEnt();
             this.setDataByUrl(this.url)
             this.getTableOption();
         }
@@ -242,5 +574,22 @@
         background-color: #f0f4f7;
         padding: 10px 20px 60px;
         height: auto;
+    }
+
+    .el-dialog {
+        max-height: calc(100% - 300px);
+        max-width: calc(100% - 30px);
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .el-dialog__body {
+        overflow: auto;
+    }
+
+    .dialog-input {
+        width: 80%;
+        padding-left: 50px;
     }
 </style>

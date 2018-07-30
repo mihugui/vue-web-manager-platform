@@ -14,12 +14,24 @@
                           background-color="#fff"
                           text-color="#333"
                           active-text-color="#36a8fc" >
-                    <el-menu-item index="1" @click="changePlace">{{  placename }}</el-menu-item>
-                    <el-submenu index="2">
-                        <template slot="title">{{username}}</template>
-                        <el-menu-item index="1-1" @click="resetRouter">界面重置</el-menu-item>
-                        <el-menu-item index="1-2" @click="logout">退出</el-menu-item>
-                    </el-submenu>
+                    <!--<el-menu-item index="1" @click="changePlace">{{  placename }}</el-menu-item>-->
+                    <!--<el-submenu index="2">-->
+                        <!--<template slot="title">{{username}}</template>-->
+                        <!--<el-menu-item index="1-1" @click="updatePWD">密码修改</el-menu-item>-->
+                        <!--<el-menu-item index="1-2" @click="resetRouter">界面重置</el-menu-item>-->
+                        <!--<el-menu-item index="1-3" @click="logout">退出</el-menu-item>-->
+                    <!--</el-submenu>-->
+                    <place-button></place-button>
+                    <el-dropdown index="2" @command="clickdropdown">
+                      <span class="el-dropdown-link">
+                        {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="updatePWD">密码修改</el-dropdown-item>
+                            <el-dropdown-item command="resetRouter">界面重置</el-dropdown-item>
+                            <el-dropdown-item command="logout" divided>退出</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </el-menu>
             </div>
             </div>
@@ -27,12 +39,12 @@
         <el-container class="maintype">
             <el-aside :width="myWidth"><mini-asidetitle :AsideTitle="AsideTitle" :isCollapse="isCollapse"></mini-asidetitle></el-aside>
             <el-main>
-                <router-view></router-view>
+                <router-view v-if="isRouterAlive"></router-view>
             </el-main>
         </el-container>
         <el-dialog
             title="请选择园区"
-            :visible.sync="dialogVisible"
+            :visible.sync="dialogVisible_place"
             width="500px"
             heigth="80%"
             :modal-append-to-body="true"
@@ -49,8 +61,34 @@
                 </el-radio-group>
             </span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible=false">取 消</el-button>
+                <el-button @click="dialogVisible_place=false">取 消</el-button>
                 <el-button type="primary" @click="selectPlace">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+            title="密码修改"
+            :visible.sync="dialogVisible_pwd"
+            width="600px"
+            heigth="80%"
+            :modal-append-to-body="true"
+            :close-on-click-modal="false"
+            style="z-index: 99999;">
+            <span>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                  <el-form-item label="旧密码" prop="oldPwd">
+                    <el-input  type="password" v-model="ruleForm.oldPwd" ></el-input>
+                  </el-form-item>
+                  <el-form-item label="新密码" prop="newPwd">
+                    <el-input type="password" v-model="ruleForm.newPwd" ></el-input>
+                  </el-form-item>
+                  <el-form-item label="新密码确认" prop="validatePwd">
+                    <el-input type="password" v-model="ruleForm.validatePwd" ></el-input>
+                  </el-form-item>
+                </el-form>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible_pwd=false">取 消</el-button>
+                <el-button type="primary" @click="updatePwd">确 定</el-button>
             </span>
         </el-dialog>
     </el-container>
@@ -59,14 +97,46 @@
     import SystemTitle from '@/components/SystemTitle'
     import AsideTitle from '@/components/AsideTitle'
     import SelectPlace from '@/components/SelectPlace'
+    import PlaceButton from '@/components/PlaceButton'
     import {loginpage} from '../axios/Login'
     import {Permission} from "../axios/Permission";
     import { mapGetters,mapActions,mapMutations} from 'vuex'
+    import * as types from '../stores/mutation-types'
     export default {
         name: "MainLayout",
         data(){
+            var checkNewPwd = (rule, value, callback) => {
+                if(value != this.ruleForm.newPwd) {
+                    return callback(new Error('两次密码不一致'));
+                }else{
+                    return  callback()
+                }
+
+            };
+
             return {
-                dialogVisible:false,
+                ruleForm:{
+                    oldPwd:'',
+                    newPwd:'',
+                    validatePwd:''
+                },
+                rules:{
+                    oldPwd:[
+                        { required: true, message: '请输入旧密码', trigger: 'blur' },
+                    ],
+                    newPwd:[
+                        { required: true, message: '请输入新密码', trigger: 'blur' },
+                        { pattern:/^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_]+$)(?![a-z0-9]+$)(?![a-z\W_]+$)(?![0-9\W_]+$)[a-zA-Z0-9\W_]{8,}$/, message: '密码格式(字母，数字，符号)'}
+                    ],
+                    validatePwd:[
+                        { required: true, message: '请重新输入密码', trigger: 'blur' },
+                        { validator: checkNewPwd, trigger: 'blur' }
+                    ],
+
+                },
+                isRouterAlive:true,
+                dialogVisible_place:false,
+                dialogVisible_pwd:false,
                 isCollapse:true,
                 myWidth:"65px",
                 placename:'',
@@ -78,14 +148,39 @@
                         width: '310px',
                         margin: '0 auto 0 0px',
                         background: 'white url(' + require('../assets/img.png') + ') left -44px no-repeat',
-                }
+                },
+
+                checkAll: false,
+                checkedCities:[],
+                isIndeterminate: true,
+                allPlace:[],
             }
         },
 
         methods:{
 
+            clickdropdown(command){
+
+                switch(command){
+                    case 'logout':
+                        this.logout()
+                        break;
+                    case 'resetRouter':
+                        this.resetRouter()
+                        break;
+                    case 'updatePWD':
+                        this.updatePWD()
+                        break;
+                }
+
+            },
+
             changePlace(){
-              this.dialogVisible=true
+              this.dialogVisible_place=true
+            },
+
+            updatePWD(){
+              this.dialogVisible_pwd = true
             },
 
             changertitle(){
@@ -138,20 +233,43 @@
             gerUserPlace:function(){
                 let vm =this
                 Permission.getUserPlaces().then(function(val){
-                        vm.places = val;
-                        vm.selplace = val.filter(p=>{return p.isDefault === "1"})[0].id;
-                        vm.placename = val.filter(p=>{return p.isDefault === "1"})[0].placeName;
+                        vm.setUserPlace(val)
                 })
+            },
 
+            updatePwd:function(){
+                let vm = this
+                this.$refs['ruleForm'].validate((valid) => {
+                    if (valid) {
+                        let loginParams = {oldpwd: this.ruleForm.oldPwd, newpwd: this.ruleForm.newPwd};
+                        loginpage.updatePwd(loginParams).then(res => {
+                            if(res.data.retcode === 200){
+                                vm.$message.success('修改密码成功')
+                                vm.dialogVisible_pwd = false
+                            }else{
+                                vm.$message.success(res.data.retmsg)
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                })
+            },
+
+            //重新加载组件
+            reload(){
+                this.isRouterAlive = false
+                this.$nextTick(() => (this.isRouterAlive = true))
             },
 
             ...mapActions({
                 getUserPermission: 'GET_USER_PERMISSION',
                 setDefaultPlace:"SET_DEFAULT_PLACE"
-
             }),
             ...mapMutations({
                 setSystemTitle : 'SET_SYSTEM_TITLE',
+                setUserPlace:types.SET_USER_PLACE
             })
         },
         mounted () {
@@ -164,6 +282,12 @@
                 _this.changertitle()
             }
         },
+
+        watch:{
+            placeIds:function () {
+                this.reload();
+            }
+        },
         created(){
             this.getUserPermission();
         },
@@ -172,12 +296,14 @@
                 AsideTitle: 'asideinfo',
                 SystemTitle:'systeminfo',
                 myComponents: 'mycomponents',
+                placeIds:'placeIds',
             })
         },
         components: {
             'mini-system': SystemTitle,
             'mini-asidetitle':AsideTitle,
             'select-place':SelectPlace,
+            'place-button':PlaceButton
         },
     }
 </script>
@@ -211,6 +337,7 @@
         padding:0;
         height: auto;
         width: auto;
+        min-width: 1200px;
         border-top:solid 2px hsla(0,0%,92%,.9)
     }
 
@@ -226,6 +353,7 @@
     }
     .fr {
         float: right;
+        padding-right: 20px;
     }
 
     .system{

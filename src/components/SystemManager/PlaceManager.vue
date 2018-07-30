@@ -19,7 +19,7 @@
     </section>
     <section class="content-operate">
     <el-button type="primary" size="mini" icon="el-icon-plus" @click="showAddModal" v-if="button.filter(btn =>{return btn.path === '/places/add'}).length!=0">新增</el-button>
-    <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
+    <el-button type="primary" size="mini" icon="el-icon-edit" v-if="showEdit && (button.filter(btn =>{return btn.path === '/places/edit'}).length!=0)" @click="showEditModal" >编辑</el-button>
     <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/places/del'}).length!=0)" @click="handleClose(deleteList)" >删除</el-button>
     </section>
     <section class="content-table">
@@ -305,6 +305,8 @@
                             if (val.data.retcode === 200) {
                                 vm.dialogVisible = false;
                                 vm.getTableByOther();
+                            }else{
+                                vm.$message.error(val.data.retmsg)
                             }
                         })
                     } else {
@@ -357,7 +359,6 @@
     .content-table{
         background-color: #f0f4f7;
         padding: 10px 20px 60px;
-        height: auto;
     }
 
     .el-dialog{

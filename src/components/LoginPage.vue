@@ -132,10 +132,11 @@
                         let result = res.data.data.split(",");
                         sessionStorage.setItem("token",result[0]);
                         sessionStorage.setItem("username",result[1]);
-                        vm.getDictsData();
-                        vm.$router.push('/selectPlace');
+                        // vm.$router.push('/selectPlace');
+                        vm.$router.push('/');
                     }else{
                         vm.$message.error(res.data.retmsg);
+                        this.getimg()
                         return Promise.reject({
                             message: '登录异常！'
                         });

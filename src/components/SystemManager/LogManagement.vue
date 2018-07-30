@@ -202,6 +202,7 @@
 
     .content-table{
         background-color: #f0f4f7;
-        padding: 10px 20px 60px;
+        padding: 10px 20px 20px;
+        height: calc(100vh - 200px);
     }
 </style>
