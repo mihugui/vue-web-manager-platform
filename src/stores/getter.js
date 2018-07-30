@@ -41,4 +41,4 @@ export const test = state => state.test
 
 export const placeIds = state => state.placeIds
 
-export const userPlace = status => state.userPlace
+export const userPlace = state  => state.userPlace
