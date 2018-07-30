@@ -15,7 +15,7 @@ global.install = (Vue, router) => {
         //对数据在请求值服务器前做一次处理
         /*..........*/
         console.log(config.data)
-        if(config.url.indexOf("import")==-1)
+        if(config.url.indexOf("import")==-1){
         if (sessionStorage.getItem("token")) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             if(config.data === undefined){
                 config.data ='token=' + sessionStorage.getItem("token")
@@ -24,7 +24,8 @@ global.install = (Vue, router) => {
             }
         }
         if (sessionStorage.getItem("placeIds")){
-            config.data = config.data+"&pIds="+JSON.stringify(sessionStorage.getItem("placeIds"));
+            config.data = config.data+"&pIds="+JSON.parse(sessionStorage.getItem("placeIds")).toString();
+        }
         }
         return config
     })
