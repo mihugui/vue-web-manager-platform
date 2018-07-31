@@ -508,7 +508,7 @@
             currentChange(val) {
                 let vm = this
                 this.loading = true
-                this.page.pageNum = val;
+                this.page.page = val;
                 this.getTableData({...this.page,"userRealname":this.username,"userStatus":this.statue,"placeNames":this.placename}).then(function(){
                     vm.loading = false
                 });
