@@ -422,6 +422,7 @@
                         children:vm.analysis(),
                         name:'当前园区'
                     }
+                    console.log(placeEnt.children)
                     vm.showChart(placeEnt)
                 })
             },
@@ -510,7 +511,7 @@
                 var vm = this;
                 let tree =[];
                 for(let i=0;i<vm.chartTree.length;i++){
-                    if(this.chartTree[i].entParentId === null){
+                    if(this.chartTree[i].entParentId === ""){
                         let obj = vm.chartTree[i]
                         obj.children = []
                         obj.name = obj.entName
