@@ -33,7 +33,7 @@
             <el-button type="primary" size="mini" icon="el-icon-rank" @click="showEntER">企业关系图</el-button>
             <el-button type="primary" size="mini" icon="el-icon-edit" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/edit'}).length!=0)" @click="showEditModal">编辑</el-button>
             <el-button type="primary" size="mini" icon="el-icon-setting" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/per'}).length!=0)" @click="showPerMission">权限分配</el-button>
-            <!--<el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理</el-button>-->
+            <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit" @click="showOrganization">组织管理</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus" v-if="showEdit && (button.filter(btn =>{return btn.path === '/enterprise/place'}).length!=0)" @click="showPlaces">园区管理
             </el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" v-if="showDetele && (button.filter(btn =>{return btn.path === '/enterprise/del'}).length!=0)" @click="handleClose(deleteList)">删除
@@ -170,12 +170,37 @@
                 width="1000px"
                 heigth="80%"
                 :modal-append-to-body="false"
-                @close='closeDialog_permission'
                 style="z-index: 99999;">
             <span>
                 <el-row :gutter="20">
-                  <el-col :span="12"><div class="grid-content bg-purple"></div></el-col>
-                  <el-col :span="12"><div class="grid-content bg-purple"></div></el-col>
+                  <el-col :span="24">
+                      <el-button type="primary" size="mini" icon="el-icon-plus" @click="addOrganization">添加</el-button>
+                      <el-button type="primary" size="mini" icon="el-icon-plus" @click="updateOrganization">修改</el-button>
+                      <el-button type="danger" size="mini" icon="el-icon-plus" @click="deleteOrganization">删除</el-button>
+                      <div class="grid-content bg-purple">
+                          <el-tree
+                              :data="OrganizationTree"
+                              show-checkbox
+                              default-expand-all
+                              node-key="id"
+                              ref="Otree"
+                              highlight-current
+                              :props="defaultProps"
+                              check-strictly
+                              @check-change="handleClick"
+                              @check="getOtreeid">
+                        </el-tree>
+                      </div>
+                  </el-col>
+                  <!--<el-col :span="15"><div class="grid-content bg-purple">-->
+                        <!--<el-transfer-->
+                            <!--filterable-->
+                            <!--:filter-method="filterMethod"-->
+                            <!--filter-placeholder="请输入城市名称"-->
+                            <!--v-model="selUser"-->
+                            <!--:data="users">-->
+                        <!--</el-transfer>-->
+                  <!--</div></el-col>-->
                 </el-row>
             </span>
                 <span slot="footer" class="dialog-footer">
@@ -197,6 +222,45 @@
             <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible_chart = false">取 消</el-button>
             <el-button type="primary" @click="sureok">确 定</el-button>
+            </span>
+            </el-dialog>
+
+            <el-dialog
+                :title="title_Organization_Mini"
+                :visible.sync="dialogVisible_Organization_Mini"
+                width="500px"
+                heigth="80%"
+                :modal-append-to-body="false"
+                @close='closeDialog_Organization_Mini'
+                style="z-index: 99999;">
+            <span>
+                <el-form :model="OrganizationInfo" :rules="O_rules" ref="dialog" label-width="120px"  class="demo-ruleForm">
+                    <el-form-item label="父组织" prop="parentId">
+                        <el-select v-model="OrganizationInfo.parentId" clearable placeholder="请选择" disabled >
+                            <el-option :label="selectOrganization.orgName" :value="selectOrganization.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="组织名称" prop="orgName">
+                        <el-col :span="20">
+                        <el-input v-model="OrganizationInfo.orgName"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="组织编号" prop="orgCode">
+                        <el-col :span="20">
+                        <el-input v-model="OrganizationInfo.orgCode"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="组织描述" prop="description">
+                        <el-col :span="20">
+                        <el-input v-model="OrganizationInfo.description"></el-input>
+                        </el-col>
+                    </el-form-item>
+                </el-form>
+            </span>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible_Organization_Mini = false">取 消</el-button>
+            <el-button type="primary" @click="sureok_Organization">确 定</el-button>
             </span>
             </el-dialog>
         </div>
@@ -226,6 +290,20 @@
                     return  callback()
                 }
 
+            };
+
+            const generateData = _ => {
+                const data = [];
+                const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
+                const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+                cities.forEach((city, index) => {
+                    data.push({
+                        label: city,
+                        key: index,
+                        pinyin: pinyin[index]
+                    });
+                });
+                return data;
             };
 
             return {
@@ -260,6 +338,10 @@
                         { required: false, message: '请选择父企业', trigger: 'change' }
                     ],
                 },
+
+                O_rules:{
+
+                },
                 //弹出框
                 title: '',
                 dialog: {
@@ -289,10 +371,12 @@
                 title_places:'园区管理',
                 title_chart:'企业关系',
                 title_Organization:'组织管理',
+                title_Organization_Mini:'组织添加',
                 dialogVisible_permission: false,
                 dialogVisible_Organization: false,
                 dialogVisible_places:false,
                 dialogVisible_chart:false,
+                dialogVisible_Organization_Mini:false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -359,6 +443,26 @@
                 entName:'',
                 seltable: '',
                 selall: [],
+
+                //企业组织
+                Organization:[],
+                OrganizationTree:[],
+                OrganizationInfo:{
+                    orgName:'',
+                    orgCode:'',
+                    entId:'',
+                    orgType:'',
+                    parentId:'',
+                    description:'',
+                    isShow:'',
+                },
+                selectOrganization:{
+                    orgName:'',
+                    id:''
+                },
+                i:0,
+                users:generateData(), //用户
+                selUser:[]
             }
         },
         components: {
@@ -391,6 +495,7 @@
                 getTableData: 'GET_TABLE_DATA',
                 updateSureOK: 'UPDATE_TABLE_DATA',
                 getEntPermission: 'GET_ENT_PERMISSION',
+                getEntOrganization:'GET_ENT_ORGANIZATION',
                 getAllPermission: 'GET_ALL_PERMISSION',
                 setPermission: 'SET_PERMISSION',
                 axioPostNoData: 'AXIO_POST_NODATA',
@@ -398,6 +503,10 @@
                 getChildrenList:'GET_CHILDREN_LIST',
                 getEntListByPlace:'GET_ENT_LIST'
             }),
+
+            filterMethod(query, item) {
+                return item.pinyin.indexOf(query) > -1;
+            },
 
             gettreeid() {
                 let vm = this;
@@ -409,6 +518,34 @@
                 let a = JSON.stringify(ids);
                 let pids = a.substring(1, a.length - 1);
                 this.params = {'entId': vm.seltable.Id, 'resourceId': pids}
+            },
+
+            handleClick(data,checked, node) {
+                this.i++;
+                if(this.i%2 === 0){
+                    if(checked){
+                        this.$refs.Otree.setCheckedNodes([]);
+                        this.$refs.Otree.setCheckedNodes([data]);
+                        //交叉点击节点
+                    }else{
+                        this.$refs.Otree.setCheckedNodes([]);
+                        //点击已经选中的节点，置空
+                    }
+                }
+            },
+
+            getOtreeid(data){
+                let tree = [...this.$refs.Otree.getCheckedNodes()];
+                if( tree.length === 0){
+                    this.OrganizationInfo.parentId = '';
+                }else{
+                    console.log(tree)
+                    this.selectOrganization.orgName = tree[0].name
+                    this.selectOrganization.id = tree[0].id
+                    this.OrganizationInfo.parentId = tree[0].id;
+                }
+                console.log(this.OrganizationInfo.parentId)
+
             },
 
             showEntER(){
@@ -619,15 +756,131 @@
                 this.setSureUrl('/enterprise/updatePlaces');
                 this.dialogVisible_places=true;
             },
+
+            addOrganization(){
+                this.setSureUrl('/organization/add');
+                this.dialogVisible_Organization_Mini = true
+            },
+
+            updateOrganization(){
+                let vm = this
+                this.setSureUrl('/organization/findOrgById');
+                if(vm.OrganizationInfo.parentId === '')
+                {
+                    vm.$message.error('请选择一个部门')
+                    return
+                }
+
+
+                let parameter = {'id':vm.OrganizationInfo.parentId}
+                vm.updateSureOK(parameter).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.OrganizationInfo = {...val.data.data}
+                        delete vm.OrganizationInfo.createTime
+                        delete vm.OrganizationInfo.updateTime
+                        console.log(vm.OrganizationInfo)
+                        vm.setSureUrl('/organization/update');
+                    }else{
+                        vm.$message.error(val.data.retmsg)
+                    }
+                })
+                this.title_Organization_Mini = "组织修改";
+                this.dialogVisible_Organization_Mini = true;
+            },
+
+            deleteOrganization(){
+                let vm = this
+                this.setSureUrl('/organization/delete');
+                if(vm.OrganizationInfo.parentId === '')
+                {
+                    vm.$message.error('请选择一个部门')
+                    return
+                }
+
+                this.handleClose(this.deleteOrganization_ok)
+
+            },
+
+            deleteOrganization_ok(){
+                let vm = this
+                let delList = []
+                delList.push(vm.OrganizationInfo.parentId)
+                let parameter = {'ids':delList}
+                vm.updateSureOK(parameter).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.$message.success(val.data.retmsg)
+                    }else{
+                        vm.$message.error(val.data.retmsg)
+                    }
+                })
+
+            },
+            sureok_Organization(){
+                let vm = this
+                vm.updateSureOK(vm.OrganizationInfo).then(function (val) {
+                    if (val.data.retcode === 200) {
+                        vm.$message.success(val.data.retmsg)
+                        vm.params = {'entId': vm.seltable.Id}
+                        vm.getEntOrganization(vm.params).then(function (val) {
+                            vm.Organization = val.data.data;
+                            vm.OrganizationTree = vm.Oanalysis();
+                            vm.dialogVisible_Organization_Mini = false
+                        });
+
+                    }else{
+                        vm.$message.error(val.data.retmsg)
+                    }
+                })
+
+            },
+
             showOrganization() {
                 let vm = this;
-                this.params = {'Id': vm.seltable.Id}
                 this.dialogVisible_Organization = true;
-                this.getEntPermission(this.params).then(function (val) {
-                    let ids = base.toNum(val.data.data)
-                    vm.$refs.tree.setCheckedKeys(ids);
+                this.params = {'entId': vm.seltable.Id}
+                this.OrganizationInfo.entId = this.seltable.Id
+                console.log(this.OrganizationInfo)
+                this.getEntOrganization(this.params).then(function (val) {
+                    vm.Organization = val.data.data;
+                    vm.OrganizationTree = vm.Oanalysis();
+                    console.log(vm.Organization)
                 });
             },
+
+            Oanalysis:function(){
+                var vm = this;
+                let tree =[];
+                for(let i=0;i<vm.Organization.length;i++){
+                    if(this.Organization[i].pId === ""){
+                        let obj = vm.Organization[i]
+                        obj.children = []
+                        tree.push(obj)
+                        vm.Organization.splice(i,1)
+                        i--
+                    }
+                }
+                return this.OmenuList(tree);
+            },
+
+            OmenuList:function(arr){
+                var vm = this;
+                if(vm.Organization.length !=0){
+                    for(let i=0; i<arr.length;i++){
+                        for(let j=0;j<vm.Organization.length;j++){
+                            if(this.Organization[j].pId === arr[i].id){
+                                let obj = vm.Organization[j]
+                                obj.children = []
+                                arr[i].children.push(obj)
+                                vm.Organization.splice(j,1)
+                                j--
+                            }
+                        }
+                        vm.OmenuList(arr[i].children)
+                    }
+                }
+                return arr;
+            },
+
             deleteList() {
                 let vm = this;
                 this.setSureUrl('/enterprise/delete');
@@ -744,6 +997,19 @@
 
             },
 
+            closeDialog_Organization_Mini:function(){
+                console.log('组织关闭')
+                this.OrganizationInfo={
+                        orgName:'',
+                        orgCode:'',
+                        entId:this.seltable.Id,
+                        orgType:'',
+                        parentId:'',
+                        description:'',
+                        isShow:''
+                }
+            },
+
             getTableByOther: function () {
                 let vm = this
                 this.getTableData(this.page).then( function () {
@@ -807,5 +1073,9 @@
     .dialog-input {
         width: 80%;
         padding-left: 50px;
+    }
+
+    .modal-backdrop {
+        z-index: -1;
     }
 </style>

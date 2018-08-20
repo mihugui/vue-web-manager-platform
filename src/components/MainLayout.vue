@@ -206,7 +206,9 @@
             },
             resetRouter:function(){
                 sessionStorage.removeItem("permission");
-                location.reload();
+                Permission.getUserPermission().then(function(val){
+                    //location.reload();
+                })
             },
 
             selectPlace:function(){

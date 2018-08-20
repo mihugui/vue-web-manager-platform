@@ -87,12 +87,47 @@
                 <el-form :model="dialog" ref="dialog"  label-width="120px"  class="demo-ruleForm">
                     <el-form-item
                         v-for="(item,key) in formList"
+                        v-if="item.type==''"
                         :key="key"
                         :label="item.paramDesc"
                         :prop="item.paramKey"
                         :rules="item.paramRule">
                         <el-col :span="20">
                         <el-input v-model="dialog[item.paramKey]"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item
+                        v-else-if="item.type=='ent'"
+                        :key="key"
+                        :label="item.paramDesc"
+                        :prop="item.paramKey"
+                        :rules="item.paramRule">
+                        <el-col :span="20">
+                        <el-select v-model="dialog[item.paramKey]"  clearable  placeholder="请选择企业" :key="'dataType'+key">
+                            <el-option
+                                v-for="(itemDict,key) in allEnt"
+                                :key="itemDict.id"
+                                :label="itemDict.entName"
+                                :value="itemDict.id">
+                            </el-option>
+                        </el-select>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item
+                        v-else
+                        :key="key"
+                        :label="item.paramDesc"
+                        :prop="item.paramKey"
+                        :rules="item.paramRule">
+                        <el-col :span="20">
+                        <el-select v-model="dialog[item.paramKey]" filterable clearable placeholder="请选择">
+                            <el-option
+                                v-for="itemDict in dicts[item.type]"
+                                :key="itemDict.id"
+                                :label="itemDict.name"
+                                :value="itemDict.code">
+                            </el-option>
+                        </el-select>
                         </el-col>
                     </el-form-item>
                 </el-form>
@@ -208,7 +243,7 @@
 
         computed:{
             ...mapGetters({
-                test:'test',
+                dicts: 'dicts',
             }),
         },
 
@@ -315,16 +350,16 @@
                         break
 
                     case 'edit':
-                        if(vm.selall.length != 1){
-                            vm.$message.warning('每次只能编辑一个')
-                            break
-                        }
+                        // if(vm.selall.length != 1){
+                        //     vm.$message.warning('每次只能编辑一个')
+                        //     break
+                        // }
                         vm.title = "编辑"
                         vm.dialogVisible = true
                         vm.getTableInfo(rid).then(function(val){
                             console.log(val)
                             vm.formList = val.data.data.srdpList.filter(p=>{return p.isShow === '1'})
-                            vm.dialog = vm.selall[0]
+                            //vm.dialog = vm.selall[0]
 
                             for(let f of vm.formList){
                                 let rule = JSON.parse(f.paramRule)
@@ -336,7 +371,7 @@
                                             message: '请输入'+f.paramDesc,
                                             trigger: 'blur' })
                                 }
-
+                                f.type=rule.type
                                 if(rule.isRegular === true){
                                     console.log(rule.regular)
                                     f.paramRule.push(

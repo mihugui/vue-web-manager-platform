@@ -125,6 +125,18 @@ export const GET_ENT_PERMISSION = async({ dispatch, commit, state },data)=> {
     return promise;
 }
 
+export const GET_ENT_ORGANIZATION = async({ dispatch, commit, state },data)=> {
+    var qs = require('qs');
+    const promise = new Promise(function(resolve, reject) {
+        axios.post(url.allurl+"/organization/getOrganization",qs.stringify(data)).then(function(res) {
+            resolve(res);
+        }).catch(function(error){
+            reject(error);
+        });
+    });
+    return promise;
+}
+
 export const GET_ROLE_PERMISSION = async({ dispatch, commit, state },data)=> {
     var qs = require('qs');
     const promise = new Promise(function(resolve, reject) {

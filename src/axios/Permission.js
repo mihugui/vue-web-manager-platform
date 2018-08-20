@@ -19,7 +19,7 @@ export const Permission = {
                     });
                     if(action === 1){ //获取路由
                         resolve(res.data.data.filter(Permission => {
-                            return (Permission.button != 1 || Permission.pId != null) && Permission.path != '' ;
+                            return (Permission.button != 1 || Permission.pId != null) && Permission.path != '' && Permission.path != null ;
                         }));
                     }else {
                         resolve(vm.analysis());
