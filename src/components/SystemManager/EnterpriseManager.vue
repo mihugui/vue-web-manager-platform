@@ -411,7 +411,7 @@
                     operate: true
                 }, {
                     name: '企业类型',
-                    value: 'placeArea',
+                    value: 'entType',
                     operate: true,
                     formatter: function (row) {
                         for(let type  of store.getters.dicts.enttype){

@@ -5,7 +5,7 @@
             <el-form :inline="true" class="demo-form-inline" size="mini" label-width="100px">
                 <el-form-item
                     v-for="(item,key) in search"
-                    v-if="item.paramRule===''"
+                    v-if="item.paramRule.type===''"
                     :key="key"
                     :label="item.paramDesc"
                     label-width="80px">
@@ -36,9 +36,9 @@
                     <el-select v-model="search[key].paramValue"  clearable  placeholder="请选择企业" :key="'dataType'+key">
                         <el-option
                             v-for="(itemDict,key) in allEnt"
-                            :key="itemDict.id"
-                            :label="itemDict.entName"
-                            :value="itemDict.id">
+                            :key="itemDict.filialeid"
+                            :label="itemDict.filialename"
+                            :value="itemDict.filialeid">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -174,6 +174,8 @@
     import Table from '@/components/Table'
     import { mapActions,mapGetters,mapMutations } from 'vuex'
     import XLSX from 'xlsx'
+    import axios from 'axios'
+    import url from "../../globbal/url"
     export default {
         name: 'importTable',
         data() {
@@ -204,6 +206,7 @@
                 id:'',
                 bid:'',
                 is_one:false,
+                consumeToken:'',
                 //所有企业
                 allEnt:[],
                 dialog:{
@@ -253,7 +256,8 @@
                 setDataByUrl: 'SET_DATA_BYURL',
             }),
             ...mapActions({
-                getTableInfo:'GET_TABLE_INFO',
+                getTableInfo:'G' +
+                'ET_TABLE_INFO',
                 getDataByUrl:'GET_DATA_BYURL',
                 getTableButton:'GET_TABLE_BUTTON',
                 axioPostNoData: 'AXIO_POST_NODATA',
@@ -274,7 +278,6 @@
                         vm.searchParams[s.paramKey]='';
                         if(s.paramRule != '')
                             s.paramRule = JSON.parse(s.paramRule)
-                            console.log(s.paramRule)
                     }
                     vm.page.push(info.filter(p=>{return p.paramDesc === "page"})[0])
                     vm.page.push(info.filter(p=>{return p.paramDesc === "pagesize"})[0])
@@ -286,10 +289,37 @@
                         type: 'index',
                     })
                     for(let a of info.filter(p=>{return p.isShow === "1"})){
-                        vm.tableKey.push({
-                            name:a.paramDesc,
-                            value:a.paramKey
-                        })
+                        if(a.paramKey === ''){
+                            vm.tableKey.push({
+                                name:a.paramDesc,
+                                value:a.paramKey,
+                                formatter:function(row){
+                                    for(let type  of vm.allEnt){
+                                        if(type.filialeid === row[a.paramKey]){
+                                            return type.filialename
+                                        }
+                                    }
+                                }
+                            })
+                        }else if(a.paramKey === ''){
+                            vm.tableKey.push({
+                                name:a.paramDesc,
+                                value:a.paramKey,
+                                formatter:function(row){
+                                    for(let type  of vm.dicts[a.paramKey]){
+                                        if(type.code === row[a.paramKey]){
+                                            return type.name
+                                        }
+                                    }
+                                }
+                            })
+                        }else{
+                            vm.tableKey.push({
+                                name:a.paramDesc,
+                                value:a.paramKey
+                            })
+                        }
+
                     }
                     vm.getTableDataByUrl();
                 })
@@ -302,7 +332,6 @@
                             b.dataType = val.data.data.srd.dataType
                         })
                     }
-                    console.log(result)
                     vm.button = result
                 })
 
@@ -328,9 +357,8 @@
                                             message: '请输入'+f.paramDesc,
                                             trigger: 'blur' })
                                 }
-
+                                f.type=rule.type
                                 if(rule.isRegular === true){
-                                    console.log(rule.regular)
                                     f.paramRule.push(
                                         {
                                             pattern: rule.regular,
@@ -357,7 +385,6 @@
                         vm.title = "编辑"
                         vm.dialogVisible = true
                         vm.getTableInfo(rid).then(function(val){
-                            console.log(val)
                             vm.formList = val.data.data.srdpList.filter(p=>{return p.isShow === '1'})
                             //vm.dialog = vm.selall[0]
 
@@ -373,7 +400,6 @@
                                 }
                                 f.type=rule.type
                                 if(rule.isRegular === true){
-                                    console.log(rule.regular)
                                     f.paramRule.push(
                                         {
                                             pattern: rule.regular,
@@ -391,14 +417,43 @@
                         })
 
                         break
+
+                    case 'export':
+                        let Condition = [...vm.search]
+                        vm.getTableInfo(rid).then(function(val){
+                            let url = val.data.data.srd.dataUrl+"?token="+vm.consumeToken
+                            console.log(Condition)
+                            for(let a of Condition)
+                            {
+                                url +="&&"+a.paramKey+"="+a.paramValue
+                            }
+                            window.open(url)
+                        })
+                        break
+
+                    case 'send':
+                        if(vm.selall.length != 1){
+                            vm.$message.warning('每次只能删除一个')
+                            break
+                        }
+
+                        vm.handleSend(vm.bid)
+                        break
                 }
             },
 
             handleClose(id) {
-
                 this.$confirm('确认删除？')
                     .then(_ => {
                         this.deleteList(id)
+                    })
+                    .catch(_ => {});
+            },
+
+            handleSend(id){
+                this.$confirm('确认下发当前福利？')
+                    .then(_ => {
+                        this.sendList(id)
                     })
                     .catch(_ => {});
             },
@@ -409,7 +464,6 @@
 
             getFile:function(file){
                 this.isBtnLoading = true
-                console.log(file.size/1024)
                 if((file.name.indexOf(".xls") == -1) && (file.name.indexOf(".xlsx") == -1) ) {
                     this.$message.warning("只能上传xls/xlsx文件")
                     return false
@@ -435,7 +489,6 @@
                     }
                     result.push(s)
                 }
-                console.log(result)
                 this.isBtnLoading = false
             },
             excelToList:function(file){
@@ -443,7 +496,6 @@
                 var rABS = true;
                 var reader = new FileReader();
                 var name = file.name;
-                let info
                 reader.onload = function (e) {
                     var data = e.target.result;
                     var wb;
@@ -466,19 +518,33 @@
                 return o;
             },
 
+            sendList(id){
+                let vm = this;
+
+                let rid = {'rId':id}
+                this.getTableInfo(rid).then(function(val){
+                    val.data.data.srdpList[0].paramValue = vm.selall[0].batch
+                    let Condition = [...val.data.data.srdpList]
+                    let Params = {'rId':val.data.data.srd.resourceId,'params':JSON.stringify(Condition)}
+                    vm.getDataByUrl(Params).then(function(val2){
+                        let data = JSON.parse(val2.data.data)
+                        vm.$message.success(data.retmsg)
+                        vm.getTableDataByUrl()
+                    })
+                })
+            },
+
+
             deleteList(id){
                 let vm = this;
 
                 let rid = {'rId':id}
                 this.getTableInfo(rid).then(function(val){
-                    console.log(val.data.data.srdpList[0])
                     val.data.data.srdpList[0].paramValue = vm.selall[0].id
                     let Condition = [...val.data.data.srdpList]
                     let Params = {'rId':val.data.data.srd.resourceId,'params':JSON.stringify(Condition)}
                     vm.getDataByUrl(Params).then(function(val2){
-                        console.log(val2)
                         let data = JSON.parse(val2.data.data)
-                        console.log(data)
                         vm.$message.success(data.retmsg)
                         vm.getTableDataByUrl()
                     })
@@ -489,11 +555,9 @@
                 let vm = this
                 //this.search[0].paramValue = '洛阳园区'
                 let Condition = [...this.page,...this.search]
-                console.log(Condition)
                 let Params = {'rId':this.id,'params':JSON.stringify(Condition)}
                 this.getDataByUrl(Params).then(function(val){
                     let data = JSON.parse(val.data.data)
-                    console.log(data)
                     if(data.data.data != null)
                     {
                         vm.tableData= data.data.data
@@ -516,7 +580,6 @@
 
             selectedChange:function(val){
                 this.selall = val
-                console.log(val)
             },
             sizeChange:function(val){
 
@@ -531,7 +594,6 @@
             },
             sureok:function(){
                 let vm = this
-                console.log(this.dialog)
                 let result = []
                 let keys = Object.keys(this.dialog)
                 for(let key of keys){
@@ -543,7 +605,6 @@
                 let Params = {'rId':this.bid,'params':JSON.stringify(result)}
                 this.getDataByUrl(Params).then(function(val){
                     let data = JSON.parse(val.data.data)
-                    console.log(data)
                     vm.$message.success(data.retmsg)
                     vm.dialogVisible = false
                     vm.getTableDataByUrl()
@@ -558,16 +619,41 @@
 
             changeRouter(){
                 Object.assign(this.$data, this.$options.data())
-                this.getAllEnt();
+                this.getAllEnt()
+                this.getConsumeToken()
                 this.setDataByUrl(this.url)
-                this.getTableOption();
+                this.getTableOption()
             },
 
             getAllEnt: function () {
                 let vm = this;
-                this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
-                    vm.allEnt = val.data.data
+                // this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                //     vm.allEnt = val.data.data
+                // })
+
+                axios(
+                    {
+                        method: 'post',
+                        url:url.allurl+'/resourceData/getOtherData',
+                        params:{
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='ent' })[0].code
+                        }
+                    }).then((res)=>{
+                    vm.allEnt = JSON.parse(res.data.data)
                 })
+
+            },
+
+            getConsumeToken:function(){
+                let vm = this;
+                axios(
+                    {
+                        method: 'post',
+                        url:url.allurl+'/token/getConsumeToken'
+                    }).then((res)=>{
+                    vm.consumeToken = res.data.data[0].consumeToken
+                })
+
             }
         },
         components:{
@@ -584,9 +670,10 @@
             "list":"listToJson"
         },
         created(){
-            this.getAllEnt();
+            this.getAllEnt()
+            this.getConsumeToken()
             this.setDataByUrl(this.url)
-            this.getTableOption();
+            this.getTableOption()
         }
     }
 

@@ -6,11 +6,23 @@
         text-color="#333"
         active-text-color="#36a8fc">
         <el-menu-item  v-for="(item,key) in SystemTitle"
+                       v-if="key<6"
                        :key="key"
                        :index="item.system"
                        @click="changeSystem(item.system)">
             <i :class="item.icon"></i> {{item.name}}
         </el-menu-item>
+        <el-submenu
+            v-else-if="key==6">
+            <template slot="title">更多</template>
+            <el-menu-item v-for="(item,key) in SystemTitle"
+                           v-if="key>=6"
+                           :key="key"
+                           :index="item.system"
+                           @click="changeSystem(item.system)">
+                <i :class="item.icon"></i> {{item.name}}
+            </el-menu-item>
+        </el-submenu>
     </el-menu>
 </template>
 <script>

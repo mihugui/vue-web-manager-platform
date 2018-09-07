@@ -322,8 +322,14 @@
                             a.isCondition = false
                         }
 
-                        if(a.paramRule != '')
-                        a.paramRule = JSON.parse(a.paramRule)
+                        if(a.paramRule != '') {
+                            a.paramRule = JSON.parse(a.paramRule)
+                        }else{
+                            a.paramRule={
+                                type:'',
+                                rule:'',
+                            }
+                        }
                     }
 
                     console.log(this.form.parameter)
