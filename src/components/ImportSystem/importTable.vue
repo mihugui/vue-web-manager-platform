@@ -42,6 +42,34 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item
+                    v-else-if="item.paramRule.type==='controller'"
+                    :key="key"
+                    :label="item.paramDesc"
+                    label-width="80px">
+                    <el-select v-model="search[key].paramValue"  clearable  placeholder="请选择控制中心" :key="'dataType'+key">
+                        <el-option
+                            v-for="(itemDict,key) in controller"
+                            :key="itemDict.systemid"
+                            :label="itemDict.systemname"
+                            :value="itemDict.systemid">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                    v-else-if="item.paramRule.type==='groupInfo'"
+                    :key="key"
+                    :label="item.paramDesc"
+                    label-width="80px">
+                    <el-select v-model="search[key].paramValue"  clearable  placeholder="请选择工作组" :key="'dataType'+key">
+                        <el-option
+                            v-for="(itemDict,key) in groupInfo"
+                            :key="itemDict.groupid"
+                            :label="itemDict.groupname"
+                            :value="itemDict.groupid">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search" @click="searchTable" v-if="search!=[]">查询</el-button>
                 </el-form-item>
@@ -209,6 +237,8 @@
                 consumeToken:'',
                 //所有企业
                 allEnt:[],
+                controller:[],
+                groupInfo:[],
                 dialog:{
 
                 },
@@ -619,8 +649,10 @@
 
             changeRouter(){
                 Object.assign(this.$data, this.$options.data())
-                this.getAllEnt()
                 this.getConsumeToken()
+                this.getAllEnt()
+                this.getGroupInfo()
+                this.getController()
                 this.setDataByUrl(this.url)
                 this.getTableOption()
             },
@@ -654,6 +686,42 @@
                     vm.consumeToken = res.data.data[0].consumeToken
                 })
 
+            },
+
+            getGroupInfo(){
+                let vm = this;
+                // this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                //     vm.allEnt = val.data.data
+                // })
+
+                axios(
+                    {
+                        method: 'post',
+                        url:url.allurl+'/resourceData/getOtherData',
+                        params:{
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='controller' })[0].code
+                        }
+                    }).then((res)=>{
+                    vm.controller = JSON.parse(res.data.data)
+                })
+            },
+
+            getController(){
+                let vm = this;
+                // this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                //     vm.allEnt = val.data.data
+                // })
+
+                axios(
+                    {
+                        method: 'post',
+                        url:url.allurl+'/resourceData/getOtherData',
+                        params:{
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='groupInfo' })[0].code
+                        }
+                    }).then((res)=>{
+                    vm.controller = JSON.parse(res.data.data)
+                })
             }
         },
         components:{
@@ -670,8 +738,10 @@
             "list":"listToJson"
         },
         created(){
-            this.getAllEnt()
             this.getConsumeToken()
+            this.getAllEnt()
+            this.getGroupInfo()
+            this.getController()
             this.setDataByUrl(this.url)
             this.getTableOption()
         }
