@@ -70,6 +70,20 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item
+                    v-else-if="item.paramRule.type==='WelfareType'"
+                    :key="key"
+                    :label="item.paramDesc"
+                    label-width="80px">
+                    <el-select v-model="search[key].paramValue"  clearable  placeholder="请选择福利类型" :key="'dataType'+key">
+                        <el-option
+                            v-for="(itemDict,key) in groupInfo"
+                            :key="itemDict.id"
+                            :label="itemDict.name"
+                            :value="itemDict.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="el-icon-search" @click="searchTable" v-if="search!=[]">查询</el-button>
                 </el-form-item>
@@ -239,6 +253,7 @@
                 allEnt:[],
                 controller:[],
                 groupInfo:[],
+                WelfareType:[],
                 dialog:{
 
                 },
@@ -319,7 +334,7 @@
                         type: 'index',
                     })
                     for(let a of info.filter(p=>{return p.isShow === "1"})){
-                        if(a.paramKey === ''){
+                        if(a.paramKey === 'mgmtincid' ||a.paramKey === 'consumeincid'){
                             vm.tableKey.push({
                                 name:a.paramDesc,
                                 value:a.paramKey,
@@ -331,13 +346,15 @@
                                     }
                                 }
                             })
-                        }else if(a.paramKey === ''){
+                        }else if(a.paramKey === 'downloadstatus'||a.paramKey === 'cardstatus'||a.paramKey === 'consumetype'||a.paramKey === 'consumemode' ||a.paramKey === 'consumeway' ||a.paramKey === 'tradetype'
+                        ){
                             vm.tableKey.push({
                                 name:a.paramDesc,
                                 value:a.paramKey,
                                 formatter:function(row){
                                     for(let type  of vm.dicts[a.paramKey]){
-                                        if(type.code === row[a.paramKey]){
+                                        if(type.code===row[a.paramKey].toString()){
+                                            console.log(type.name)
                                             return type.name
                                         }
                                     }
@@ -487,11 +504,7 @@
                     })
                     .catch(_ => {});
             },
-
-
-
             //导入相关 JSON
-
             getFile:function(file){
                 this.isBtnLoading = true
                 if((file.name.indexOf(".xls") == -1) && (file.name.indexOf(".xlsx") == -1) ) {
@@ -653,6 +666,7 @@
                 this.getAllEnt()
                 this.getGroupInfo()
                 this.getController()
+                this.getWelfareType()
                 this.setDataByUrl(this.url)
                 this.getTableOption()
             },
@@ -699,10 +713,10 @@
                         method: 'post',
                         url:url.allurl+'/resourceData/getOtherData',
                         params:{
-                            url:vm.dicts.consume_url.filter(p=>{return p.name==='controller' })[0].code
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='groupInfo' })[0].code
                         }
                     }).then((res)=>{
-                    vm.controller = JSON.parse(res.data.data)
+                    vm.groupInfo = JSON.parse(res.data.data)
                 })
             },
 
@@ -717,10 +731,28 @@
                         method: 'post',
                         url:url.allurl+'/resourceData/getOtherData',
                         params:{
-                            url:vm.dicts.consume_url.filter(p=>{return p.name==='groupInfo' })[0].code
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='controller' })[0].code
                         }
                     }).then((res)=>{
                     vm.controller = JSON.parse(res.data.data)
+                })
+            },
+
+            getWelfareType(){
+                let vm = this;
+                // this.axioPostNoData("/enterprise/getAllEnterprise").then(function (val) {
+                //     vm.allEnt = val.data.data
+                // })
+
+                axios(
+                    {
+                        method: 'post',
+                        url:url.allurl+'/resourceData/getOtherData',
+                        params:{
+                            url:vm.dicts.consume_url.filter(p=>{return p.name==='WelfareType' })[0].code
+                        }
+                    }).then((res)=>{
+                    vm.WelfareType = JSON.parse(res.data.data)
                 })
             }
         },
@@ -742,12 +774,11 @@
             this.getAllEnt()
             this.getGroupInfo()
             this.getController()
+            this.getWelfareType()
             this.setDataByUrl(this.url)
             this.getTableOption()
         }
     }
-
-
 </script>
 <style scoped>
     .content-search {
